@@ -33,7 +33,11 @@
             this.loadSpriteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.fastObjectListView1 = new BrightIdeasSoftware.FastObjectListView();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.objectListView1 = new BrightIdeasSoftware.ObjectListView();
+            this.objectFramesView = new BrightIdeasSoftware.ObjectListView();
+            this.ImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openSpriteFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.comboBoxFrameNo = new System.Windows.Forms.ComboBox();
@@ -48,7 +52,12 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fastObjectListView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,7 +105,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.fastObjectListView1);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             // 
             // splitContainer1.Panel2
             // 
@@ -105,20 +114,69 @@
             this.splitContainer1.SplitterDistance = 235;
             this.splitContainer1.TabIndex = 2;
             // 
-            // fastObjectListView1
+            // splitContainer2
             // 
-            this.fastObjectListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.objectListView1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.objectFramesView);
+            this.splitContainer2.Size = new System.Drawing.Size(235, 377);
+            this.splitContainer2.SplitterDistance = 159;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // objectListView1
+            // 
+            this.objectListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.fastObjectListView1.CellEditUseWholeCell = false;
-            this.fastObjectListView1.Location = new System.Drawing.Point(3, 3);
-            this.fastObjectListView1.Name = "fastObjectListView1";
-            this.fastObjectListView1.ShowGroups = false;
-            this.fastObjectListView1.Size = new System.Drawing.Size(229, 371);
-            this.fastObjectListView1.TabIndex = 0;
-            this.fastObjectListView1.UseCompatibleStateImageBehavior = false;
-            this.fastObjectListView1.View = System.Windows.Forms.View.Details;
-            this.fastObjectListView1.VirtualMode = true;
+            this.objectListView1.CellEditUseWholeCell = false;
+            this.objectListView1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.objectListView1.Location = new System.Drawing.Point(3, 3);
+            this.objectListView1.Name = "objectListView1";
+            this.objectListView1.Size = new System.Drawing.Size(229, 153);
+            this.objectListView1.TabIndex = 0;
+            this.objectListView1.UseCompatibleStateImageBehavior = false;
+            this.objectListView1.View = System.Windows.Forms.View.Details;
+            // 
+            // objectFramesView
+            // 
+            this.objectFramesView.Alignment = System.Windows.Forms.ListViewAlignment.SnapToGrid;
+            this.objectFramesView.AllColumns.Add(this.ImageColumn);
+            this.objectFramesView.AllColumns.Add(this.NameColumn);
+            this.objectFramesView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.objectFramesView.CellEditUseWholeCell = false;
+            this.objectFramesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.ImageColumn,
+            this.NameColumn});
+            this.objectFramesView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.objectFramesView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.objectFramesView.Location = new System.Drawing.Point(3, 3);
+            this.objectFramesView.Name = "objectFramesView";
+            this.objectFramesView.ShowGroups = false;
+            this.objectFramesView.Size = new System.Drawing.Size(229, 208);
+            this.objectFramesView.TabIndex = 0;
+            this.objectFramesView.TileSize = new System.Drawing.Size(64, 64);
+            this.objectFramesView.UseCompatibleStateImageBehavior = false;
+            this.objectFramesView.View = System.Windows.Forms.View.Tile;
+            // 
+            // ImageColumn
+            // 
+            this.ImageColumn.Text = "";
+            // 
+            // NameColumn
+            // 
+            this.NameColumn.AspectName = "m_name";
+            this.NameColumn.Text = "";
             // 
             // pictureBox
             // 
@@ -248,7 +306,12 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.fastObjectListView1)).EndInit();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -260,7 +323,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private BrightIdeasSoftware.FastObjectListView fastObjectListView1;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadSpriteFileToolStripMenuItem;
@@ -272,6 +334,11 @@
         private System.Windows.Forms.Button BlueButton;
         private System.Windows.Forms.Button WhiteButton;
         private System.Windows.Forms.Button PurpleButton;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private BrightIdeasSoftware.ObjectListView objectListView1;
+        private BrightIdeasSoftware.ObjectListView objectFramesView;
+        private BrightIdeasSoftware.OLVColumn ImageColumn;
+        private BrightIdeasSoftware.OLVColumn NameColumn;
     }
 }
 

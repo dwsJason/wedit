@@ -199,18 +199,56 @@ namespace wedit
 
                     case 0x4D4E4153:  // 'SANM'
                                       /* 
+                                    	da	opend
+                                    	da	oploop
+                                    	da	opgoto
+                                    	da	opgotoseq
+                                    	da	oppause
+                                    	da	opsetrate
+                                    	da	opsetdefrate
+                                    	da	opmultiop
+                                    	da	opdelete
+                                    	da 	opsetflag
+                                    	da	opsound
+                                    	da	opfliph
+                                    	da	opflipv
+                                    	da	opnop
+                                    	da	opprocess
+                                    	da	opclearflag
+                                    	da	opgotolast
+                                    	da	opblank
+                                    	da	oprndpause
+                                    	da	opsethflip
+                                    	da	opresethflip
+                                    	da	opsetvflip
+                                    	da	opresetvflip
+                                    	da	ophvflip
+                                    	da	opsethvflip
+                                    	da	opresethvflip
+                                    	da	opextspr
+                                    	da	opbrk
+                                    	da	oponbrk
+                                    	da 	opdynsound
+                                       
                                       dw  <size in bytes> ; including these 2 bytes
                                       db  #of lines in the seqence
 
                                       db <frameNo> or 0xFF means command
-
-                                      ; Loop
+                                       
+                                      ; End 
+                                      00 
+                                      ; Loop - back to index 0 on the anim
                                       01
                                       ; Goto
                                       02, targetLo, TargetHi
-
-                                      ; SetSpeed
-                                      06, speedlo, speed hi
+                                      ; GotoSeq 
+                                      03   db <seqNo>
+                                      ; Pause 
+                                      04 
+                                      ; SetRate 
+                                      05 
+                                      ; SetDefaultSpeed
+                                      06, speedlo, speed hi 
                                       ; Loop
                                       0A
                                       ; Process

@@ -11,8 +11,15 @@ using System.Windows.Forms;
 
 namespace wedit
 {
+
     public partial class wedit : Form
     {
+        public class ImageEntry
+        {
+            public int m_frameNo;
+            public string m_name;
+        }
+
         spData m_spriteFile = null;
         int    m_frameNo = 0;
 
@@ -52,7 +59,7 @@ namespace wedit
             //    new KeyPressEventHandler(wedit_KeyPress);
             //this.splitContainer1.Panel1.KeyPress += new KeyPressEventHandler(wedit_KeyPress); 
             //this.splitContainer1.Panel2.KeyPress += new KeyPressEventHandler(wedit_KeyPress); 
-            fastObjectListView1.KeyPress += new KeyPressEventHandler(Wedit_KeyPress);
+            //fastObjectListView1.KeyPress += new KeyPressEventHandler(Wedit_KeyPress);
 
             this.PreviewKeyDown += new PreviewKeyDownEventHandler(Wedit_KeyDownPreview);
             //fastObjectListView1.PreviewKeyDown += new PreviewKeyDownEventHandler(Wedit_KeyDownPreview);
@@ -62,6 +69,18 @@ namespace wedit
 
             this.pictureBox.MouseMove += new MouseEventHandler(Wedit_MouseMove);
             this.pictureBox.MouseDown += new MouseEventHandler(Wedit_MouseMove);
+
+            BrightIdeasSoftware.OLVColumn col = this.objectFramesView.ColumnsInDisplayOrder[0];
+            col.AspectGetter = delegate (object x) {
+                return ((ImageEntry)x).m_name;
+            };
+            col.AspectToStringConverter = delegate (object x) {
+                return String.Empty;
+            };
+            col.ImageGetter = delegate (object x) {
+                return ((ImageEntry)x).m_frameNo;
+            };
+
         }
         
         // MouseMove Handler
@@ -277,6 +296,29 @@ namespace wedit
             {
                 m_spriteFile = new spData(openSpriteFileDialog.FileName);
                 m_frameNo = 0;
+
+                if ((null != m_spriteFile) && !m_spriteFile.IsEmpty())
+                {
+                    ImageList images = new ImageList();
+                    images.ImageSize = new Size(64, 64);
+                    int numFrames = m_spriteFile.NumFrames();
+
+                    List<ImageEntry> frames = new List<ImageEntry>();
+
+                    // Load up the image list with the BMPs
+                    for (int idx = 0; idx < numFrames; ++idx)
+                    {
+                        Bitmap bmp = m_spriteFile.BitmapFromFrame(idx);
+                        images.Images.Add(bmp);
+                        ImageEntry ie = new ImageEntry();
+                        ie.m_frameNo = idx;
+                        ie.m_name = String.Format("Frame {0}", idx + 1);
+                        frames.Add(ie);
+                    }
+
+                    objectFramesView.LargeImageList = images;
+                    objectFramesView.SetObjects(frames);
+                }                
 
                 Paint();
             }
