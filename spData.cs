@@ -52,6 +52,8 @@ namespace wedit
 
         public spData(string pathName)
         {
+            int animNo = 0;
+
             Console.WriteLine("import: {0}", pathName);
 
             using (BinaryReader b = new BinaryReader(
@@ -266,12 +268,146 @@ namespace wedit
                                       SetFlag
                                       BRK
                                       */
+                        {
+                            Console.WriteLine("Animation #{0}",animNo);
+                            animNo++;
+                            int lineNo = 1;
+                            UInt16 u16;
+                            byte u8;
+
                             while (0 != length)
                             {
-                                b.ReadByte();
+                                byte cmd = b.ReadByte();
                                 length--;
+
+                                if ((0xFF == cmd) && (0 != length))
+                                {
+                                    cmd = b.ReadByte();
+                                    length--;
+
+                                    switch (cmd)
+                                    {
+                                    case 0:
+                                        Console.WriteLine("({0})  End", lineNo);
+                                        break;
+                                    case 1:
+                                        Console.WriteLine("({0})  Loop",lineNo);
+                                        break;
+                                    case 2:
+                                        u16 = b.ReadUInt16(); length-=2;
+                                        Console.WriteLine("({0})  Goto {1}", lineNo, u16);
+                                        break;
+                                    case 3:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  GotoSeq {1}", lineNo, u8);
+                                        break;
+                                    case 4:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  Pause {1}", lineNo, u8);
+                                        break;
+                                    case 5:
+                                        u16 = b.ReadUInt16(); length-=2;
+                                        Console.WriteLine("({0})  SetRate ${1:X4}", lineNo, u16);
+                                        break;
+                                    case 6:
+                                        u16 = b.ReadUInt16(); length-=2;
+                                        Console.WriteLine("({0})  SetSpeed ${1:X4}", lineNo, u16);
+                                        break;
+                                    case 7:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  MultiOp {1}", lineNo, u8);
+                                        break;
+                                    case 8:
+                                        Console.WriteLine("({0})  Delete", lineNo);
+                                        break;
+                                    case 9:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  SetFlag {1}", lineNo, u8);
+                                        break;
+                                    case 10:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  Sound {1}", lineNo, u8);
+                                        break;
+                                    case 11:
+                                        Console.WriteLine("({0})  HFlip", lineNo);
+                                        break;
+                                    case 12:
+                                        Console.WriteLine("({0})  VFlip", lineNo);
+                                        break;
+                                    case 13:
+                                        Console.WriteLine("({0})  Nop", lineNo);
+                                        break;
+                                    case 14:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  Process {1}", lineNo, u8);
+                                        break;
+                                    case 15:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  ClearFlag {1}", lineNo, u8);
+                                        break;
+                                    case 16:
+                                        Console.WriteLine("({0})  GotoLast", lineNo);
+                                        break;
+                                    case 17:
+                                        Console.WriteLine("({0})  Blank", lineNo);
+                                        break;
+                                    case 18:
+                                        {
+                                            byte min = b.ReadByte(); length--;
+                                            byte max = b.ReadByte(); length--;
+                                            Console.WriteLine("({0})  RndPause {1},{2}", lineNo, min, max);
+                                        }
+                                        break;
+                                    case 19:
+                                        Console.WriteLine("({0})  Set HFlip", lineNo);
+                                        break;
+                                    case 20:
+                                        Console.WriteLine("({0})  Clr HFlip", lineNo);
+                                        break;
+                                    case 21:
+                                        Console.WriteLine("({0})  Set VFlip", lineNo);
+                                        break;
+                                    case 22:
+                                        Console.WriteLine("({0})  Clr VFlip", lineNo);
+                                        break;
+                                    case 23:
+                                        Console.WriteLine("({0})  HVFlip", lineNo);
+                                        break;
+                                    case 24:
+                                        Console.WriteLine("({0})  Set HVFlip", lineNo);
+                                        break;
+                                    case 25:
+                                        Console.WriteLine("({0})  Clr HVFlip", lineNo);
+                                        break;
+                                    case 26:
+                                        u16 = b.ReadUInt16(); length-=2;
+                                        Console.WriteLine("({0})  ExtSprite {1}", lineNo, u16);
+                                        break;
+                                    case 27:
+                                        Console.WriteLine("({0})  Brk", lineNo);
+                                        break;
+                                    case 28:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  OnBrk {1}", lineNo, u8);
+                                        break;
+                                    case 29:
+                                        u8 = b.ReadByte(); length--;
+                                        Console.WriteLine("({0})  DynSound {1}", lineNo, u8);
+                                        break;
+                                    default:
+                                        Console.WriteLine("({0})  UNKNOWN CMD {1}, len={2}", lineNo, cmd, length);
+                                        Debug.Assert(false);
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("({0})  Sprite {1}",lineNo,cmd);
+                                }
+                                lineNo++;
                             }
-                            break;
+                        }
+                        break;
 
                     default:
                         {
