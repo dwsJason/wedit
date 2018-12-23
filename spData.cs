@@ -534,6 +534,7 @@ namespace wedit
                     }
                 }
 
+#if false
                 //
                 // Draw the rectangles in white
                 //
@@ -573,8 +574,8 @@ namespace wedit
                         }
                     }
                 }
+#endif
             }
-
             return bmp;
         }
 
