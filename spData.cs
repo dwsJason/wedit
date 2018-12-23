@@ -22,6 +22,16 @@ namespace wedit
         public List<Color> colors = new List<Color>();
     }
 
+    public class spRect
+    {
+        public int m_frameNo;
+        public int m_attrib;
+        public int m_xOffset;
+        public int m_yOffset;
+        public int m_width;
+        public int m_height;
+    }
+
     public class spPixels
     {
         public int m_width;
@@ -30,6 +40,8 @@ namespace wedit
         public int m_offset_y;
 
         public List<byte> m_pixels = new List<byte>();
+
+        public List<spRect> m_rects = new List<spRect>();
 
         public spPixels(int width, int height, List<byte> pixels)
         {
@@ -89,6 +101,35 @@ namespace wedit
                             v1 = b.ReadUInt16();
                             Console.WriteLine("v = {0:X4}", v0);
                             Console.WriteLine("v = {0:X4}", v1);
+                        break;
+                    // SPRITE RECT
+                    case 0x54435253: // 'SRCT'
+                        Debug.Assert(12 == length);
+                        {
+                            UInt16 frameNo   = b.ReadUInt16();
+                            UInt16 attribute = b.ReadUInt16();
+                            Int16  xOffset   = b.ReadInt16();
+                            Int16  yOffset   = b.ReadInt16();
+                            Int16  width     = b.ReadInt16();
+                            Int16  height    = b.ReadInt16();
+
+                            Console.WriteLine("{0:X4},{1:X4} - {2},{3},{4},{5}",
+                                              frameNo, attribute,
+                                              xOffset, yOffset,
+                                              width, height);
+
+                            spRect r = new spRect();
+
+                            r.m_frameNo = frameNo;
+                            r.m_attrib  = attribute;
+                            r.m_xOffset = xOffset;
+                            r.m_yOffset = yOffset;
+                            r.m_width   = width;
+                            r.m_height  = height;
+
+                            m_frames[ frameNo ].m_rects.Add(r);
+
+                        }
                         break;
 
                         // SPRITE PALETTE ENTRIES
@@ -493,6 +534,45 @@ namespace wedit
                     }
                 }
 
+                //
+                // Draw the rectangles in white
+                //
+                int anchor_x = 0; //pix.m_offset_x;
+                int anchor_y = 0; //pix.m_offset_y;
+
+                foreach (spRect r in pix.m_rects)
+                {
+                    int x0,y0,x1,y1;
+
+                    x0 = r.m_xOffset + anchor_x;
+                    x1 = x0 + r.m_width;
+
+                    y0 = r.m_yOffset + anchor_y;
+                    y1 = y0 + r.m_height;
+
+                    // Horizontal Lines
+                    for (int x = x0; x < x1; ++x)
+                    {
+                        if (x >= 0 && x < width)
+                        {
+                            if (y0 >= 0 && y0 < height)
+                            bmp.SetPixel(x,y0,Color.White);
+                            if (y1 >= 0 && y1 < height)
+                            bmp.SetPixel(x,y1,Color.White);
+                        }
+                    }
+                    // Vertical Lines
+                    for (int y = y0; y < y1; ++y)
+                    {
+                        if (y >= 0 && y < height)
+                        {
+                            if (x0 >= 0 && x0 < width)
+                            bmp.SetPixel(x0,y,Color.White);
+                            if (x1 >= 0 && x1 < width)
+                            bmp.SetPixel(x1,y,Color.White);
+                        }
+                    }
+                }
             }
 
             return bmp;
