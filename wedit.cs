@@ -80,7 +80,20 @@ namespace wedit
             col.ImageGetter = delegate (object x) {
                 return ((ImageEntry)x).m_frameNo;
             };
+            //col.IsTileViewColumn = true;
+            this.objectFramesView.ColumnsInDisplayOrder[1].IsTileViewColumn = true;
 
+            this.objectFramesView.SelectionChanged += new System.EventHandler(OnFrameSelectionChanged);
+
+        }
+
+        void OnFrameSelectionChanged(object sender, System.EventArgs e)
+        {
+            ImageEntry ie = objectFramesView.SelectedObject as ImageEntry;
+
+            m_frameNo = ie.m_frameNo;
+
+            PaintSprite();
         }
         
         // MouseMove Handler
@@ -100,7 +113,7 @@ namespace wedit
                 m_canvas_offset_x = e.X - cx;
                 m_canvas_offset_y = e.Y - cy;
                 
-                Paint(); 
+                PaintSprite(); 
             }
         }
 
@@ -129,7 +142,7 @@ namespace wedit
             }
         }
 
-        private void Paint()
+        private void PaintSprite()
         {
             if (null != m_spriteFile && !m_spriteFile.IsEmpty())
             {
@@ -320,7 +333,7 @@ namespace wedit
                     objectFramesView.SetObjects(frames);
                 }                
 
-                Paint();
+                PaintSprite();
             }
         }
 
@@ -344,7 +357,7 @@ namespace wedit
                     {
                         m_frameNo = 0;
                     }
-                    Paint();
+                    PaintSprite();
                     e.Handled = true;
                     break;
                 case (char)'6':
@@ -362,7 +375,7 @@ namespace wedit
                             }
                         }
                     }
-                    Paint();
+                    PaintSprite();
                     e.Handled = true;
                     break;
                 case (char)'-':
@@ -372,7 +385,7 @@ namespace wedit
                     {
                         m_zoom = 0;
                     }
-                    Paint();
+                    PaintSprite();
                     e.Handled = true;
                     break;
                 case (char)'+':
@@ -382,7 +395,7 @@ namespace wedit
                     {
                         m_zoom = 4;
                     }
-                    Paint();
+                    PaintSprite();
                     e.Handled = true;
                     break;
             }
@@ -392,35 +405,35 @@ namespace wedit
         {
             m_BackColor = RedButton.BackColor;
             m_GridColor = Color.White;
-            Paint();
+            PaintSprite();
         }
 
         private void GreenButton_Click(object sender, EventArgs e)
         {
             m_BackColor = GreenButton.BackColor;
             m_GridColor = Color.White;
-            Paint();
+            PaintSprite();
         }
 
         private void BlueButton_Click(object sender, EventArgs e)
         {
             m_BackColor = BlueButton.BackColor;
             m_GridColor = Color.White;
-            Paint();
+            PaintSprite();
         }
 
         private void PurpleButton_Click(object sender, EventArgs e)
         {
             m_BackColor = PurpleButton.BackColor;
             m_GridColor = Color.White;
-            Paint();
+            PaintSprite();
         }
 
         private void WhiteButton_Click(object sender, EventArgs e)
         {
             m_BackColor = WhiteButton.BackColor;
             m_GridColor = Color.Black;
-            Paint();
+            PaintSprite();
         }
     }
 }

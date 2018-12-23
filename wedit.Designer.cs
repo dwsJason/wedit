@@ -161,6 +161,7 @@
             this.objectFramesView.Cursor = System.Windows.Forms.Cursors.Default;
             this.objectFramesView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.objectFramesView.Location = new System.Drawing.Point(3, 3);
+            this.objectFramesView.MultiSelect = false;
             this.objectFramesView.Name = "objectFramesView";
             this.objectFramesView.ShowGroups = false;
             this.objectFramesView.Size = new System.Drawing.Size(229, 208);
