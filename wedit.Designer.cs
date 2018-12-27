@@ -34,7 +34,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.objectListView1 = new BrightIdeasSoftware.ObjectListView();
+            this.animListView = new BrightIdeasSoftware.ObjectListView();
             this.objectFramesView = new BrightIdeasSoftware.ObjectListView();
             this.ImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -47,6 +47,8 @@
             this.BlueButton = new System.Windows.Forms.Button();
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
+            this.animNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -56,7 +58,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.animListView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
@@ -123,7 +125,7 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.objectListView1);
+            this.splitContainer2.Panel1.Controls.Add(this.animListView);
             // 
             // splitContainer2.Panel2
             // 
@@ -132,19 +134,27 @@
             this.splitContainer2.SplitterDistance = 159;
             this.splitContainer2.TabIndex = 0;
             // 
-            // objectListView1
+            // animListView
             // 
-            this.objectListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.animListView.AllColumns.Add(this.animNoColumn);
+            this.animListView.AllColumns.Add(this.animNameColumn);
+            this.animListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.objectListView1.CellEditUseWholeCell = false;
-            this.objectListView1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.objectListView1.Location = new System.Drawing.Point(3, 3);
-            this.objectListView1.Name = "objectListView1";
-            this.objectListView1.Size = new System.Drawing.Size(229, 153);
-            this.objectListView1.TabIndex = 0;
-            this.objectListView1.UseCompatibleStateImageBehavior = false;
-            this.objectListView1.View = System.Windows.Forms.View.Details;
+            this.animListView.AutoArrange = false;
+            this.animListView.CellEditUseWholeCell = false;
+            this.animListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.animNoColumn,
+            this.animNameColumn});
+            this.animListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.animListView.GridLines = true;
+            this.animListView.Location = new System.Drawing.Point(3, 3);
+            this.animListView.Name = "animListView";
+            this.animListView.ShowGroups = false;
+            this.animListView.Size = new System.Drawing.Size(229, 153);
+            this.animListView.TabIndex = 0;
+            this.animListView.UseCompatibleStateImageBehavior = false;
+            this.animListView.View = System.Windows.Forms.View.Details;
             // 
             // objectFramesView
             // 
@@ -164,6 +174,7 @@
             this.objectFramesView.MultiSelect = false;
             this.objectFramesView.Name = "objectFramesView";
             this.objectFramesView.ShowGroups = false;
+            this.objectFramesView.ShowImagesOnSubItems = true;
             this.objectFramesView.Size = new System.Drawing.Size(229, 208);
             this.objectFramesView.TabIndex = 0;
             this.objectFramesView.TileSize = new System.Drawing.Size(64, 64);
@@ -279,6 +290,18 @@
             this.PurpleButton.UseVisualStyleBackColor = false;
             this.PurpleButton.Click += new System.EventHandler(this.PurpleButton_Click);
             // 
+            // animNoColumn
+            // 
+            this.animNoColumn.AspectName = "m_animNo";
+            this.animNoColumn.Text = "#";
+            this.animNoColumn.Width = 44;
+            // 
+            // animNameColumn
+            // 
+            this.animNameColumn.AspectName = "m_name";
+            this.animNameColumn.Text = "Anim Name";
+            this.animNameColumn.Width = 178;
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,7 +334,7 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.animListView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
@@ -336,10 +359,12 @@
         private System.Windows.Forms.Button WhiteButton;
         private System.Windows.Forms.Button PurpleButton;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private BrightIdeasSoftware.ObjectListView objectListView1;
+        private BrightIdeasSoftware.ObjectListView animListView;
         private BrightIdeasSoftware.ObjectListView objectFramesView;
         private BrightIdeasSoftware.OLVColumn ImageColumn;
         private BrightIdeasSoftware.OLVColumn NameColumn;
+        private BrightIdeasSoftware.OLVColumn animNoColumn;
+        private BrightIdeasSoftware.OLVColumn animNameColumn;
     }
 }
 

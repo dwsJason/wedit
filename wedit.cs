@@ -20,6 +20,12 @@ namespace wedit
             public string m_name;
         }
 
+        public class AnimEntry
+        {
+            public int m_animNo;
+            public string m_name;
+        }
+
         spData m_spriteFile = null;
         int    m_frameNo = 0;
 
@@ -91,7 +97,8 @@ namespace wedit
         {
             ImageEntry ie = objectFramesView.SelectedObject as ImageEntry;
 
-            m_frameNo = ie.m_frameNo;
+            if (null != ie)
+                m_frameNo = ie.m_frameNo;
 
             PaintSprite();
         }
@@ -329,9 +336,27 @@ namespace wedit
                         frames.Add(ie);
                     }
 
+                    objectFramesView.SmallImageList = images;
                     objectFramesView.LargeImageList = images;
                     objectFramesView.SetObjects(frames);
-                }                
+
+                    // Anims
+                    List<AnimEntry> anims = new List<AnimEntry>();
+
+                    for (int idx = 0; idx<m_spriteFile.NumAnims(); ++idx)
+                    {
+                        AnimEntry entry = new AnimEntry();
+
+                        spAnim anm = m_spriteFile.GetAnim(idx);
+
+                        entry.m_animNo = idx;
+                        entry.m_name   = anm.m_name;
+
+                        anims.Add(entry);
+                    }
+
+                    animListView.SetObjects(anims);
+                }
 
                 PaintSprite();
             }
