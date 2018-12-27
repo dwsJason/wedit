@@ -51,11 +51,61 @@ namespace wedit
         }
     }
 
+    public class spAnimCommand
+    {
+        public enum cmd
+        {
+            End,
+            Loop,
+            Goto,
+            GotoSeq,
+            Pause,
+            SetRate,
+            SetSpeed,
+            MultiOp,
+            Delete,
+            SetFlag,
+            Sound,
+            HFlip,
+            VFlip,
+            Nop,
+            Process,
+            ClearFlag,
+            GotoLast,
+            Blank,
+            RndPause,
+            SetHFlip,
+            ClrHFlip,
+            SetVFlip,
+            ClrVFlip,
+            HVFlip,
+            SetHVFlip,
+            ClrHVFlip,
+            ExtSprite,
+            Brk,
+            OnBrk,
+            DynSound,
+
+            None = -1
+        };
+
+        public int m_frameNo;   // Is a frame or command
+        public int m_command;   // Animation command
+        public int m_arg;       // Arguments
+    }
+
+    public class spAnim
+    {
+        public string m_name;
+        public List<spAnimCommand> m_commands = new List<spAnimCommand>();
+    }
+
     // WEDIT SP File Serializer / Class
     public class spData
     {
         List<spPalette> m_palettes = new List<spPalette>();
         List<spPixels>  m_frames   = new List<spPixels>();
+        List<spAnim>    m_anims    = new List<spAnim>();
 
         public int NumFrames()
         {
@@ -316,6 +366,15 @@ namespace wedit
                             UInt16 u16;
                             byte u8;
 
+                            spAnim anim = new spAnim();
+
+                            anim.m_name = "";
+
+                            spAnimCommand animCmd = new spAnimCommand();
+                            animCmd.m_frameNo =  0;
+                            animCmd.m_command = (int)spAnimCommand.cmd.None;
+                            animCmd.m_arg     =  0;
+
                             while (0 != length)
                             {
                                 byte cmd = b.ReadByte();
@@ -323,6 +382,7 @@ namespace wedit
 
                                 if ((0xFF == cmd) && (0 != length))
                                 {
+                                    animCmd.m_frameNo = -1;
                                     cmd = b.ReadByte();
                                     length--;
 
@@ -330,123 +390,174 @@ namespace wedit
                                     {
                                     case 0:
                                         Console.WriteLine("({0})  End", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.End;
                                         break;
                                     case 1:
                                         Console.WriteLine("({0})  Loop",lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Loop;
                                         break;
                                     case 2:
                                         u16 = b.ReadUInt16(); length-=2;
                                         Console.WriteLine("({0})  Goto {1}", lineNo, u16);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Goto;
+                                        animCmd.m_arg = u16;
                                         break;
                                     case 3:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  GotoSeq {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.GotoSeq;
                                         break;
                                     case 4:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  Pause {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Pause;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 5:
                                         u16 = b.ReadUInt16(); length-=2;
                                         Console.WriteLine("({0})  SetRate ${1:X4}", lineNo, u16);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetRate;
+                                        animCmd.m_arg = u16;
                                         break;
                                     case 6:
                                         u16 = b.ReadUInt16(); length-=2;
                                         Console.WriteLine("({0})  SetSpeed ${1:X4}", lineNo, u16);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetSpeed;
+                                        animCmd.m_arg = u16;
                                         break;
                                     case 7:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  MultiOp {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.MultiOp;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 8:
                                         Console.WriteLine("({0})  Delete", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Delete;
                                         break;
                                     case 9:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  SetFlag {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetFlag;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 10:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  Sound {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Sound;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 11:
                                         Console.WriteLine("({0})  HFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.HFlip;
                                         break;
                                     case 12:
                                         Console.WriteLine("({0})  VFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.VFlip;
                                         break;
                                     case 13:
                                         Console.WriteLine("({0})  Nop", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Nop;
                                         break;
                                     case 14:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  Process {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Process;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 15:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  ClearFlag {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.ClearFlag;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 16:
                                         Console.WriteLine("({0})  GotoLast", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.GotoLast;
                                         break;
                                     case 17:
                                         Console.WriteLine("({0})  Blank", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Blank;
                                         break;
                                     case 18:
                                         {
                                             byte min = b.ReadByte(); length--;
                                             byte max = b.ReadByte(); length--;
                                             Console.WriteLine("({0})  RndPause {1},{2}", lineNo, min, max);
+                                            animCmd.m_command = (int)spAnimCommand.cmd.RndPause;
+                                            animCmd.m_arg   = max;
+                                            animCmd.m_arg <<= 8;
+                                            animCmd.m_arg  |= min;
                                         }
                                         break;
                                     case 19:
                                         Console.WriteLine("({0})  Set HFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetHFlip;
                                         break;
                                     case 20:
                                         Console.WriteLine("({0})  Clr HFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.ClrHFlip;
                                         break;
                                     case 21:
                                         Console.WriteLine("({0})  Set VFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetVFlip;
                                         break;
                                     case 22:
                                         Console.WriteLine("({0})  Clr VFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.ClrVFlip;
                                         break;
                                     case 23:
                                         Console.WriteLine("({0})  HVFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.HVFlip;
                                         break;
                                     case 24:
                                         Console.WriteLine("({0})  Set HVFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.SetHVFlip;
                                         break;
                                     case 25:
                                         Console.WriteLine("({0})  Clr HVFlip", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.ClrHVFlip;
                                         break;
                                     case 26:
                                         u16 = b.ReadUInt16(); length-=2;
                                         Console.WriteLine("({0})  ExtSprite {1}", lineNo, u16);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.ExtSprite;
+                                        animCmd.m_arg = u16;
                                         break;
                                     case 27:
                                         Console.WriteLine("({0})  Brk", lineNo);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.Brk;
                                         break;
                                     case 28:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  OnBrk {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.OnBrk;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 29:
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  DynSound {1}", lineNo, u8);
+                                        animCmd.m_command = (int)spAnimCommand.cmd.DynSound;
+                                        animCmd.m_arg = u8;
                                         break;
                                     default:
                                         Console.WriteLine("({0})  UNKNOWN CMD {1}, len={2}", lineNo, cmd, length);
                                         Debug.Assert(false);
                                         break;
                                     }
+
+                                    anim.m_commands.Add(animCmd);
                                 }
                                 else
                                 {
+                                    animCmd.m_frameNo = cmd;
+                                    anim.m_commands.Add(animCmd);
                                     Console.WriteLine("({0})  Sprite {1}",lineNo,cmd);
                                 }
                                 lineNo++;
                             }
+
+                            m_anims.Add(anim);
                         }
                         break;
 
