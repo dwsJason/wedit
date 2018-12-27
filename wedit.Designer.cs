@@ -142,6 +142,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.animListView.AutoArrange = false;
+            this.animListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
             this.animListView.CellEditUseWholeCell = false;
             this.animListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.animNoColumn,
@@ -188,6 +189,7 @@
             // NameColumn
             // 
             this.NameColumn.AspectName = "m_name";
+            this.NameColumn.IsTileViewColumn = true;
             this.NameColumn.Text = "";
             // 
             // pictureBox
@@ -293,14 +295,16 @@
             // animNoColumn
             // 
             this.animNoColumn.AspectName = "m_animNo";
+            this.animNoColumn.IsEditable = false;
             this.animNoColumn.Text = "#";
             this.animNoColumn.Width = 44;
             // 
             // animNameColumn
             // 
             this.animNameColumn.AspectName = "m_name";
+            this.animNameColumn.CellEditUseWholeCell = true;
             this.animNameColumn.Text = "Anim Name";
-            this.animNameColumn.Width = 178;
+            this.animNameColumn.Width = 85;
             // 
             // wedit
             // 

@@ -375,8 +375,8 @@ namespace wedit
             switch (e.KeyChar)
             {
                 case (char)'4':
-                case (char)Keys.NumPad4:
-                case (char)Keys.Left:
+                //case (char)Keys.NumPad4:
+                //case (char)Keys.Left:
                     m_frameNo -= 1;
                     if (m_frameNo < 0)
                     {
@@ -386,8 +386,8 @@ namespace wedit
                     e.Handled = true;
                     break;
                 case (char)'6':
-                case (char)Keys.NumPad6:
-                case (char)Keys.Right:
+                //case (char)Keys.NumPad6:
+                //case (char)Keys.Right:
 
                     if (null != m_spriteFile)
                     {
@@ -404,7 +404,7 @@ namespace wedit
                     e.Handled = true;
                     break;
                 case (char)'-':
-                case (char)Keys.Subtract:
+                //case (char)Keys.Subtract:
                     m_zoom--;
                     if (m_zoom < 0)
                     {
@@ -414,7 +414,7 @@ namespace wedit
                     e.Handled = true;
                     break;
                 case (char)'+':
-                case (char)Keys.Add:
+                //case (char)Keys.Add:
                     m_zoom++;
                     if (m_zoom > 4)
                     {
