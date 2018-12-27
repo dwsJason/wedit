@@ -112,6 +112,11 @@ namespace wedit
             return m_frames.Count;
         }
 
+        public int NumAnims()
+        {
+            return m_anims.Count;
+        }
+
         public spData(string pathName)
         {
             int animNo = 0;
@@ -700,6 +705,18 @@ namespace wedit
             }
 
             return pix;
+        }
+
+        public spAnim GetAnim(int animNo)
+        {
+            spAnim anim = null;
+
+            if ((animNo >= 0) && (animNo < m_anims.Count))
+            {
+                anim = m_anims[ animNo ];
+            }
+
+            return anim;
         }
     }
 }
