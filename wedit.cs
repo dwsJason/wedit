@@ -91,6 +91,19 @@ namespace wedit
 
             this.objectFramesView.SelectionChanged += new System.EventHandler(OnFrameSelectionChanged);
 
+            // Animation Select
+            this.animListView.SelectionChanged += new System.EventHandler(OnAnimSelectionChanged);
+
+        }
+
+        void OnAnimSelectionChanged(object sender, System.EventArgs e)
+        {
+            AnimEntry ae = animListView.SelectedObject as AnimEntry;
+
+            if (null != ae)
+            {
+                Console.WriteLine("{0} {1}", ae.m_animNo, ae.m_name);
+            }
         }
 
         void OnFrameSelectionChanged(object sender, System.EventArgs e)

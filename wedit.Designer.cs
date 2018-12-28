@@ -35,6 +35,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.animListView = new BrightIdeasSoftware.ObjectListView();
+            this.animNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.objectFramesView = new BrightIdeasSoftware.ObjectListView();
             this.ImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -47,8 +49,6 @@
             this.BlueButton = new System.Windows.Forms.Button();
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
-            this.animNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.animNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -138,6 +138,7 @@
             // 
             this.animListView.AllColumns.Add(this.animNoColumn);
             this.animListView.AllColumns.Add(this.animNameColumn);
+            this.animListView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.animListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -148,14 +149,30 @@
             this.animNoColumn,
             this.animNameColumn});
             this.animListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.animListView.FullRowSelect = true;
             this.animListView.GridLines = true;
             this.animListView.Location = new System.Drawing.Point(3, 3);
             this.animListView.Name = "animListView";
             this.animListView.ShowGroups = false;
             this.animListView.Size = new System.Drawing.Size(229, 153);
             this.animListView.TabIndex = 0;
+            this.animListView.UseAlternatingBackColors = true;
             this.animListView.UseCompatibleStateImageBehavior = false;
             this.animListView.View = System.Windows.Forms.View.Details;
+            // 
+            // animNoColumn
+            // 
+            this.animNoColumn.AspectName = "m_animNo";
+            this.animNoColumn.IsEditable = false;
+            this.animNoColumn.Text = "#";
+            this.animNoColumn.Width = 44;
+            // 
+            // animNameColumn
+            // 
+            this.animNameColumn.AspectName = "m_name";
+            this.animNameColumn.CellEditUseWholeCell = true;
+            this.animNameColumn.Text = "Animation Name";
+            this.animNameColumn.Width = 164;
             // 
             // objectFramesView
             // 
@@ -291,20 +308,6 @@
             this.PurpleButton.Text = "#";
             this.PurpleButton.UseVisualStyleBackColor = false;
             this.PurpleButton.Click += new System.EventHandler(this.PurpleButton_Click);
-            // 
-            // animNoColumn
-            // 
-            this.animNoColumn.AspectName = "m_animNo";
-            this.animNoColumn.IsEditable = false;
-            this.animNoColumn.Text = "#";
-            this.animNoColumn.Width = 44;
-            // 
-            // animNameColumn
-            // 
-            this.animNameColumn.AspectName = "m_name";
-            this.animNameColumn.CellEditUseWholeCell = true;
-            this.animNameColumn.Text = "Anim Name";
-            this.animNameColumn.Width = 85;
             // 
             // wedit
             // 
