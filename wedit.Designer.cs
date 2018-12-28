@@ -49,6 +49,7 @@
             this.BlueButton = new System.Windows.Forms.Button();
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
+            this.animEditorBox = new System.Windows.Forms.GroupBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -125,6 +126,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.animEditorBox);
             this.splitContainer2.Panel1.Controls.Add(this.animListView);
             // 
             // splitContainer2.Panel2
@@ -309,6 +311,15 @@
             this.PurpleButton.UseVisualStyleBackColor = false;
             this.PurpleButton.Click += new System.EventHandler(this.PurpleButton_Click);
             // 
+            // animEditorBox
+            // 
+            this.animEditorBox.Location = new System.Drawing.Point(3, 3);
+            this.animEditorBox.Name = "animEditorBox";
+            this.animEditorBox.Size = new System.Drawing.Size(229, 153);
+            this.animEditorBox.TabIndex = 1;
+            this.animEditorBox.TabStop = false;
+            this.animEditorBox.Text = "Animation Editor";
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -372,6 +383,7 @@
         private BrightIdeasSoftware.OLVColumn NameColumn;
         private BrightIdeasSoftware.OLVColumn animNoColumn;
         private BrightIdeasSoftware.OLVColumn animNameColumn;
+        private System.Windows.Forms.GroupBox animEditorBox;
     }
 }
 

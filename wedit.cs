@@ -94,6 +94,29 @@ namespace wedit
             // Animation Select
             this.animListView.SelectionChanged += new System.EventHandler(OnAnimSelectionChanged);
 
+            ShowAnimEditor(false);
+
+        }
+
+        //
+        //  Hide Show Animation Editor
+        //
+        void ShowAnimEditor(bool bShow)
+        {
+            if (bShow)
+            {
+                // Show Animation Editor
+                this.animListView.Enabled = false;
+                this.animEditorBox.BringToFront();
+                this.animEditorBox.Enabled = true;
+            }
+            else
+            {
+                // Hide Animation Editor
+                this.animEditorBox.Enabled = false;
+                this.animListView.BringToFront();
+                this.animListView.Enabled = true;
+            }
         }
 
         void OnAnimSelectionChanged(object sender, System.EventArgs e)
