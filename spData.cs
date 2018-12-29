@@ -92,6 +92,19 @@ namespace wedit
         public int m_frameNo;   // Is a frame or command
         public int m_command;   // Animation command
         public int m_arg;       // Arguments
+
+        public string GetArgString()
+        {
+            string result = "";
+
+            switch (m_command)
+            {
+            default:
+                break;
+            }
+
+            return result;
+        }
     }
 
     public class spAnim
@@ -375,13 +388,13 @@ namespace wedit
 
                             anim.m_name = "";
 
-                            spAnimCommand animCmd = new spAnimCommand();
-                            animCmd.m_frameNo =  0;
-                            animCmd.m_command = (int)spAnimCommand.cmd.None;
-                            animCmd.m_arg     =  0;
-
                             while (0 != length)
                             {
+                                spAnimCommand animCmd = new spAnimCommand();
+                                animCmd.m_frameNo =  0;
+                                animCmd.m_command = (int)spAnimCommand.cmd.None;
+                                animCmd.m_arg     =  0;
+
                                 byte cmd = b.ReadByte();
                                 length--;
 

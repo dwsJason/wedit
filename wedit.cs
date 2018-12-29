@@ -26,6 +26,51 @@ namespace wedit
             public string m_name;
         }
 
+        public class AnimEditorEntry
+        {
+            public enum cmd
+            {
+                Sprite,
+                End,
+                Loop,
+                Goto,
+                GotoSeq,
+                Pause,
+                SetRate,
+                SetSpeed,
+                MultiOp,
+                Delete,
+                SetFlag,
+                Sound,
+                HFlip,
+                VFlip,
+                Nop,
+                Process,
+                ClearFlag,
+                GotoLast,
+                Blank,
+                RndPause,
+                SetHFlip,
+                ClrHFlip,
+                SetVFlip,
+                ClrVFlip,
+                HVFlip,
+                SetHVFlip,
+                ClrHVFlip,
+                ExtSprite,
+                Brk,
+                OnBrk,
+                DynSound,
+            };
+
+            public int m_lineNo;
+            public AnimEditorEntry.cmd m_cmd;
+            public string m_arg;
+            public int m_image;
+        }
+        // For animation editor
+        List<AnimEditorEntry> m_anim = new List<AnimEditorEntry>();
+
         spData m_spriteFile = null;
         int    m_frameNo = 0;
 
@@ -93,6 +138,9 @@ namespace wedit
 
             // Animation Select
             this.animListView.SelectionChanged += new System.EventHandler(OnAnimSelectionChanged);
+            // Animation DoubleClick
+            animListView.DoubleClick += new System.EventHandler(OnAnimDoubleClicked);
+
 
             ShowAnimEditor(false);
 
@@ -116,6 +164,46 @@ namespace wedit
                 this.animEditorBox.Enabled = false;
                 this.animListView.BringToFront();
                 this.animListView.Enabled = true;
+            }
+        }
+
+        void OnAnimDoubleClicked(object sender, System.EventArgs e)
+        {
+            AnimEntry ae = animListView.SelectedObject as AnimEntry;
+
+            if (null != ae)
+            {
+                ShowAnimEditor(true);
+                Console.WriteLine("Double Clicked {0} {1}", ae.m_animNo, ae.m_name);
+
+                // Load up n_anim, and refresh the view
+                m_anim = new List<AnimEditorEntry>();
+                spAnim anim = m_spriteFile.GetAnim(ae.m_animNo);
+
+                int lineNo = 1;
+                foreach(spAnimCommand cmd in anim.m_commands)
+                {
+                    AnimEditorEntry entry = new AnimEditorEntry();
+
+                    entry.m_lineNo = lineNo;
+
+                    if (cmd.m_frameNo < 0)
+                    {
+                        entry.m_cmd = (AnimEditorEntry.cmd) (cmd.m_command+1);
+                        entry.m_arg = cmd.GetArgString();
+                    }
+                    else
+                    {
+                        entry.m_cmd = AnimEditorEntry.cmd.Sprite;
+                        entry.m_arg = String.Format("{0}",cmd.m_frameNo);
+                    }
+
+                    m_anim.Add(entry);
+
+                    lineNo++;
+                }
+
+                cmdListView.SetObjects(m_anim);
             }
         }
 
@@ -373,6 +461,7 @@ namespace wedit
                     }
 
                     objectFramesView.SmallImageList = images;
+                    //cmdListView.SmallImageList = images;
                     objectFramesView.LargeImageList = images;
                     objectFramesView.SetObjects(frames);
 

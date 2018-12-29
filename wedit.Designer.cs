@@ -34,6 +34,14 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.animEditorBox = new System.Windows.Forms.GroupBox();
+            this.cmdListView = new BrightIdeasSoftware.ObjectListView();
+            this.labelLineNo = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.labelAnimNo = new System.Windows.Forms.Label();
+            this.stopButton = new System.Windows.Forms.Button();
+            this.playButton = new System.Windows.Forms.Button();
+            this.loopCheckBox = new System.Windows.Forms.CheckBox();
             this.animListView = new BrightIdeasSoftware.ObjectListView();
             this.animNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.animNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -49,7 +57,10 @@
             this.BlueButton = new System.Windows.Forms.Button();
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
-            this.animEditorBox = new System.Windows.Forms.GroupBox();
+            this.animLineNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animCmdColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animArgColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -59,6 +70,8 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.animEditorBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmdListView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.animListView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -133,8 +146,111 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.objectFramesView);
             this.splitContainer2.Size = new System.Drawing.Size(235, 377);
-            this.splitContainer2.SplitterDistance = 159;
+            this.splitContainer2.SplitterDistance = 189;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // animEditorBox
+            // 
+            this.animEditorBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.animEditorBox.Controls.Add(this.cmdListView);
+            this.animEditorBox.Controls.Add(this.labelLineNo);
+            this.animEditorBox.Controls.Add(this.label2);
+            this.animEditorBox.Controls.Add(this.labelAnimNo);
+            this.animEditorBox.Controls.Add(this.stopButton);
+            this.animEditorBox.Controls.Add(this.playButton);
+            this.animEditorBox.Controls.Add(this.loopCheckBox);
+            this.animEditorBox.Location = new System.Drawing.Point(3, 3);
+            this.animEditorBox.Name = "animEditorBox";
+            this.animEditorBox.Size = new System.Drawing.Size(229, 183);
+            this.animEditorBox.TabIndex = 1;
+            this.animEditorBox.TabStop = false;
+            this.animEditorBox.Text = "Animation Editor";
+            // 
+            // cmdListView
+            // 
+            this.cmdListView.AllColumns.Add(this.animLineNoColumn);
+            this.cmdListView.AllColumns.Add(this.animCmdColumn);
+            this.cmdListView.AllColumns.Add(this.animArgColumn);
+            this.cmdListView.AllColumns.Add(this.animImageColumn);
+            this.cmdListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmdListView.AutoArrange = false;
+            this.cmdListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+            this.cmdListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.animLineNoColumn,
+            this.animCmdColumn,
+            this.animArgColumn,
+            this.animImageColumn});
+            this.cmdListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.cmdListView.GridLines = true;
+            this.cmdListView.Location = new System.Drawing.Point(0, 66);
+            this.cmdListView.MultiSelect = false;
+            this.cmdListView.Name = "cmdListView";
+            this.cmdListView.ShowGroups = false;
+            this.cmdListView.Size = new System.Drawing.Size(229, 121);
+            this.cmdListView.TabIndex = 6;
+            this.cmdListView.UseCompatibleStateImageBehavior = false;
+            this.cmdListView.View = System.Windows.Forms.View.Details;
+            // 
+            // labelLineNo
+            // 
+            this.labelLineNo.AutoSize = true;
+            this.labelLineNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.labelLineNo.Location = new System.Drawing.Point(136, 50);
+            this.labelLineNo.Name = "labelLineNo";
+            this.labelLineNo.Size = new System.Drawing.Size(43, 13);
+            this.labelLineNo.TabIndex = 5;
+            this.labelLineNo.Text = "lineNo";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.label2.Location = new System.Drawing.Point(12, 50);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "animName";
+            // 
+            // labelAnimNo
+            // 
+            this.labelAnimNo.AutoSize = true;
+            this.labelAnimNo.Location = new System.Drawing.Point(9, 23);
+            this.labelAnimNo.Name = "labelAnimNo";
+            this.labelAnimNo.Size = new System.Drawing.Size(43, 13);
+            this.labelAnimNo.TabIndex = 3;
+            this.labelAnimNo.Text = "animNo";
+            // 
+            // stopButton
+            // 
+            this.stopButton.Location = new System.Drawing.Point(136, 19);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(44, 23);
+            this.stopButton.TabIndex = 2;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            // 
+            // playButton
+            // 
+            this.playButton.Location = new System.Drawing.Point(186, 19);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(43, 23);
+            this.playButton.TabIndex = 1;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = true;
+            // 
+            // loopCheckBox
+            // 
+            this.loopCheckBox.AutoSize = true;
+            this.loopCheckBox.Location = new System.Drawing.Point(69, 23);
+            this.loopCheckBox.Name = "loopCheckBox";
+            this.loopCheckBox.Size = new System.Drawing.Size(61, 17);
+            this.loopCheckBox.TabIndex = 0;
+            this.loopCheckBox.Text = "Repeat";
+            this.loopCheckBox.UseVisualStyleBackColor = true;
             // 
             // animListView
             // 
@@ -156,7 +272,7 @@
             this.animListView.Location = new System.Drawing.Point(3, 3);
             this.animListView.Name = "animListView";
             this.animListView.ShowGroups = false;
-            this.animListView.Size = new System.Drawing.Size(229, 153);
+            this.animListView.Size = new System.Drawing.Size(229, 183);
             this.animListView.TabIndex = 0;
             this.animListView.UseAlternatingBackColors = true;
             this.animListView.UseCompatibleStateImageBehavior = false;
@@ -195,7 +311,7 @@
             this.objectFramesView.Name = "objectFramesView";
             this.objectFramesView.ShowGroups = false;
             this.objectFramesView.ShowImagesOnSubItems = true;
-            this.objectFramesView.Size = new System.Drawing.Size(229, 208);
+            this.objectFramesView.Size = new System.Drawing.Size(229, 178);
             this.objectFramesView.TabIndex = 0;
             this.objectFramesView.TileSize = new System.Drawing.Size(64, 64);
             this.objectFramesView.UseCompatibleStateImageBehavior = false;
@@ -311,14 +427,27 @@
             this.PurpleButton.UseVisualStyleBackColor = false;
             this.PurpleButton.Click += new System.EventHandler(this.PurpleButton_Click);
             // 
-            // animEditorBox
+            // animLineNoColumn
             // 
-            this.animEditorBox.Location = new System.Drawing.Point(3, 3);
-            this.animEditorBox.Name = "animEditorBox";
-            this.animEditorBox.Size = new System.Drawing.Size(229, 153);
-            this.animEditorBox.TabIndex = 1;
-            this.animEditorBox.TabStop = false;
-            this.animEditorBox.Text = "Animation Editor";
+            this.animLineNoColumn.AspectName = "m_lineNo";
+            this.animLineNoColumn.IsEditable = false;
+            this.animLineNoColumn.Text = "#";
+            this.animLineNoColumn.Width = 26;
+            // 
+            // animCmdColumn
+            // 
+            this.animCmdColumn.AspectName = "m_cmd";
+            this.animCmdColumn.Text = "Command";
+            this.animCmdColumn.Width = 77;
+            // 
+            // animArgColumn
+            // 
+            this.animArgColumn.AspectName = "m_arg";
+            this.animArgColumn.Text = "Arg";
+            // 
+            // animImageColumn
+            // 
+            this.animImageColumn.Text = "Image";
             // 
             // wedit
             // 
@@ -352,6 +481,9 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.animEditorBox.ResumeLayout(false);
+            this.animEditorBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cmdListView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.animListView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.objectFramesView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
@@ -384,6 +516,17 @@
         private BrightIdeasSoftware.OLVColumn animNoColumn;
         private BrightIdeasSoftware.OLVColumn animNameColumn;
         private System.Windows.Forms.GroupBox animEditorBox;
+        private BrightIdeasSoftware.ObjectListView cmdListView;
+        private System.Windows.Forms.Label labelLineNo;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelAnimNo;
+        private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button playButton;
+        private System.Windows.Forms.CheckBox loopCheckBox;
+        private BrightIdeasSoftware.OLVColumn animLineNoColumn;
+        private BrightIdeasSoftware.OLVColumn animCmdColumn;
+        private BrightIdeasSoftware.OLVColumn animArgColumn;
+        private BrightIdeasSoftware.OLVColumn animImageColumn;
     }
 }
 
