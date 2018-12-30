@@ -99,7 +99,87 @@ namespace wedit
 
             switch (m_command)
             {
+            case 0: //End
+                break;
+            case 1: //Loop
+                break;
+            case 2: //Goto
+                result = String.Format("{0}", m_arg);
+                break;
+            case 3: //GotoSeq
+                result = String.Format("{0}", m_arg);
+                break;
+            case 4: //Pause
+                result = String.Format("{0}", m_arg);
+                break;
+            case 5: //SetRate
+                result = String.Format("${0:X4}", m_arg);
+                break;
+            case 6: //SetSpeed
+                result = String.Format("${0:X4}", m_arg);
+                break;
+            case 7: //MultiOp
+                result = String.Format("{0}", m_arg);
+                break;
+            case 8: //Delete
+                break;
+            case 9: //SetFlag
+                result = String.Format("{0}", m_arg);
+                break;
+            case 10: //Sound
+                result = String.Format("{0}", m_arg);
+                break;
+            case 11: //HFlip
+                break;
+            case 12: //VFlip
+                break;
+            case 13: //Nop
+                break;
+            case 14: //Process
+                result = String.Format("{0}", m_arg);
+                break;
+            case 15: //ClearFlag
+                result = String.Format("{0}", m_arg);
+                break;
+            case 16:  //GotoLast
+                break;
+            case 17:  //Blank
+                break;
+            case 18: //RndPause
+                {
+                    int min = m_arg & 0xFF;
+                    int max = (m_arg >> 8) & 0xFF;
+                    result = String.Format("{0},{1}", min, max);
+                }
+                break;
+            case 19: //SetHFlip
+                break;
+            case 20: //ClrHFlip
+                break;
+            case 21: //SetVFlip
+                break;
+            case 22: //ClrVFlip
+                break;
+            case 23: //HVFlip
+                break;
+            case 24: //SetHVFlip
+                break;
+            case 25: //ClrHVFlip
+                break;
+            case 26: //ExtSprite
+                result = String.Format("{0}", m_arg);
+                break;
+            case 27: //Brk
+                break;
+            case 28: //OnBrk
+                result = String.Format("{0}", m_arg);
+                break;
+            case 29: //DynSound
+                result = String.Format("{0}", m_arg);
+                break;
+
             default:
+                result = "?";
                 break;
             }
 
