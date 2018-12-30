@@ -178,14 +178,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdListView.AutoArrange = false;
             this.cmdListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
-            this.cmdListView.CellEditUseWholeCell = false;
+            this.cmdListView.CellEditEnterChangesRows = true;
             this.cmdListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.animLineNoColumn,
             this.animCmdColumn,
             this.animArgColumn,
             this.animImageColumn});
             this.cmdListView.Cursor = System.Windows.Forms.Cursors.Default;
+            this.cmdListView.FullRowSelect = true;
             this.cmdListView.GridLines = true;
+            this.cmdListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.cmdListView.Location = new System.Drawing.Point(0, 66);
             this.cmdListView.MultiSelect = false;
             this.cmdListView.Name = "cmdListView";
@@ -205,12 +207,15 @@
             // animCmdColumn
             // 
             this.animCmdColumn.AspectName = "m_cmd";
+            this.animCmdColumn.ButtonSizing = BrightIdeasSoftware.OLVColumn.ButtonSizingMode.CellBounds;
+            this.animCmdColumn.CellEditUseWholeCell = true;
             this.animCmdColumn.Text = "Command";
             this.animCmdColumn.Width = 77;
             // 
             // animArgColumn
             // 
             this.animArgColumn.AspectName = "m_arg";
+            this.animArgColumn.CellEditUseWholeCell = true;
             this.animArgColumn.Text = "Arg";
             // 
             // animImageColumn
