@@ -459,6 +459,19 @@ namespace wedit
                                       */
                         {
                             Console.WriteLine("Animation #{0}",animNo);
+
+                            UInt16 len2 = b.ReadUInt16();
+                            Debug.Assert(length == len2);
+                            length-=2;
+
+                            // Number of frames in the animation
+                            // (I think we don't need this, as it
+                            //  can be computed later)
+                            byte frameCount = b.ReadByte();
+                            length--;
+                            byte frameCount2 = b.ReadByte();
+                            length--;
+
                             animNo++;
                             int lineNo = 1;
                             UInt16 u16;
