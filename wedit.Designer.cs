@@ -36,6 +36,10 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.animEditorBox = new System.Windows.Forms.GroupBox();
             this.cmdListView = new BrightIdeasSoftware.ObjectListView();
+            this.animLineNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animCmdColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animArgColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.labelLineNo = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.labelAnimNo = new System.Windows.Forms.Label();
@@ -50,17 +54,12 @@
             this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openSpriteFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.comboBoxFrameNo = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.RedButton = new System.Windows.Forms.Button();
             this.GreenButton = new System.Windows.Forms.Button();
             this.BlueButton = new System.Windows.Forms.Button();
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
-            this.animLineNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.animCmdColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.animArgColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.animImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.animButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -179,6 +178,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdListView.AutoArrange = false;
             this.cmdListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+            this.cmdListView.CellEditUseWholeCell = false;
             this.cmdListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.animLineNoColumn,
             this.animCmdColumn,
@@ -194,6 +194,28 @@
             this.cmdListView.TabIndex = 6;
             this.cmdListView.UseCompatibleStateImageBehavior = false;
             this.cmdListView.View = System.Windows.Forms.View.Details;
+            // 
+            // animLineNoColumn
+            // 
+            this.animLineNoColumn.AspectName = "m_lineNo";
+            this.animLineNoColumn.IsEditable = false;
+            this.animLineNoColumn.Text = "#";
+            this.animLineNoColumn.Width = 26;
+            // 
+            // animCmdColumn
+            // 
+            this.animCmdColumn.AspectName = "m_cmd";
+            this.animCmdColumn.Text = "Command";
+            this.animCmdColumn.Width = 77;
+            // 
+            // animArgColumn
+            // 
+            this.animArgColumn.AspectName = "m_arg";
+            this.animArgColumn.Text = "Arg";
+            // 
+            // animImageColumn
+            // 
+            this.animImageColumn.Text = "Image";
             // 
             // labelLineNo
             // 
@@ -346,23 +368,6 @@
             this.openSpriteFileDialog.Title = "Open Sprite File";
             this.openSpriteFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.openSpriteFileDialog_FileOk);
             // 
-            // comboBoxFrameNo
-            // 
-            this.comboBoxFrameNo.FormattingEnabled = true;
-            this.comboBoxFrameNo.Location = new System.Drawing.Point(242, 0);
-            this.comboBoxFrameNo.Name = "comboBoxFrameNo";
-            this.comboBoxFrameNo.Size = new System.Drawing.Size(79, 21);
-            this.comboBoxFrameNo.TabIndex = 3;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(196, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Frame";
-            // 
             // RedButton
             // 
             this.RedButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(15)))), ((int)(((byte)(16)))));
@@ -427,40 +432,27 @@
             this.PurpleButton.UseVisualStyleBackColor = false;
             this.PurpleButton.Click += new System.EventHandler(this.PurpleButton_Click);
             // 
-            // animLineNoColumn
+            // animButton
             // 
-            this.animLineNoColumn.AspectName = "m_lineNo";
-            this.animLineNoColumn.IsEditable = false;
-            this.animLineNoColumn.Text = "#";
-            this.animLineNoColumn.Width = 26;
-            // 
-            // animCmdColumn
-            // 
-            this.animCmdColumn.AspectName = "m_cmd";
-            this.animCmdColumn.Text = "Command";
-            this.animCmdColumn.Width = 77;
-            // 
-            // animArgColumn
-            // 
-            this.animArgColumn.AspectName = "m_arg";
-            this.animArgColumn.Text = "Arg";
-            // 
-            // animImageColumn
-            // 
-            this.animImageColumn.Text = "Image";
+            this.animButton.Location = new System.Drawing.Point(242, 1);
+            this.animButton.Name = "animButton";
+            this.animButton.Size = new System.Drawing.Size(75, 23);
+            this.animButton.TabIndex = 10;
+            this.animButton.Text = "Anim";
+            this.animButton.UseVisualStyleBackColor = true;
+            this.animButton.Click += new System.EventHandler(this.animButton_Click);
             // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.animButton);
             this.Controls.Add(this.PurpleButton);
             this.Controls.Add(this.WhiteButton);
             this.Controls.Add(this.BlueButton);
             this.Controls.Add(this.GreenButton);
             this.Controls.Add(this.RedButton);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBoxFrameNo);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -500,8 +492,6 @@
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadSpriteFileToolStripMenuItem;
-        private System.Windows.Forms.ComboBox comboBoxFrameNo;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openSpriteFileDialog;
         private System.Windows.Forms.Button RedButton;
         private System.Windows.Forms.Button GreenButton;
@@ -527,6 +517,7 @@
         private BrightIdeasSoftware.OLVColumn animCmdColumn;
         private BrightIdeasSoftware.OLVColumn animArgColumn;
         private BrightIdeasSoftware.OLVColumn animImageColumn;
+        private System.Windows.Forms.Button animButton;
     }
 }
 

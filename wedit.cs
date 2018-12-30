@@ -141,6 +141,8 @@ namespace wedit
             // Animation DoubleClick
             animListView.DoubleClick += new System.EventHandler(OnAnimDoubleClicked);
 
+            // Animation Editor Events
+            cmdListView.SelectionChanged += new System.EventHandler(OnCommandSelectionChanged);
 
             ShowAnimEditor(false);
 
@@ -225,6 +227,22 @@ namespace wedit
                 m_frameNo = ie.m_frameNo;
 
             PaintSprite();
+        }
+
+        void OnCommandSelectionChanged(object sender, System.EventArgs e)
+        {
+            AnimEditorEntry aee = cmdListView.SelectedObject as AnimEditorEntry;
+
+            if (null != aee)
+            {
+                if (AnimEditorEntry.cmd.Sprite == aee.m_cmd)
+                {
+                    if (int.TryParse(aee.m_arg, out m_frameNo))
+                    {
+                        PaintSprite();
+                    }
+                }
+            }
         }
         
         // MouseMove Handler
@@ -584,6 +602,11 @@ namespace wedit
             m_BackColor = WhiteButton.BackColor;
             m_GridColor = Color.Black;
             PaintSprite();
+        }
+
+        private void animButton_Click(object sender, EventArgs e)
+        {
+            ShowAnimEditor(false);
         }
     }
 }
