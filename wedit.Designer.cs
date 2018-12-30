@@ -60,6 +60,8 @@
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
             this.animButton = new System.Windows.Forms.Button();
+            this.buttonNextAnim = new System.Windows.Forms.Button();
+            this.buttonPrevAnim = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -153,6 +155,8 @@
             this.animEditorBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.animEditorBox.Controls.Add(this.buttonPrevAnim);
+            this.animEditorBox.Controls.Add(this.buttonNextAnim);
             this.animEditorBox.Controls.Add(this.cmdListView);
             this.animEditorBox.Controls.Add(this.labelLineNo);
             this.animEditorBox.Controls.Add(this.label2);
@@ -179,6 +183,7 @@
             this.cmdListView.AutoArrange = false;
             this.cmdListView.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
             this.cmdListView.CellEditEnterChangesRows = true;
+            this.cmdListView.CellEditUseWholeCell = false;
             this.cmdListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.animLineNoColumn,
             this.animCmdColumn,
@@ -245,17 +250,18 @@
             // labelAnimNo
             // 
             this.labelAnimNo.AutoSize = true;
-            this.labelAnimNo.Location = new System.Drawing.Point(9, 23);
+            this.labelAnimNo.Location = new System.Drawing.Point(22, 23);
+            this.labelAnimNo.Margin = new System.Windows.Forms.Padding(0);
             this.labelAnimNo.Name = "labelAnimNo";
-            this.labelAnimNo.Size = new System.Drawing.Size(43, 13);
+            this.labelAnimNo.Size = new System.Drawing.Size(25, 13);
             this.labelAnimNo.TabIndex = 3;
-            this.labelAnimNo.Text = "animNo";
+            this.labelAnimNo.Text = "000";
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(136, 19);
+            this.stopButton.Location = new System.Drawing.Point(144, 19);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(44, 23);
+            this.stopButton.Size = new System.Drawing.Size(40, 23);
             this.stopButton.TabIndex = 2;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -272,7 +278,8 @@
             // loopCheckBox
             // 
             this.loopCheckBox.AutoSize = true;
-            this.loopCheckBox.Location = new System.Drawing.Point(69, 23);
+            this.loopCheckBox.Location = new System.Drawing.Point(80, 23);
+            this.loopCheckBox.Margin = new System.Windows.Forms.Padding(1);
             this.loopCheckBox.Name = "loopCheckBox";
             this.loopCheckBox.Size = new System.Drawing.Size(61, 17);
             this.loopCheckBox.TabIndex = 0;
@@ -447,6 +454,28 @@
             this.animButton.UseVisualStyleBackColor = true;
             this.animButton.Click += new System.EventHandler(this.animButton_Click);
             // 
+            // buttonNextAnim
+            // 
+            this.buttonNextAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.buttonNextAnim.Location = new System.Drawing.Point(47, 19);
+            this.buttonNextAnim.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonNextAnim.Name = "buttonNextAnim";
+            this.buttonNextAnim.Size = new System.Drawing.Size(20, 23);
+            this.buttonNextAnim.TabIndex = 7;
+            this.buttonNextAnim.Text = ">>>";
+            this.buttonNextAnim.UseVisualStyleBackColor = true;
+            // 
+            // buttonPrevAnim
+            // 
+            this.buttonPrevAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.buttonPrevAnim.Location = new System.Drawing.Point(0, 19);
+            this.buttonPrevAnim.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonPrevAnim.Name = "buttonPrevAnim";
+            this.buttonPrevAnim.Size = new System.Drawing.Size(20, 23);
+            this.buttonPrevAnim.TabIndex = 8;
+            this.buttonPrevAnim.Text = "<";
+            this.buttonPrevAnim.UseVisualStyleBackColor = true;
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -523,6 +552,8 @@
         private BrightIdeasSoftware.OLVColumn animArgColumn;
         private BrightIdeasSoftware.OLVColumn animImageColumn;
         private System.Windows.Forms.Button animButton;
+        private System.Windows.Forms.Button buttonPrevAnim;
+        private System.Windows.Forms.Button buttonNextAnim;
     }
 }
 
