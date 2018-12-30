@@ -71,8 +71,9 @@ namespace wedit
         // For animation editor
         List<AnimEditorEntry> m_anim = new List<AnimEditorEntry>();
 
-        spData m_spriteFile = null;
-        int    m_frameNo = 0;
+        spData  m_spriteFile = null;
+        int     m_frameNo = 0;
+        int     m_animNo = 0;   // Current Animation # loaded into the editor
 
         // Sprite Frame Render Info
         Bitmap m_bitmap = null;
@@ -169,6 +170,46 @@ namespace wedit
             }
         }
 
+        void PaintAnimEditor()
+        {
+            if (null != m_spriteFile)
+            {
+                labelAnimNo.Text = String.Format("{0}", m_animNo);
+
+                // Load up n_anim, and refresh the view
+                m_anim = new List<AnimEditorEntry>();
+                spAnim anim = m_spriteFile.GetAnim(m_animNo);
+
+                if (null != anim)
+                {
+                    int lineNo = 1;
+                    foreach(spAnimCommand cmd in anim.m_commands)
+                    {
+                        AnimEditorEntry entry = new AnimEditorEntry();
+
+                        entry.m_lineNo = lineNo;
+
+                        if (cmd.m_frameNo < 0)
+                        {
+                            entry.m_cmd = (AnimEditorEntry.cmd) (cmd.m_command+1);
+                            entry.m_arg = cmd.GetArgString();
+                        }
+                        else
+                        {
+                            entry.m_cmd = AnimEditorEntry.cmd.Sprite;
+                            entry.m_arg = String.Format("{0}",cmd.m_frameNo);
+                        }
+
+                        m_anim.Add(entry);
+
+                        lineNo++;
+                    }
+                }
+
+                cmdListView.SetObjects(m_anim);
+            }
+        }
+
         void OnAnimDoubleClicked(object sender, System.EventArgs e)
         {
             AnimEntry ae = animListView.SelectedObject as AnimEntry;
@@ -178,34 +219,8 @@ namespace wedit
                 ShowAnimEditor(true);
                 Console.WriteLine("Double Clicked {0} {1}", ae.m_animNo, ae.m_name);
 
-                // Load up n_anim, and refresh the view
-                m_anim = new List<AnimEditorEntry>();
-                spAnim anim = m_spriteFile.GetAnim(ae.m_animNo);
-
-                int lineNo = 1;
-                foreach(spAnimCommand cmd in anim.m_commands)
-                {
-                    AnimEditorEntry entry = new AnimEditorEntry();
-
-                    entry.m_lineNo = lineNo;
-
-                    if (cmd.m_frameNo < 0)
-                    {
-                        entry.m_cmd = (AnimEditorEntry.cmd) (cmd.m_command+1);
-                        entry.m_arg = cmd.GetArgString();
-                    }
-                    else
-                    {
-                        entry.m_cmd = AnimEditorEntry.cmd.Sprite;
-                        entry.m_arg = String.Format("{0}",cmd.m_frameNo);
-                    }
-
-                    m_anim.Add(entry);
-
-                    lineNo++;
-                }
-
-                cmdListView.SetObjects(m_anim);
+                m_animNo = ae.m_animNo;
+                PaintAnimEditor();
             }
         }
 
@@ -607,6 +622,18 @@ namespace wedit
         private void animButton_Click(object sender, EventArgs e)
         {
             ShowAnimEditor(false);
+        }
+
+        private void buttonNextAnim_Click(object sender, EventArgs e)
+        {
+            m_animNo++;
+            PaintAnimEditor();
+        }
+
+        private void buttonPrevAnim_Click(object sender, EventArgs e)
+        {
+            m_animNo--;
+            PaintAnimEditor();
         }
     }
 }

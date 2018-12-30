@@ -35,6 +35,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.animEditorBox = new System.Windows.Forms.GroupBox();
+            this.buttonPrevAnim = new System.Windows.Forms.Button();
+            this.buttonNextAnim = new System.Windows.Forms.Button();
             this.cmdListView = new BrightIdeasSoftware.ObjectListView();
             this.animLineNoColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.animCmdColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -60,8 +62,6 @@
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
             this.animButton = new System.Windows.Forms.Button();
-            this.buttonNextAnim = new System.Windows.Forms.Button();
-            this.buttonPrevAnim = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -170,6 +170,30 @@
             this.animEditorBox.TabIndex = 1;
             this.animEditorBox.TabStop = false;
             this.animEditorBox.Text = "Animation Editor";
+            // 
+            // buttonPrevAnim
+            // 
+            this.buttonPrevAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.buttonPrevAnim.Location = new System.Drawing.Point(0, 19);
+            this.buttonPrevAnim.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonPrevAnim.Name = "buttonPrevAnim";
+            this.buttonPrevAnim.Size = new System.Drawing.Size(20, 23);
+            this.buttonPrevAnim.TabIndex = 8;
+            this.buttonPrevAnim.Text = "<";
+            this.buttonPrevAnim.UseVisualStyleBackColor = true;
+            this.buttonPrevAnim.Click += new System.EventHandler(this.buttonPrevAnim_Click);
+            // 
+            // buttonNextAnim
+            // 
+            this.buttonNextAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.buttonNextAnim.Location = new System.Drawing.Point(47, 19);
+            this.buttonNextAnim.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonNextAnim.Name = "buttonNextAnim";
+            this.buttonNextAnim.Size = new System.Drawing.Size(20, 23);
+            this.buttonNextAnim.TabIndex = 7;
+            this.buttonNextAnim.Text = ">>>";
+            this.buttonNextAnim.UseVisualStyleBackColor = true;
+            this.buttonNextAnim.Click += new System.EventHandler(this.buttonNextAnim_Click);
             // 
             // cmdListView
             // 
@@ -453,28 +477,6 @@
             this.animButton.Text = "Anim";
             this.animButton.UseVisualStyleBackColor = true;
             this.animButton.Click += new System.EventHandler(this.animButton_Click);
-            // 
-            // buttonNextAnim
-            // 
-            this.buttonNextAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.buttonNextAnim.Location = new System.Drawing.Point(47, 19);
-            this.buttonNextAnim.Margin = new System.Windows.Forms.Padding(0);
-            this.buttonNextAnim.Name = "buttonNextAnim";
-            this.buttonNextAnim.Size = new System.Drawing.Size(20, 23);
-            this.buttonNextAnim.TabIndex = 7;
-            this.buttonNextAnim.Text = ">>>";
-            this.buttonNextAnim.UseVisualStyleBackColor = true;
-            // 
-            // buttonPrevAnim
-            // 
-            this.buttonPrevAnim.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
-            this.buttonPrevAnim.Location = new System.Drawing.Point(0, 19);
-            this.buttonPrevAnim.Margin = new System.Windows.Forms.Padding(0);
-            this.buttonPrevAnim.Name = "buttonPrevAnim";
-            this.buttonPrevAnim.Size = new System.Drawing.Size(20, 23);
-            this.buttonPrevAnim.TabIndex = 8;
-            this.buttonPrevAnim.Text = "<";
-            this.buttonPrevAnim.UseVisualStyleBackColor = true;
             // 
             // wedit
             // 
