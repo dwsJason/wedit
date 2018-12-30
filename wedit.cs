@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -63,6 +64,41 @@ namespace wedit
                 DynSound,
             };
 
+            public static bool[] delay =
+            {
+                true,  //Sprite,
+                false, //End,
+                false, //Loop,
+                false, //Goto,
+                false, //GotoSeq,
+                true,  //Pause,
+                false, //SetRate,
+                false, //SetSpeed,
+                false, //MultiOp,
+                false, //Delete,
+                false, //SetFlag,
+                false, //Sound,
+                false, //HFlip,
+                false, //VFlip,
+                true,  //Nop,
+                false, //Process,
+                false, //ClearFlag,
+                false, //GotoLast,
+                true,  //Blank,
+                true,  //RndPause,
+                false, //SetHFlip,
+                false, //ClrHFlip,
+                false, //SetVFlip,
+                false, //ClrVFlip,
+                false, //HVFlip,
+                false, //SetHVFlip,
+                false, //ClrHVFlip,
+                true,  //ExtSprite,
+                false, //Brk,
+                false, //OnBrk,
+                false, //DynSound,
+            };
+
             public int m_lineNo;
             public AnimEditorEntry.cmd m_cmd;
             public string m_arg;
@@ -74,6 +110,16 @@ namespace wedit
         spData  m_spriteFile = null;
         int     m_frameNo = 0;
         int     m_animNo = 0;   // Current Animation # loaded into the editor
+        int     m_animCmdIndex = 0;
+        int     m_animPrevAnim = 0;
+        int     m_animRate = 0x100;
+        int     m_animSpeed = 0x100;
+        int     m_animTime = 0x100;
+        bool    m_animPlaying = false;
+        System.Windows.Forms.Timer m_animTimer = new System.Windows.Forms.Timer();
+        Stopwatch m_animStopWatch;
+        double   m_tickTimer = 0;
+        double C_TICKTIME = 16.666666666666666666667;
 
         // Sprite Frame Render Info
         Bitmap m_bitmap = null;
@@ -144,6 +190,10 @@ namespace wedit
 
             // Animation Editor Events
             cmdListView.SelectionChanged += new System.EventHandler(OnCommandSelectionChanged);
+
+            m_animTimer.Tick += new EventHandler(animTimerEventProcessor);
+            // Sets the timer interval to 5 seconds.
+            m_animTimer.Interval = 8;
 
             ShowAnimEditor(false);
 
@@ -635,5 +685,58 @@ namespace wedit
             m_animNo--;
             PaintAnimEditor();
         }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            if (!m_animPlaying)
+            {
+                m_animPlaying = true;
+                m_animCmdIndex = 0;
+                m_animSpeed = 0x100;
+                m_animTime  = 0x100;
+                m_animTimer.Start();
+                m_animStopWatch = System.Diagnostics.Stopwatch.StartNew();
+                m_tickTimer = C_TICKTIME;
+            }
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            if (m_animPlaying)
+            {
+                m_animPlaying = false;
+                m_animTimer.Stop();
+            }
+        }
+
+        private void animTimerEventProcessor(Object myObject,
+                                            EventArgs myEventArgs)
+        {
+            if (m_animPlaying)
+            {
+                m_tickTimer -= (double)m_animStopWatch.ElapsedMilliseconds;
+                m_animStopWatch = System.Diagnostics.Stopwatch.StartNew();
+
+                if (m_tickTimer <= 0)
+                {
+                    Console.WriteLine("tick");
+                    m_tickTimer += C_TICKTIME;
+
+                    m_animTime -= m_animSpeed;
+
+                    if (m_animTime <= 0)
+                    {
+                        m_animTime += m_animRate;    // Base Rate
+                        animNextFrame();
+                    }
+                }
+            }
+        }
+
+        private void animNextFrame()
+        {
+            // Single Step down the animation
+        }
+
     }
 }
