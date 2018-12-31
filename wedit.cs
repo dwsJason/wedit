@@ -229,6 +229,7 @@ namespace wedit
                 // Load up n_anim, and refresh the view
                 m_anim = new List<AnimEditorEntry>();
                 spAnim anim = m_spriteFile.GetAnim(m_animNo);
+                m_animCmdIndex = 0;
 
                 if (null != anim)
                 {
@@ -676,14 +677,32 @@ namespace wedit
 
         private void buttonNextAnim_Click(object sender, EventArgs e)
         {
-            m_animNo++;
-            PaintAnimEditor();
+            if (null != m_spriteFile)
+            {
+                m_animNo++;
+
+                if (m_animNo >= m_spriteFile.NumAnims())
+                    m_animNo = 0;
+
+                PaintAnimEditor();
+            }
         }
 
         private void buttonPrevAnim_Click(object sender, EventArgs e)
         {
-            m_animNo--;
-            PaintAnimEditor();
+            if (null != m_spriteFile)
+            {
+                m_animNo--;
+
+                if (m_animNo < 0)
+                {
+                    m_animNo = m_spriteFile.NumAnims()-1;
+                    if (m_animNo < 0)
+                        m_animNo = 0;
+                }
+
+                PaintAnimEditor();
+            }
         }
 
         private void playButton_Click(object sender, EventArgs e)
@@ -719,7 +738,7 @@ namespace wedit
 
                 if (m_tickTimer <= 0)
                 {
-                    Console.WriteLine("tick");
+                    //Console.WriteLine("tick");
                     m_tickTimer += C_TICKTIME;
 
                     m_animTime -= m_animSpeed;
@@ -736,7 +755,140 @@ namespace wedit
         private void animNextFrame()
         {
             // Single Step down the animation
+            AnimEditorEntry aee = m_anim[ m_animCmdIndex ];
+
+            m_animCmdIndex++;
+            if (m_animCmdIndex >= m_anim.Count)
+            {
+                m_animCmdIndex = m_anim.Count-1;
+                if (m_animCmdIndex < 0)
+                    m_animCmdIndex = 0;
+            }
+
+            switch (aee.m_cmd)
+            {
+            case AnimEditorEntry.cmd.Sprite:
+                m_frameNo = int.Parse(aee.m_arg);
+                PaintSprite();
+                break;
+            case AnimEditorEntry.cmd.End:
+                stopButton_Click(null,null);
+                break;
+            case AnimEditorEntry.cmd.Loop:
+                m_animCmdIndex = 0;
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Goto:
+                m_animCmdIndex = int.Parse(aee.m_arg);
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.GotoSeq:
+                m_animCmdIndex = 0;
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Pause:
+                break;
+            case AnimEditorEntry.cmd.SetRate:
+                m_animRate = ParseSpeed(aee.m_arg);
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.SetSpeed:
+                m_animSpeed = ParseSpeed(aee.m_arg);
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.MultiOp:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Delete:
+                stopButton_Click(null,null);
+                break;
+            case AnimEditorEntry.cmd.SetFlag:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Sound:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.HFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.VFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Nop:
+                break;
+            case AnimEditorEntry.cmd.Process:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.ClearFlag:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.GotoLast:
+                m_animCmdIndex = 0;
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.Blank:
+                m_frameNo = -1;
+                PaintSprite();
+                break;
+            case AnimEditorEntry.cmd.RndPause:
+                break;
+            case AnimEditorEntry.cmd.SetHFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.ClrHFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.SetVFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.ClrVFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.HVFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.SetHVFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.ClrHVFlip:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.ExtSprite:
+                m_frameNo = int.Parse(aee.m_arg);
+                PaintSprite();
+                break;
+            case AnimEditorEntry.cmd.Brk:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.OnBrk:
+                animNextFrame();
+                break;
+            case AnimEditorEntry.cmd.DynSound:
+                animNextFrame();
+                break;
+            default:
+                break;
+            }
         }
 
+        //
+        // Parse $ style string
+        //
+        private int ParseSpeed(string arg)
+        {
+            int result = 0;
+
+            if ("$" == arg.Substring(0,1))
+            {
+                result = int.Parse(arg.Substring(1), System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+            {
+                result = int.Parse(arg);
+            }
+
+            return result;
+        }
     }
+
 }
