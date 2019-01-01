@@ -135,6 +135,8 @@ namespace wedit
         Color m_BackColor = Color.FromArgb(255, 17, 110, 169);
         Color m_GridColor = Color.FromArgb(255,255, 255, 255);
         
+        // Sprite Frame Import Editor
+        Bitmap m_importImage = null;
 
         public wedit()
         {
@@ -494,7 +496,13 @@ namespace wedit
                 penHalf.Dispose();
                 penOrigin.Dispose();
 
-                if (null != m_bitmap)
+                if (null != m_importImage)
+                {
+                    gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    gr.DrawImage(m_importImage, 0, 0,
+                        m_importImage.Width << m_zoom, m_importImage.Height << m_zoom);
+                }
+                else if (null != m_bitmap)
                 {
                     gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     //gr.DrawImage(m_bitmap, cx + m_offset_x, cy + m_offset_y);
@@ -889,6 +897,17 @@ namespace wedit
 
             return result;
         }
-    }
 
+        private void importFramesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openImageFileDialog.ShowDialog();
+
+            if (DialogResult.OK == result)
+            {
+                m_importImage = new Bitmap(openImageFileDialog.FileName);
+
+                PaintSprite();
+            }
+        }
+    }
 }

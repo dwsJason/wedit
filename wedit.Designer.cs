@@ -62,6 +62,8 @@
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
             this.animButton = new System.Windows.Forms.Button();
+            this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openImageFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -92,7 +94,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadSpriteFileToolStripMenuItem});
+            this.loadSpriteFileToolStripMenuItem,
+            this.importFramesToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -480,6 +483,19 @@
             this.animButton.UseVisualStyleBackColor = true;
             this.animButton.Click += new System.EventHandler(this.animButton_Click);
             // 
+            // importFramesToolStripMenuItem
+            // 
+            this.importFramesToolStripMenuItem.Name = "importFramesToolStripMenuItem";
+            this.importFramesToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.importFramesToolStripMenuItem.Text = "Import Frames";
+            this.importFramesToolStripMenuItem.Click += new System.EventHandler(this.importFramesToolStripMenuItem_Click);
+            // 
+            // openImageFileDialog
+            // 
+            this.openImageFileDialog.Filter = "png|*.png|gif|*.gif|bmp|*.bmp";
+            this.openImageFileDialog.RestoreDirectory = true;
+            this.openImageFileDialog.Title = "Import Frames";
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -558,6 +574,8 @@
         private System.Windows.Forms.Button animButton;
         private System.Windows.Forms.Button buttonPrevAnim;
         private System.Windows.Forms.Button buttonNextAnim;
+        private System.Windows.Forms.ToolStripMenuItem importFramesToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openImageFileDialog;
     }
 }
 
