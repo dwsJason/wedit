@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(wedit));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSpriteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -62,8 +64,11 @@
             this.WhiteButton = new System.Windows.Forms.Button();
             this.PurpleButton = new System.Windows.Forms.Button();
             this.animButton = new System.Windows.Forms.Button();
-            this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openImageFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -107,6 +112,13 @@
             this.loadSpriteFileToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.loadSpriteFileToolStripMenuItem.Text = "Load Sprite File";
             this.loadSpriteFileToolStripMenuItem.Click += new System.EventHandler(this.loadSpriteFileToolStripMenuItem_Click);
+            // 
+            // importFramesToolStripMenuItem
+            // 
+            this.importFramesToolStripMenuItem.Name = "importFramesToolStripMenuItem";
+            this.importFramesToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.importFramesToolStripMenuItem.Text = "Import Frames";
+            this.importFramesToolStripMenuItem.Click += new System.EventHandler(this.importFramesToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -483,24 +495,63 @@
             this.animButton.UseVisualStyleBackColor = true;
             this.animButton.Click += new System.EventHandler(this.animButton_Click);
             // 
-            // importFramesToolStripMenuItem
-            // 
-            this.importFramesToolStripMenuItem.Name = "importFramesToolStripMenuItem";
-            this.importFramesToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.importFramesToolStripMenuItem.Text = "Import Frames";
-            this.importFramesToolStripMenuItem.Click += new System.EventHandler(this.importFramesToolStripMenuItem_Click);
-            // 
             // openImageFileDialog
             // 
             this.openImageFileDialog.Filter = "png|*.png|gif|*.gif|bmp|*.bmp";
             this.openImageFileDialog.RestoreDirectory = true;
             this.openImageFileDialog.Title = "Import Frames";
             // 
+            // button1
+            // 
+            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button1.Location = new System.Drawing.Point(449, 1);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(25, 25);
+            this.button1.TabIndex = 11;
+            this.button1.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button2.Location = new System.Drawing.Point(474, 1);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(25, 25);
+            this.button2.TabIndex = 12;
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.Location = new System.Drawing.Point(499, 1);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(25, 25);
+            this.button3.TabIndex = 13;
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
+            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button4.Location = new System.Drawing.Point(524, 1);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(25, 25);
+            this.button4.TabIndex = 14;
+            this.button4.UseVisualStyleBackColor = true;
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.animButton);
             this.Controls.Add(this.PurpleButton);
             this.Controls.Add(this.WhiteButton);
@@ -576,6 +627,10 @@
         private System.Windows.Forms.Button buttonNextAnim;
         private System.Windows.Forms.ToolStripMenuItem importFramesToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openImageFileDialog;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }
 
