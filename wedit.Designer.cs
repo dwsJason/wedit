@@ -65,10 +65,10 @@
             this.PurpleButton = new System.Windows.Forms.Button();
             this.animButton = new System.Windows.Forms.Button();
             this.openImageFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.zoomInButton = new System.Windows.Forms.Button();
+            this.zoomOutButton = new System.Windows.Forms.Button();
+            this.handCheckBox = new System.Windows.Forms.CheckBox();
+            this.selectCheckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -501,61 +501,64 @@
             this.openImageFileDialog.RestoreDirectory = true;
             this.openImageFileDialog.Title = "Import Frames";
             // 
-            // button3
+            // zoomInButton
             // 
-            this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
-            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button3.Location = new System.Drawing.Point(499, 1);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(25, 25);
-            this.button3.TabIndex = 13;
-            this.button3.UseVisualStyleBackColor = true;
+            this.zoomInButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("zoomInButton.BackgroundImage")));
+            this.zoomInButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.zoomInButton.Location = new System.Drawing.Point(499, 1);
+            this.zoomInButton.Name = "zoomInButton";
+            this.zoomInButton.Size = new System.Drawing.Size(25, 25);
+            this.zoomInButton.TabIndex = 13;
+            this.zoomInButton.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // zoomOutButton
             // 
-            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
-            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button4.Location = new System.Drawing.Point(524, 1);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(25, 25);
-            this.button4.TabIndex = 14;
-            this.button4.UseVisualStyleBackColor = true;
+            this.zoomOutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("zoomOutButton.BackgroundImage")));
+            this.zoomOutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.zoomOutButton.Location = new System.Drawing.Point(524, 1);
+            this.zoomOutButton.Name = "zoomOutButton";
+            this.zoomOutButton.Size = new System.Drawing.Size(25, 25);
+            this.zoomOutButton.TabIndex = 14;
+            this.zoomOutButton.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // handCheckBox
             // 
-            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox1.BackgroundImage")));
-            this.checkBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.checkBox1.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(228)))), ((int)(((byte)(247)))));
-            this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.checkBox1.Location = new System.Drawing.Point(449, 1);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(25, 25);
-            this.checkBox1.TabIndex = 15;
-            this.checkBox1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.handCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.handCheckBox.AutoCheck = false;
+            this.handCheckBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("handCheckBox.BackgroundImage")));
+            this.handCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.handCheckBox.Checked = true;
+            this.handCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.handCheckBox.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(228)))), ((int)(((byte)(247)))));
+            this.handCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.handCheckBox.Location = new System.Drawing.Point(449, 1);
+            this.handCheckBox.Margin = new System.Windows.Forms.Padding(0);
+            this.handCheckBox.Name = "handCheckBox";
+            this.handCheckBox.Size = new System.Drawing.Size(25, 25);
+            this.handCheckBox.TabIndex = 15;
+            this.handCheckBox.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.handCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // selectCheckBox
             // 
-            this.checkBox2.Appearance = System.Windows.Forms.Appearance.Button;
-            this.checkBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("checkBox2.BackgroundImage")));
-            this.checkBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.checkBox2.Location = new System.Drawing.Point(474, 1);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(25, 25);
-            this.checkBox2.TabIndex = 16;
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.selectCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.selectCheckBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("selectCheckBox.BackgroundImage")));
+            this.selectCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.selectCheckBox.Location = new System.Drawing.Point(474, 1);
+            this.selectCheckBox.Name = "selectCheckBox";
+            this.selectCheckBox.Size = new System.Drawing.Size(25, 25);
+            this.selectCheckBox.TabIndex = 16;
+            this.selectCheckBox.UseVisualStyleBackColor = true;
             // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.selectCheckBox);
+            this.Controls.Add(this.handCheckBox);
+            this.Controls.Add(this.zoomOutButton);
+            this.Controls.Add(this.zoomInButton);
             this.Controls.Add(this.animButton);
             this.Controls.Add(this.PurpleButton);
             this.Controls.Add(this.WhiteButton);
@@ -631,10 +634,10 @@
         private System.Windows.Forms.Button buttonNextAnim;
         private System.Windows.Forms.ToolStripMenuItem importFramesToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openImageFileDialog;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.Button zoomInButton;
+        private System.Windows.Forms.Button zoomOutButton;
+        private System.Windows.Forms.CheckBox handCheckBox;
+        private System.Windows.Forms.CheckBox selectCheckBox;
     }
 }
 

@@ -199,6 +199,9 @@ namespace wedit
 
             ShowAnimEditor(false);
 
+            // Setup callbacks for the radio button / toolbar
+            handCheckBox.Click += new System.EventHandler(handCheckBox_Pressed);
+            selectCheckBox.Click += new System.EventHandler(selectCheckBox_Pressed);
         }
 
         //
@@ -908,6 +911,27 @@ namespace wedit
 
                 PaintSprite();
             }
+        }
+
+        //
+        // Hand Tool Check Box
+        // Radio Button
+        //
+        private void handCheckBox_Pressed(object sender, EventArgs e)
+        {
+            // If this is enabled, make sure we disable the other tools
+            // update the default cursor in the editor picture panel
+            // set the editor mode
+            handCheckBox.Checked = true;
+            selectCheckBox.Checked = false;
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
+        }
+
+        private void selectCheckBox_Pressed(object sender, EventArgs e)
+        {
+            selectCheckBox.Checked = true;
+            handCheckBox.Checked = false;
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
         }
     }
 }
