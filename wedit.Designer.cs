@@ -510,6 +510,7 @@
             this.zoomInButton.Size = new System.Drawing.Size(25, 25);
             this.zoomInButton.TabIndex = 13;
             this.zoomInButton.UseVisualStyleBackColor = true;
+            this.zoomInButton.Click += new System.EventHandler(this.zoomInButton_Click);
             // 
             // zoomOutButton
             // 
@@ -520,6 +521,7 @@
             this.zoomOutButton.Size = new System.Drawing.Size(25, 25);
             this.zoomOutButton.TabIndex = 14;
             this.zoomOutButton.UseVisualStyleBackColor = true;
+            this.zoomOutButton.Click += new System.EventHandler(this.zoomOutButton_Click);
             // 
             // handCheckBox
             // 

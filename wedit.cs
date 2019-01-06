@@ -624,23 +624,13 @@ namespace wedit
                     e.Handled = true;
                     break;
                 case (char)'-':
-                //case (char)Keys.Subtract:
-                    m_zoom--;
-                    if (m_zoom < 0)
-                    {
-                        m_zoom = 0;
-                    }
-                    PaintSprite();
+                    //case (char)Keys.Subtract:
+                    zoomOutButton_Click(null, null);
                     e.Handled = true;
                     break;
                 case (char)'+':
-                //case (char)Keys.Add:
-                    m_zoom++;
-                    if (m_zoom > 4)
-                    {
-                        m_zoom = 4;
-                    }
-                    PaintSprite();
+                    //case (char)Keys.Add:
+                    zoomInButton_Click(null, null);
                     e.Handled = true;
                     break;
             }
@@ -932,6 +922,26 @@ namespace wedit
             selectCheckBox.Checked = true;
             handCheckBox.Checked = false;
             this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
+        }
+
+        private void zoomInButton_Click(object sender, EventArgs e)
+        {
+            m_zoom++;
+            if (m_zoom > 4)
+            {
+                m_zoom = 4;
+            }
+            PaintSprite();
+        }
+
+        private void zoomOutButton_Click(object sender, EventArgs e)
+        {
+            m_zoom--;
+            if (m_zoom < 0)
+            {
+                m_zoom = 0;
+            }
+            PaintSprite();
         }
     }
 }
