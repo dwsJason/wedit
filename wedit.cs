@@ -131,6 +131,10 @@ namespace wedit
         int m_canvas_offset_x = 0;
         int m_canvas_offset_y = 0;
 
+        // Mouse Position
+        int m_canvas_mouse_x = 0;
+        int m_canvas_mouse_y = 0;
+
         // BluePrint Blue
         Color m_BackColor = Color.FromArgb(255, 17, 110, 169);
         Color m_GridColor = Color.FromArgb(255,255, 255, 255);
@@ -319,6 +323,9 @@ namespace wedit
         // MouseMove Handler
         void Wedit_MouseMove(object obj, MouseEventArgs e)
         {
+            m_canvas_mouse_x = e.X;
+            m_canvas_mouse_y = e.Y;
+
             if (e.Button == MouseButtons.Left)
             {
                 //Console.WriteLine("Mouse {0},{1}", e.X, e.Y);
@@ -501,9 +508,33 @@ namespace wedit
 
                 if (null != m_importImage)
                 {
+                    int zoom = 1 << m_zoom;
+                    gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
                     gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     gr.DrawImage(m_importImage, 0, 0,
                         m_importImage.Width << m_zoom, m_importImage.Height << m_zoom);
+
+                    // Draw Cross Hairs
+                    Pen penCross = new Pen(fgColor);
+                    
+                    penCross.Width = zoom;
+                    //penCross.Alignment = System.Drawing.Drawing2D.PenAlignment.Right;
+
+                    int x = m_canvas_mouse_x;
+                    int y = m_canvas_mouse_y;
+
+                    if (zoom > 1)
+                    {
+                        x &= ~(zoom - 1);
+                        y &= ~(zoom - 1);
+                    }
+
+                    x += (zoom >> 1);
+                    y += (zoom >> 1);
+                    
+                    gr.DrawLine(penCross, 0, y, width, y);
+                    gr.DrawLine(penCross, x, 0, x, height);
+                    penCross.Dispose();
                 }
                 else if (null != m_bitmap)
                 {
