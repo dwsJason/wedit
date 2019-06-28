@@ -577,6 +577,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "wedit";
             this.Text = "World Editor";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("wedit")));
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
