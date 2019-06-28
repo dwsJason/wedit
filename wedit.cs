@@ -12,9 +12,16 @@ using System.Windows.Forms;
 
 namespace wedit
 {
-
     public partial class wedit : Form
     {
+        public enum AppMode
+        {
+            VIEW,
+            ANIM,
+            IMPORT_FRAMES,
+            IMPORT_PALETTES,
+        };
+
         public class ImageEntry
         {
             public int m_frameNo;
@@ -104,6 +111,11 @@ namespace wedit
             public string m_arg;
             public int m_image;
         }
+
+        // Application Global Map
+        
+        wedit.AppMode m_mode = AppMode.VIEW;
+
         // For animation editor
         List<AnimEditorEntry> m_anim = new List<AnimEditorEntry>();
 
