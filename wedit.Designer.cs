@@ -34,6 +34,10 @@
             this.loadSpriteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.mode = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.mouseXY = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.animEditorBox = new System.Windows.Forms.GroupBox();
@@ -70,6 +74,7 @@
             this.handCheckBox = new System.Windows.Forms.CheckBox();
             this.selectCheckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -123,11 +128,51 @@
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 401);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.mode,
+            this.toolStripStatusLabel2,
+            this.mouseXY});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 399);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(710, 22);
+            this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.statusStrip1.Size = new System.Drawing.Size(710, 24);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(41, 19);
+            this.toolStripStatusLabel1.Text = "Mode:";
+            // 
+            // mode
+            // 
+            this.mode.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.mode.Name = "mode";
+            this.mode.Size = new System.Drawing.Size(38, 19);
+            this.mode.Text = "VIEW";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(46, 19);
+            this.toolStripStatusLabel2.Text = "Mouse:";
+            // 
+            // mouseXY
+            // 
+            this.mouseXY.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.mouseXY.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.mouseXY.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.mouseXY.Name = "mouseXY";
+            this.mouseXY.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.mouseXY.Size = new System.Drawing.Size(29, 19);
+            this.mouseXY.Text = "0, 0";
+            this.mouseXY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // splitContainer1
             // 
@@ -142,7 +187,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox);
-            this.splitContainer1.Size = new System.Drawing.Size(710, 377);
+            this.splitContainer1.Size = new System.Drawing.Size(710, 375);
             this.splitContainer1.SplitterDistance = 235;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -161,8 +206,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.objectFramesView);
-            this.splitContainer2.Size = new System.Drawing.Size(235, 377);
-            this.splitContainer2.SplitterDistance = 189;
+            this.splitContainer2.Size = new System.Drawing.Size(235, 375);
+            this.splitContainer2.SplitterDistance = 187;
             this.splitContainer2.TabIndex = 0;
             // 
             // animEditorBox
@@ -181,7 +226,7 @@
             this.animEditorBox.Controls.Add(this.loopCheckBox);
             this.animEditorBox.Location = new System.Drawing.Point(3, 3);
             this.animEditorBox.Name = "animEditorBox";
-            this.animEditorBox.Size = new System.Drawing.Size(229, 183);
+            this.animEditorBox.Size = new System.Drawing.Size(229, 181);
             this.animEditorBox.TabIndex = 1;
             this.animEditorBox.TabStop = false;
             this.animEditorBox.Text = "Animation Editor";
@@ -236,7 +281,7 @@
             this.cmdListView.MultiSelect = false;
             this.cmdListView.Name = "cmdListView";
             this.cmdListView.ShowGroups = false;
-            this.cmdListView.Size = new System.Drawing.Size(229, 121);
+            this.cmdListView.Size = new System.Drawing.Size(229, 119);
             this.cmdListView.TabIndex = 6;
             this.cmdListView.UseCompatibleStateImageBehavior = false;
             this.cmdListView.View = System.Windows.Forms.View.Details;
@@ -347,7 +392,7 @@
             this.animListView.Location = new System.Drawing.Point(3, 3);
             this.animListView.Name = "animListView";
             this.animListView.ShowGroups = false;
-            this.animListView.Size = new System.Drawing.Size(229, 183);
+            this.animListView.Size = new System.Drawing.Size(229, 181);
             this.animListView.TabIndex = 0;
             this.animListView.UseAlternatingBackColors = true;
             this.animListView.UseCompatibleStateImageBehavior = false;
@@ -410,7 +455,7 @@
             this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox.Location = new System.Drawing.Point(3, 3);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(465, 371);
+            this.pictureBox.Size = new System.Drawing.Size(465, 369);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             // 
@@ -572,14 +617,16 @@
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "wedit";
             this.Text = "World Editor";
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("wedit")));
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -641,6 +688,10 @@
         private System.Windows.Forms.Button zoomOutButton;
         private System.Windows.Forms.CheckBox handCheckBox;
         private System.Windows.Forms.CheckBox selectCheckBox;
+        private System.Windows.Forms.ToolStripStatusLabel mouseXY;
+        private System.Windows.Forms.ToolStripStatusLabel mode;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
     }
 }
 

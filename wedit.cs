@@ -231,6 +231,7 @@ namespace wedit
                 this.animListView.Enabled = false;
                 this.animEditorBox.BringToFront();
                 this.animEditorBox.Enabled = true;
+                SetMode( AppMode.ANIM );
             }
             else
             {
@@ -238,6 +239,37 @@ namespace wedit
                 this.animEditorBox.Enabled = false;
                 this.animListView.BringToFront();
                 this.animListView.Enabled = true;
+                SetMode( AppMode.VIEW );
+            }
+        }
+
+        void SetMode( wedit.AppMode newMode )
+        {
+            if (newMode != m_mode)
+            {
+                m_mode = newMode;
+                string modeString = "default";
+
+                switch (m_mode)
+                {
+                case AppMode.VIEW:
+                    modeString = "VIEW";
+                    break;
+                case AppMode.ANIM:
+                    modeString = "ANIM";
+                    break;
+                case AppMode.IMPORT_FRAMES:
+                    modeString = "IMPORT";
+                    selectCheckBox_Pressed(null, null);  // Default into Select instead of Pan
+                    break;
+                case AppMode.IMPORT_PALETTES:
+                    modeString = "CLUT IMPORT";
+                    break;
+                default:
+                    break;
+                }
+
+                mode.Text = modeString;
             }
         }
 
@@ -346,14 +378,41 @@ namespace wedit
 
                 int width = p.Size.Width;
                 int height = p.Size.Height;
-                int cx = width / 2;
-                int cy = height / 2;
-
-                m_canvas_offset_x = e.X - cx;
-                m_canvas_offset_y = e.Y - cy;
                 
-                PaintSprite(); 
+                switch (m_mode)
+                {
+                case AppMode.VIEW:
+                    {
+                        // Cheap-O recenter the origin based on mouse position
+                        int cx = width / 2;
+                        int cy = height / 2;
+
+                        m_canvas_offset_x = e.X - cx;
+                        m_canvas_offset_y = e.Y - cy;
+
+                        PaintSprite();
+                        break;
+                    }
+                case AppMode.IMPORT_FRAMES:
+                    {
+                        break;
+                    }
+
+                default:
+                    break;
+
+                }
             }
+
+            this.mouseXY.Text = String.Format("{0}, {1}", e.X, e.Y);
+
+            switch (m_mode)
+            {
+            case AppMode.IMPORT_FRAMES:
+                PaintImport();
+                break;
+            }
+
         }
 
         // Keydown Handler
@@ -399,6 +458,65 @@ namespace wedit
             DrawGrid(p.Size.Width, p.Size.Height);
         }
 
+        private void PaintImport()
+        {
+            Panel p = splitContainer1.Panel2;
+            int width  = p.Size.Width;
+            int height = p.Size.Height;
+            Size s = new Size(width, height);
+            pictureBox.Size = s;
+
+            Color bgColor = m_BackColor;
+            Color fgColor = Color.FromArgb(128, m_GridColor.R, m_GridColor.G, m_GridColor.B);
+
+            Bitmap bmp = new Bitmap(width, height);
+            Graphics gr = Graphics.FromImage(bmp);
+
+            gr.Clear(bgColor);
+
+            if (null != m_importImage)
+            {
+                int zoom = 1 << m_zoom;
+                gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                gr.DrawImage(m_importImage, 0, 0,
+                    m_importImage.Width << m_zoom, m_importImage.Height << m_zoom);
+
+                // Draw Cross Hairs
+                Pen penCross = new Pen(fgColor);
+
+                penCross.Width = zoom;
+
+                int x = m_canvas_mouse_x;
+                int y = m_canvas_mouse_y;
+
+                if (zoom > 1)
+                {
+                    x &= ~(zoom - 1);
+                    y &= ~(zoom - 1);
+                }
+
+                x += (zoom >> 1);
+                y += (zoom >> 1);
+
+                gr.DrawLine(penCross, 0, y, width, y);
+                gr.DrawLine(penCross, x, 0, x, height);
+                penCross.Dispose();
+            }
+
+            if (null != pictureBox.Image)
+            {
+                pictureBox.Image.Dispose();
+                pictureBox.Image = null;
+            }
+
+            pictureBox.Image = bmp;
+
+            pictureBox.Invalidate();
+        
+            gr.Dispose();
+
+        }
 
         private void PictureBoxResize(object sender, EventArgs e)
         {
@@ -676,6 +794,17 @@ namespace wedit
                     zoomInButton_Click(null, null);
                     e.Handled = true;
                     break;
+                case (char)27: // Escape
+                    e.Handled = true;
+                    SetMode( AppMode.VIEW );
+                    handCheckBox_Pressed(null, null);
+                    if (null != m_importImage)
+                    {
+                        m_importImage.Dispose();
+                        m_importImage = null;
+                    }
+                    PaintSprite();
+                    break;
             }
         }
 
@@ -941,6 +1070,11 @@ namespace wedit
             if (DialogResult.OK == result)
             {
                 m_importImage = new Bitmap(openImageFileDialog.FileName);
+
+                if (null != m_importImage)
+                {
+                    SetMode( AppMode.IMPORT_FRAMES );
+                }
 
                 PaintSprite();
             }
