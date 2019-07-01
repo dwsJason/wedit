@@ -146,6 +146,9 @@ namespace wedit
         // Mouse Position
         int m_canvas_mouse_x = 0;
         int m_canvas_mouse_y = 0;
+        int m_canvas_mouse_anchor_x = 0;
+        int m_canvas_mouse_anchor_y = 0;
+        bool m_canvas_mouse_button_left = false;
 
         // BluePrint Blue
         Color m_BackColor = Color.FromArgb(255, 17, 110, 169);
@@ -370,7 +373,20 @@ namespace wedit
             m_canvas_mouse_x = e.X;
             m_canvas_mouse_y = e.Y;
 
-            if (e.Button == MouseButtons.Left)
+            bool canvas_mouse_button_left = (MouseButtons.Left == e.Button);
+
+            if (canvas_mouse_button_left != m_canvas_mouse_button_left)
+            {
+                m_canvas_mouse_button_left = canvas_mouse_button_left;
+                if (canvas_mouse_button_left)
+                {
+                    // On mouse down, set the anchor
+                    m_canvas_mouse_anchor_x = e.X;
+                    m_canvas_mouse_anchor_y = e.Y;
+                }
+            }
+
+            if (canvas_mouse_button_left)
             {
                 //Console.WriteLine("Mouse {0},{1}", e.X, e.Y);
 
@@ -499,8 +515,31 @@ namespace wedit
                 x += (zoom >> 1);
                 y += (zoom >> 1);
 
-                gr.DrawLine(penCross, 0, y, width, y);
-                gr.DrawLine(penCross, x, 0, x, height);
+                if (m_canvas_mouse_button_left)
+                {
+                    // Draw a selection rubber-band
+                    int anchor_x = m_canvas_mouse_anchor_x;
+                    int anchor_y = m_canvas_mouse_anchor_y;
+
+                    if (zoom > 1)
+                    {
+                        anchor_x &= ~(zoom - 1);
+                        anchor_y &= ~(zoom - 1);
+                    }
+
+                    anchor_x += (zoom >> 1);
+                    anchor_y += (zoom >> 1);
+
+                    gr.DrawLine(penCross, x, y, anchor_x, y);
+                    gr.DrawLine(penCross, anchor_x, y, anchor_x, anchor_y);
+                    gr.DrawLine(penCross, anchor_x, anchor_y, x, anchor_y);
+                    gr.DrawLine(penCross, x, y, x, anchor_y);
+                }
+                else
+                {
+                    gr.DrawLine(penCross, 0, y, width, y);
+                    gr.DrawLine(penCross, x, 0, x, height);
+                }
                 penCross.Dispose();
             }
 
