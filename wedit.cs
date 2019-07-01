@@ -8,7 +8,11 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using System.Windows;
+//using System.Windows.Controls;
 using System.Windows.Forms;
+//using System.Windows.Media;
+//using System.Windows.Shapes;
 
 namespace wedit
 {
@@ -158,6 +162,7 @@ namespace wedit
         
         // Sprite Frame Import Editor
         Bitmap m_importImage = null;
+        Rectangle m_importRect = new Rectangle(0, 0, 0, 0);   // Currently selected import rectangle
 
         public wedit()
         {
@@ -430,6 +435,21 @@ namespace wedit
                 }
             }
 
+            if (m_canvas_mouseup_left)
+            {
+                switch (m_mode)
+                {
+                case AppMode.IMPORT_FRAMES:
+                    {
+                        SetImportRect(m_canvas_mouse_anchor_x,
+                                    m_canvas_mouse_anchor_y,
+                                    m_canvas_mouse_x,
+                                    m_canvas_mouse_y);
+                        break;
+                    }
+                }
+            }
+
             this.mouseXY.Text = String.Format("{0}, {1}", e.X, e.Y);
 
             switch (m_mode)
@@ -547,6 +567,14 @@ namespace wedit
                 }
                 else
                 {
+                    if (!m_importRect.IsEmpty)
+                    {
+                        gr.DrawLine(penCross, m_importRect.Left, m_importRect.Top, m_importRect.Right, m_importRect.Top);
+                        gr.DrawLine(penCross, m_importRect.Right, m_importRect.Top, m_importRect.Right, m_importRect.Bottom);
+                        gr.DrawLine(penCross, m_importRect.Right, m_importRect.Bottom, m_importRect.Left, m_importRect.Bottom);
+                        gr.DrawLine(penCross, m_importRect.Left, m_importRect.Bottom, m_importRect.Left, m_importRect.Top);
+                    }
+
                     gr.DrawLine(penCross, 0, y, width, y);
                     gr.DrawLine(penCross, x, 0, x, height);
                 }
@@ -1127,6 +1155,41 @@ namespace wedit
 
                 PaintSprite();
             }
+        }
+
+        private void SetImportRect(int x0, int y0, int x1, int y1)
+        {
+            // Attempt to shrink rect, and set the results out
+            // to the m_importRect, so that the rubberband is rendered
+            // (and we can wait for the spacebar to tell us to cut)
+            if (x1 < x0)
+            {
+                int temp = x0;
+                x0 = x1;
+                x1 = temp;
+            }
+            if (y1 < y0)
+            {
+                int temp = y0;
+                y0 = y1;
+                y1 = temp;
+            }
+
+            int zoom = 1 << m_zoom;
+            if (zoom > 1)
+            {
+                x0 &= ~(zoom - 1);
+                y0 &= ~(zoom - 1);
+                x1 &= ~(zoom - 1);
+                y1 &= ~(zoom - 1);
+            }
+
+            x0 += (zoom >> 1);
+            y0 += (zoom >> 1);
+            x1 += (zoom >> 1);
+            y1 += (zoom >> 1);
+
+            m_importRect = new Rectangle(x0, y0, (x1 - x0) + 1, (y1 - y0) + 1);
         }
 
         //
