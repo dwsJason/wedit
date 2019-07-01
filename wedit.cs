@@ -149,6 +149,8 @@ namespace wedit
         int m_canvas_mouse_anchor_x = 0;
         int m_canvas_mouse_anchor_y = 0;
         bool m_canvas_mouse_button_left = false;
+        bool m_canvas_mousedown_left = false;
+        bool m_canvas_mouseup_left = false;
 
         // BluePrint Blue
         Color m_BackColor = Color.FromArgb(255, 17, 110, 169);
@@ -375,14 +377,22 @@ namespace wedit
 
             bool canvas_mouse_button_left = (MouseButtons.Left == e.Button);
 
+            m_canvas_mousedown_left = false;
+            m_canvas_mouseup_left = false;
+
             if (canvas_mouse_button_left != m_canvas_mouse_button_left)
             {
                 m_canvas_mouse_button_left = canvas_mouse_button_left;
                 if (canvas_mouse_button_left)
                 {
+                    m_canvas_mousedown_left = true;
                     // On mouse down, set the anchor
                     m_canvas_mouse_anchor_x = e.X;
                     m_canvas_mouse_anchor_y = e.Y;
+                }
+                else
+                {
+                    m_canvas_mouseup_left = true;
                 }
             }
 
