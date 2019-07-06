@@ -163,7 +163,7 @@ namespace wedit
         // Sprite Frame Import Editor
         Bitmap m_importImage = null;
         Rectangle m_importRect = new Rectangle(0, 0, 0, 0);   // Currently selected import rectangle
-        Color m_transparent = new Color(0,0,0,0);
+        Color m_transparent = new Color();
 
         public wedit()
         {
@@ -893,6 +893,14 @@ namespace wedit
                     }
                     PaintSprite();
                     break;
+            case (char)' ': // Space
+                    if ( (!m_importRect.IsEmpty) &&
+                         (null != m_importImage) )
+                    {
+                        ImportFrame();
+                        PaintImport();
+                    }
+                break;
             }
         }
 
@@ -1305,6 +1313,29 @@ namespace wedit
             return result;
         }
 
+        //
+        // Actually Clip out the frame we want to import
+        //
+        private void ImportFrame()
+        {
+            if ( (!m_importRect.IsEmpty) &&
+                 (null != m_importImage) )
+            {
+                // We're done, so erase the old image
+                for (int y = m_importRect.Top; y <= m_importRect.Bottom; ++y)
+                {
+                    for (int x = m_importRect.Left; x <= m_importRect.Right; ++x)
+                    {
+                        m_importImage.SetPixel(x,y,m_transparent);
+                    }
+                }
+                
+                // Clear the import Rectangle
+                m_importRect = new Rectangle();
+            }
+        }
+
+
         // Convert Mouse Canvas Coordinates
         // into local import bitmap coordinates
         private void MouseXYToImportXY(ref int x, ref int y)
@@ -1313,6 +1344,14 @@ namespace wedit
 
             x >>= zoom;
             y >>= zoom;
+
+            if (null != m_importImage)
+            {
+                if (x < 0) x = 0;
+                if (x >= m_importImage.Width) x = m_importImage.Width-1;
+                if (y < 0) y = 0;
+                if (y >= m_importImage.Height) y = m_importImage.Height-1;
+            }
 
         }
 
