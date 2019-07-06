@@ -569,10 +569,20 @@ namespace wedit
                 {
                     if (!m_importRect.IsEmpty)
                     {
-                        gr.DrawLine(penCross, m_importRect.Left, m_importRect.Top, m_importRect.Right, m_importRect.Top);
-                        gr.DrawLine(penCross, m_importRect.Right, m_importRect.Top, m_importRect.Right, m_importRect.Bottom);
-                        gr.DrawLine(penCross, m_importRect.Right, m_importRect.Bottom, m_importRect.Left, m_importRect.Bottom);
-                        gr.DrawLine(penCross, m_importRect.Left, m_importRect.Bottom, m_importRect.Left, m_importRect.Top);
+                        int x0 = m_importRect.Left;
+                        int y0 = m_importRect.Top;
+                        int x1 = m_importRect.Right;
+                        int y1 = m_importRect.Bottom;
+
+                        x0 <<= m_zoom; x0 += (1 << m_zoom >> 1);
+                        y0 <<= m_zoom; y0 += (1 << m_zoom >> 1);
+                        x1 <<= m_zoom; x1 -= (1 << m_zoom >> 1);
+                        y1 <<= m_zoom; y1 -= (1 << m_zoom >> 1);
+
+                        gr.DrawLine(penCross, x0, y0, x1, y0);
+                        gr.DrawLine(penCross, x1, y0, x1, y1);
+                        gr.DrawLine(penCross, x1, y1, x0, y1);
+                        gr.DrawLine(penCross, x0, y1, x0, y0);
                     }
 
                     gr.DrawLine(penCross, 0, y, width, y);
@@ -1175,21 +1185,29 @@ namespace wedit
                 y1 = temp;
             }
 
-            int zoom = 1 << m_zoom;
-            if (zoom > 1)
-            {
-                x0 &= ~(zoom - 1);
-                y0 &= ~(zoom - 1);
-                x1 &= ~(zoom - 1);
-                y1 &= ~(zoom - 1);
-            }
-
-            x0 += (zoom >> 1);
-            y0 += (zoom >> 1);
-            x1 += (zoom >> 1);
-            y1 += (zoom >> 1);
+            MouseXYToImportXY(ref x0, ref y0);
+            MouseXYToImportXY(ref x1, ref y1);
 
             m_importRect = new Rectangle(x0, y0, (x1 - x0) + 1, (y1 - y0) + 1);
+
+            if (null != m_importImage)
+            {
+                if (PixelFormat.Format8bppIndexed == m_importImage.PixelFormat)
+                {
+                    Console.WriteLine(String.Format("Pixel Format = {0}", m_importImage.PixelFormat));
+                }
+            }
+        }
+
+        // Convert Mouse Canvas Coordinates
+        // into local import bitmap coordinates
+        private void MouseXYToImportXY(ref int x, ref int y)
+        {
+            int zoom = m_zoom;
+
+            x >>= zoom;
+            y >>= zoom;
+
         }
 
         //
@@ -1221,6 +1239,7 @@ namespace wedit
                 m_zoom = 4;
             }
             PaintSprite();
+            PaintImport();
         }
 
         private void zoomOutButton_Click(object sender, EventArgs e)
@@ -1231,6 +1250,7 @@ namespace wedit
                 m_zoom = 0;
             }
             PaintSprite();
+            PaintImport();
         }
     }
 }
