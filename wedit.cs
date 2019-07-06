@@ -163,6 +163,7 @@ namespace wedit
         // Sprite Frame Import Editor
         Bitmap m_importImage = null;
         Rectangle m_importRect = new Rectangle(0, 0, 0, 0);   // Currently selected import rectangle
+        Color m_transparent = new Color(0,0,0,0);
 
         public wedit()
         {
@@ -576,8 +577,8 @@ namespace wedit
 
                         x0 <<= m_zoom; x0 += (1 << m_zoom >> 1);
                         y0 <<= m_zoom; y0 += (1 << m_zoom >> 1);
-                        x1 <<= m_zoom; x1 -= (1 << m_zoom >> 1);
-                        y1 <<= m_zoom; y1 -= (1 << m_zoom >> 1);
+                        x1 <<= m_zoom; x1 += (1 << m_zoom >> 1);
+                        y1 <<= m_zoom; y1 += (1 << m_zoom >> 1);
 
                         gr.DrawLine(penCross, x0, y0, x1, y0);
                         gr.DrawLine(penCross, x1, y0, x1, y1);
@@ -1188,15 +1189,120 @@ namespace wedit
             MouseXYToImportXY(ref x0, ref y0);
             MouseXYToImportXY(ref x1, ref y1);
 
-            m_importRect = new Rectangle(x0, y0, (x1 - x0) + 1, (y1 - y0) + 1);
+            m_importRect = new Rectangle(x0, y0, (x1 - x0)/*+ 1*/, (y1 - y0)/*+ 1*/);
 
+            //if (null != m_importImage)
+            //{
+            //    if (PixelFormat.Format8bppIndexed == m_importImage.PixelFormat)
+            //    {
+            //        Console.WriteLine(String.Format("Pixel Format = {0}", m_importImage.PixelFormat));
+            //    }
+            //}
+
+            ShrinkRect(ref m_importRect);
+
+        }
+
+        //
+        // Take shrink the rectangle on to the m_importImage 
+        //
+        private void ShrinkRect(ref Rectangle r)
+        {
             if (null != m_importImage)
             {
-                if (PixelFormat.Format8bppIndexed == m_importImage.PixelFormat)
+                Color transparent = m_importImage.GetPixel(r.Left, r.Top);
+                m_transparent = transparent;
+
+                int top, bottom, left, right;
+                top = bottom = left = right = -1;
+
+                // Get the top
+                for (int y = r.Top; y <= r.Bottom; ++y)
                 {
-                    Console.WriteLine(String.Format("Pixel Format = {0}", m_importImage.PixelFormat));
+                    if (CheckHLine(transparent,r.Left,r.Right,y))
+                    {
+                        top = y;
+                        break;
+                    }
+                }
+                // Get the left
+                for (int x = r.Left; x <= r.Right; ++x)
+                {
+                    if (CheckVLine(transparent,r.Top,r.Bottom,x))
+                    {
+                        left = x;
+                        break;
+                    }
+                }
+                // Get the bottom
+                for (int y = r.Bottom; y >= r.Top; --y)
+                {
+                    if (CheckHLine(transparent,r.Left,r.Right,y))
+                    {
+                        bottom = y;
+                        break;
+                    }
+                }
+                // Get the right
+                for (int x = r.Right; x >= r.Left; --x)
+                {
+                    if (CheckVLine(transparent,r.Top,r.Bottom,x))
+                    {
+                        right = x;
+                        break;
+                    }
+                }
+
+                if ((top >= 0) && (bottom >= 0) &&
+                    (left >=0) && (right >= 0) )
+                {
+                    r = new Rectangle(left, top, right - left/*+ 1*/, bottom - top/*+ 1*/);
+                }
+                else
+                {
+                    r = new Rectangle();
                 }
             }
+        }
+
+        //
+        // Return true if we encounter a non-transparent pixel
+        //
+        private bool CheckHLine(Color transparent, int x0, int x1, int y)
+        {
+            bool result = false;
+
+            for (int x = x0; x <= x1; ++x)
+            {
+                Color p = m_importImage.GetPixel(x , y);
+
+                if (p != transparent)
+                {
+                    return true;
+                }
+            }
+
+            return result;
+        }
+
+        //
+        // Return true if we encounter a non-transparent pixel
+        //
+        private bool CheckVLine(Color transparent, int y0, int y1, int x)
+        {
+            bool result = false;
+
+            for (int y = y0; y <= y1; ++y)
+            {
+                Color p = m_importImage.GetPixel(x, y);
+
+                if (p != transparent)
+                {
+                    return true;
+                }
+            }
+
+            return result;
         }
 
         // Convert Mouse Canvas Coordinates
