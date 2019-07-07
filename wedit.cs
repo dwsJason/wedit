@@ -1449,5 +1449,29 @@ namespace wedit
             PaintSprite();
             PaintImport();
         }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Clear out the current file
+            m_spriteFile = new spData();
+
+            ImageList images = new ImageList();
+            images.ImageSize = new Size(64, 64);
+            int numFrames = m_spriteFile.NumFrames();
+
+            List<ImageEntry> frames = new List<ImageEntry>();
+
+            objectFramesView.SmallImageList = images;
+            objectFramesView.LargeImageList = images;
+            objectFramesView.SetObjects(frames);
+
+            // Anims
+            List<AnimEntry> anims = new List<AnimEntry>();
+            animListView.SetObjects(anims);
+
+            m_bitmap = null;
+
+            SpriteFileUpdate();          
+        }
     }
 }
