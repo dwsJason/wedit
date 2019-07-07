@@ -507,6 +507,9 @@ namespace wedit
 
         private void PaintImport()
         {
+            if (null == m_importImage)
+                return;
+
             Panel p = splitContainer1.Panel2;
             int width  = p.Size.Width;
             int height = p.Size.Height;
@@ -757,6 +760,7 @@ namespace wedit
                 else if (null != m_bitmap)
                 {
                     gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
                     //gr.DrawImage(m_bitmap, cx + m_offset_x, cy + m_offset_y);
                     gr.DrawImage(m_bitmap, cx + (m_offset_x << m_zoom), cy + (m_offset_y << m_zoom),
                         m_bitmap.Width << m_zoom, m_bitmap.Height << m_zoom);
@@ -776,6 +780,59 @@ namespace wedit
 
         }
 
+        //
+        // Make sure controls reflect what is happening
+        // with the the m_spriteFile
+        //
+        private void SpriteFileUpdate()
+        {
+            m_frameNo = 0;
+
+            if ((null != m_spriteFile) && !m_spriteFile.IsEmpty())
+            {
+                ImageList images = new ImageList();
+                images.ImageSize = new Size(64, 64);
+                int numFrames = m_spriteFile.NumFrames();
+
+                List<ImageEntry> frames = new List<ImageEntry>();
+
+                // Load up the image list with the BMPs
+                for (int idx = 0; idx < numFrames; ++idx)
+                {
+                    Bitmap bmp = m_spriteFile.BitmapFromFrame(idx);
+                    images.Images.Add(bmp);
+                    ImageEntry ie = new ImageEntry();
+                    ie.m_frameNo = idx;
+                    ie.m_name = String.Format("Frame {0}", idx + 1);
+                    frames.Add(ie);
+                }
+
+                objectFramesView.SmallImageList = images;
+                //cmdListView.SmallImageList = images;
+                objectFramesView.LargeImageList = images;
+                objectFramesView.SetObjects(frames);
+
+                // Anims
+                List<AnimEntry> anims = new List<AnimEntry>();
+
+                for (int idx = 0; idx<m_spriteFile.NumAnims(); ++idx)
+                {
+                    AnimEntry entry = new AnimEntry();
+
+                    spAnim anm = m_spriteFile.GetAnim(idx);
+
+                    entry.m_animNo = idx;
+                    entry.m_name   = anm.m_name;
+
+                    anims.Add(entry);
+                }
+
+                animListView.SetObjects(anims);
+            }
+
+            PaintSprite();
+        }
+
         private void loadSpriteFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult result = openSpriteFileDialog.ShowDialog();
@@ -783,51 +840,8 @@ namespace wedit
             if (DialogResult.OK == result)
             {
                 m_spriteFile = new spData(openSpriteFileDialog.FileName);
-                m_frameNo = 0;
 
-                if ((null != m_spriteFile) && !m_spriteFile.IsEmpty())
-                {
-                    ImageList images = new ImageList();
-                    images.ImageSize = new Size(64, 64);
-                    int numFrames = m_spriteFile.NumFrames();
-
-                    List<ImageEntry> frames = new List<ImageEntry>();
-
-                    // Load up the image list with the BMPs
-                    for (int idx = 0; idx < numFrames; ++idx)
-                    {
-                        Bitmap bmp = m_spriteFile.BitmapFromFrame(idx);
-                        images.Images.Add(bmp);
-                        ImageEntry ie = new ImageEntry();
-                        ie.m_frameNo = idx;
-                        ie.m_name = String.Format("Frame {0}", idx + 1);
-                        frames.Add(ie);
-                    }
-
-                    objectFramesView.SmallImageList = images;
-                    //cmdListView.SmallImageList = images;
-                    objectFramesView.LargeImageList = images;
-                    objectFramesView.SetObjects(frames);
-
-                    // Anims
-                    List<AnimEntry> anims = new List<AnimEntry>();
-
-                    for (int idx = 0; idx<m_spriteFile.NumAnims(); ++idx)
-                    {
-                        AnimEntry entry = new AnimEntry();
-
-                        spAnim anm = m_spriteFile.GetAnim(idx);
-
-                        entry.m_animNo = idx;
-                        entry.m_name   = anm.m_name;
-
-                        anims.Add(entry);
-                    }
-
-                    animListView.SetObjects(anims);
-                }
-
-                PaintSprite();
+                SpriteFileUpdate();
             }
         }
 
@@ -840,6 +854,17 @@ namespace wedit
         {
             Console.WriteLine("key {0}", e.KeyChar);
             //e.Handled = true;
+
+            // Hack to keep spacebar from pushing down on buttons
+             if (this.ActiveControl is Button
+               && e.KeyChar == (char)Keys.Space) 
+               {
+                  var button = this.ActiveControl;
+                  button.Enabled = false;
+                  Application.DoEvents();
+                  button.Enabled = true;
+                  button.Focus();
+               }
 
             switch (e.KeyChar)
             {
@@ -893,7 +918,7 @@ namespace wedit
                     }
                     PaintSprite();
                     break;
-            case (char)' ': // Space
+                case (char)' ': // Space
                     if ( (!m_importRect.IsEmpty) &&
                          (null != m_importImage) )
                     {
@@ -1321,6 +1346,31 @@ namespace wedit
             if ( (!m_importRect.IsEmpty) &&
                  (null != m_importImage) )
             {
+                // For now, we're giving up a color (on the GS)
+                // We want to map these colors into an index from 0-15
+                // onto one of the palettes thats available
+
+                // For now, we'll just support palette 0, because
+                // more than 1 palette just isn't practical on the GS
+                // and if you're going to use more than 1, it doesn't
+                // really make any difference in this tool
+
+                // Clone looks like it's not inclusive, so we have to inflate the importRect by 1
+                Rectangle importRect = new Rectangle(m_importRect.Left, m_importRect.Top, m_importRect.Width+1, m_importRect.Height+1);
+
+                Bitmap clipped = m_importImage.Clone(importRect, m_importImage.PixelFormat);
+
+                if (null != clipped)
+                {
+                    if (null == m_spriteFile)
+                    {
+                        m_spriteFile = new spData();
+                    }
+                }
+
+                // Add the frame to the sprite catalog
+                m_spriteFile.AddFrame(m_transparent, clipped);
+
                 // We're done, so erase the old image
                 for (int y = m_importRect.Top; y <= m_importRect.Bottom; ++y)
                 {
@@ -1332,6 +1382,8 @@ namespace wedit
                 
                 // Clear the import Rectangle
                 m_importRect = new Rectangle();
+
+                SpriteFileUpdate();
             }
         }
 

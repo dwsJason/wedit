@@ -40,6 +40,9 @@ namespace wedit
         public int m_offset_y;
 
         public List<byte> m_pixels = new List<byte>();
+        // optional alpha mask (color index 0, can be substituted)
+        // This optional mask allows 16 color + mask on the GS
+        public List<byte> m_mask = new List<byte>();
 
         public List<spRect> m_rects = new List<spRect>();
 
@@ -208,6 +211,34 @@ namespace wedit
         public int NumAnims()
         {
             return m_anims.Count;
+        }
+
+        // Create an "empty" spData
+        public spData()
+        {
+            // Add a default palette
+            spPalette pal = new spPalette();
+
+            // Default to a DB16 Palette
+            pal.colors.Add( Color.FromArgb(255,0x14,0x0C,0x1C) );
+            pal.colors.Add( Color.FromArgb(255,0x44,0x24,0x34) );
+            pal.colors.Add( Color.FromArgb(255,0x30,0x34,0x6D) );
+            pal.colors.Add( Color.FromArgb(255,0x4E,0x4A,0x4E) );
+            pal.colors.Add( Color.FromArgb(255,0x85,0x4C,0x30) );
+            pal.colors.Add( Color.FromArgb(255,0x34,0x65,0x24) );
+            pal.colors.Add( Color.FromArgb(255,0xD0,0x46,0x48) );
+            pal.colors.Add( Color.FromArgb(255,0x75,0x71,0x61) );
+            pal.colors.Add( Color.FromArgb(255,0x59,0x7D,0xCE) );
+            pal.colors.Add( Color.FromArgb(255,0xD2,0x7D,0x2C) );
+            pal.colors.Add( Color.FromArgb(255,0x85,0x95,0xA1) );
+            pal.colors.Add( Color.FromArgb(255,0x6D,0xAA,0x2C) );
+            pal.colors.Add( Color.FromArgb(255,0xD2,0xAA,0x99) );
+            pal.colors.Add( Color.FromArgb(255,0x6D,0xC2,0xCA) );
+            pal.colors.Add( Color.FromArgb(255,0xDA,0xD4,0x5E) );
+            pal.colors.Add( Color.FromArgb(255,0xDE,0xEE,0xD6) );
+
+            m_palettes.Add( pal );
+
         }
 
         public spData(string pathName)
@@ -719,6 +750,108 @@ namespace wedit
             return bResult;
         }
 
+        // Take an input bitmap, convret into an spPixels
+        // object, and add it to the frame list 
+        public void AddFrame(Color trans, Bitmap bmp)
+        {
+            if (null == bmp)
+                return;
+
+            List<byte> pixels = new List<byte>();
+            List<byte> mask   = new List<byte>();
+
+            for (int y = 0; y < bmp.Height; ++y)
+            {
+                for (int x = 0; x < bmp.Width; ++x)
+                {
+                    Color px = bmp.GetPixel(x,y);
+                    byte colorIndex = GetPaletteIndex(px);
+                    byte maskIndex = 0xF;
+
+                    // If the pixel is Transparent
+                    // it's index 0
+                    if (trans == px)
+                    {
+                        colorIndex = 0;
+                        maskIndex = 0;
+                    }
+
+                    if (0 == (x & 1))
+                    {
+                        // Even
+                        colorIndex <<= 4;
+                        maskIndex  <<= 4;
+
+                        pixels.Add(colorIndex);
+                        mask.Add(maskIndex);
+                    }
+                    else
+                    {
+                        // Odd
+                        colorIndex &= 0xF;
+                        maskIndex  &= 0xF;
+                        pixels[ pixels.Count - 1 ] |= colorIndex;
+                        mask[ mask.Count - 1 ] |= maskIndex;
+                    }
+                }
+            }
+
+            spPixels pixelFrame = new spPixels((bmp.Width+1)>>1,bmp.Height, pixels);
+
+            pixelFrame.m_offset_x = pixelFrame.m_width;
+            pixelFrame.m_offset_y = pixelFrame.m_height>>1;
+            pixelFrame.m_mask = mask;
+
+            m_frames.Add( pixelFrame );
+        }
+
+        //
+        //  Get the Closest Matching palette index
+        //
+        byte GetPaletteIndex(Color p)
+        {
+            byte result_index = 0;
+
+            if (m_palettes.Count > 0)
+            {
+                spPalette pal = m_palettes[0];
+                List<float> dist = new List<float>();
+
+                for (int idx = 0; idx < pal.colors.Count; ++idx)
+                {
+                    float delta = ColorDelta(pal.colors[idx], p);
+                    dist.Add(delta);
+
+                    // Make sure the result_index is the one
+                    // with the least amount of error
+                    if (dist[idx] < dist[result_index])
+                    {
+                        result_index = (byte)idx;
+                    }
+                }
+            }
+
+            return result_index;
+        }
+
+        float ColorDelta(Color c0, Color c1)
+        {
+            //  Y=0.2126R+0.7152G+0.0722B
+            float r = (c0.R-c1.R);
+            r = r * r;
+            r *= 0.2126f;
+
+            float g = (c0.G-c1.G);
+            g = g * g;
+            g *= 0.7152f;
+
+            float b = (c0.B-c1.B);
+            b = b * b;
+            b *= 0.0722f;
+
+            return r + g + b;
+        }
+
         public Bitmap BitmapFromFrame(int frameNo)
         {
             Bitmap bmp = null;
@@ -733,26 +866,60 @@ namespace wedit
 
                 bmp = new Bitmap(width, height);
 
-                for (int y = 0; y < height; ++y)
+                if (pix.m_mask.Count > 0)
                 {
-                    for (int x = 0; x < width; ++x)
+                    // Use a 16 color sprite + mask
+                    for (int y = 0; y < height; ++y)
                     {
-                        byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
-                        if (0 == (x&1))
+                        for (int x = 0; x < width; ++x)
                         {
-                            px >>= 4;
+                            byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
+                            byte mx = pix.m_mask[(y * pix.m_width) + (x>>1)];
+                            if (0 == (x&1))
+                            {
+                                px >>= 4;
+                                mx >>= 4;
+                            }
+
+                            px &= 0xF;
+                            mx &= 0xF;
+
+                            Color c = pal.colors[px];
+                            
+                            if (0==mx)
+                            {
+                                c = Color.FromArgb(0, c.R, c.G, c.B);
+                            }
+
+                            bmp.SetPixel(x,y,c);
                         }
+                    }
 
-                        px &= 0xF;
-
-                        Color c = pal.colors[px];
-                        
-                        if (0==px)
+                }
+                else
+                {
+                    // 15 Color + Color Index 0 is transparent
+                    for (int y = 0; y < height; ++y)
+                    {
+                        for (int x = 0; x < width; ++x)
                         {
-                            c = Color.FromArgb(0, c.R, c.G, c.B);
-                        }
+                            byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
+                            if (0 == (x&1))
+                            {
+                                px >>= 4;
+                            }
 
-                        bmp.SetPixel(x,y,c);
+                            px &= 0xF;
+
+                            Color c = pal.colors[px];
+                            
+                            if (0==px)
+                            {
+                                c = Color.FromArgb(0, c.R, c.G, c.B);
+                            }
+
+                            bmp.SetPixel(x,y,c);
+                        }
                     }
                 }
 
