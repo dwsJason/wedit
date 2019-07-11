@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(wedit));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSpriteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -73,7 +74,7 @@
             this.zoomOutButton = new System.Windows.Forms.Button();
             this.handCheckBox = new System.Windows.Forms.CheckBox();
             this.selectCheckBox = new System.Windows.Forms.CheckBox();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AddAnimButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -111,6 +112,13 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // loadSpriteFileToolStripMenuItem
             // 
@@ -536,9 +544,9 @@
             // 
             this.animButton.Location = new System.Drawing.Point(242, 1);
             this.animButton.Name = "animButton";
-            this.animButton.Size = new System.Drawing.Size(75, 23);
+            this.animButton.Size = new System.Drawing.Size(60, 23);
             this.animButton.TabIndex = 10;
-            this.animButton.Text = "Anim";
+            this.animButton.Text = "Sel Anim";
             this.animButton.UseVisualStyleBackColor = true;
             this.animButton.Click += new System.EventHandler(this.animButton_Click);
             // 
@@ -599,18 +607,22 @@
             this.selectCheckBox.TabIndex = 16;
             this.selectCheckBox.UseVisualStyleBackColor = true;
             // 
-            // newToolStripMenuItem
+            // AddAnimButton
             // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            this.AddAnimButton.Location = new System.Drawing.Point(174, 1);
+            this.AddAnimButton.Name = "AddAnimButton";
+            this.AddAnimButton.Size = new System.Drawing.Size(65, 23);
+            this.AddAnimButton.TabIndex = 17;
+            this.AddAnimButton.Text = "New Anim";
+            this.AddAnimButton.UseVisualStyleBackColor = true;
+            this.AddAnimButton.Click += new System.EventHandler(this.AddAnimButton_Click);
             // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.AddAnimButton);
             this.Controls.Add(this.selectCheckBox);
             this.Controls.Add(this.handCheckBox);
             this.Controls.Add(this.zoomOutButton);
@@ -702,6 +714,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.Button AddAnimButton;
     }
 }
 

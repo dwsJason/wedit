@@ -991,5 +991,12 @@ namespace wedit
 
             return anim;
         }
+
+        public void AddAnim()
+        {
+            spAnim anim = new spAnim();
+            anim.m_name = "New Anim";
+            m_anims.Add( anim );
+        }
     }
 }

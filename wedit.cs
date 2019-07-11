@@ -788,7 +788,7 @@ namespace wedit
         {
             m_frameNo = 0;
 
-            if ((null != m_spriteFile) && !m_spriteFile.IsEmpty())
+            if ((null != m_spriteFile) /*&& !m_spriteFile.IsEmpty()*/)
             {
                 ImageList images = new ImageList();
                 images.ImageSize = new Size(64, 64);
@@ -1472,6 +1472,17 @@ namespace wedit
             m_bitmap = null;
 
             SpriteFileUpdate();          
+        }
+
+        private void AddAnimButton_Click(object sender, EventArgs e)
+        {
+            // Add a new animation to the list
+            if (null == m_spriteFile)
+                m_spriteFile = new spData();
+
+            m_spriteFile.AddAnim();
+            ShowAnimEditor(false);
+            SpriteFileUpdate();
         }
     }
 }
