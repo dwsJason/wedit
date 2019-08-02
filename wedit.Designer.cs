@@ -33,7 +33,9 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSpriteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveSpriteFileAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importPaletteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.mode = new System.Windows.Forms.ToolStripStatusLabel();
@@ -75,6 +77,7 @@
             this.handCheckBox = new System.Windows.Forms.CheckBox();
             this.selectCheckBox = new System.Windows.Forms.CheckBox();
             this.AddAnimButton = new System.Windows.Forms.Button();
+            this.anchorCheckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -108,7 +111,9 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.loadSpriteFileToolStripMenuItem,
-            this.importFramesToolStripMenuItem});
+            this.saveSpriteFileAsToolStripMenuItem,
+            this.importFramesToolStripMenuItem,
+            this.importPaletteToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -128,12 +133,26 @@
             this.loadSpriteFileToolStripMenuItem.Text = "Load Sprite File";
             this.loadSpriteFileToolStripMenuItem.Click += new System.EventHandler(this.loadSpriteFileToolStripMenuItem_Click);
             // 
+            // saveSpriteFileAsToolStripMenuItem
+            // 
+            this.saveSpriteFileAsToolStripMenuItem.Name = "saveSpriteFileAsToolStripMenuItem";
+            this.saveSpriteFileAsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.saveSpriteFileAsToolStripMenuItem.Text = "Save Sprite File As...";
+            this.saveSpriteFileAsToolStripMenuItem.Click += new System.EventHandler(this.saveSpriteFileAsToolStripMenuItem_Click);
+            // 
             // importFramesToolStripMenuItem
             // 
             this.importFramesToolStripMenuItem.Name = "importFramesToolStripMenuItem";
             this.importFramesToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.importFramesToolStripMenuItem.Text = "Import Frames";
             this.importFramesToolStripMenuItem.Click += new System.EventHandler(this.importFramesToolStripMenuItem_Click);
+            // 
+            // importPaletteToolStripMenuItem
+            // 
+            this.importPaletteToolStripMenuItem.Name = "importPaletteToolStripMenuItem";
+            this.importPaletteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.importPaletteToolStripMenuItem.Text = "Import Palette";
+            this.importPaletteToolStripMenuItem.Click += new System.EventHandler(this.importPaletteToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -287,6 +306,7 @@
             this.cmdListView.FullRowSelect = true;
             this.cmdListView.GridLines = true;
             this.cmdListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.cmdListView.HideSelection = false;
             this.cmdListView.Location = new System.Drawing.Point(0, 66);
             this.cmdListView.MultiSelect = false;
             this.cmdListView.Name = "cmdListView";
@@ -399,6 +419,7 @@
             this.animListView.Cursor = System.Windows.Forms.Cursors.Default;
             this.animListView.FullRowSelect = true;
             this.animListView.GridLines = true;
+            this.animListView.HideSelection = false;
             this.animListView.Location = new System.Drawing.Point(3, 3);
             this.animListView.Name = "animListView";
             this.animListView.ShowGroups = false;
@@ -436,6 +457,7 @@
             this.NameColumn});
             this.objectFramesView.Cursor = System.Windows.Forms.Cursors.Default;
             this.objectFramesView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.objectFramesView.HideSelection = false;
             this.objectFramesView.Location = new System.Drawing.Point(3, 3);
             this.objectFramesView.MultiSelect = false;
             this.objectFramesView.Name = "objectFramesView";
@@ -560,7 +582,7 @@
             // 
             this.zoomInButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("zoomInButton.BackgroundImage")));
             this.zoomInButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.zoomInButton.Location = new System.Drawing.Point(499, 1);
+            this.zoomInButton.Location = new System.Drawing.Point(524, 1);
             this.zoomInButton.Name = "zoomInButton";
             this.zoomInButton.Size = new System.Drawing.Size(25, 25);
             this.zoomInButton.TabIndex = 13;
@@ -571,7 +593,7 @@
             // 
             this.zoomOutButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("zoomOutButton.BackgroundImage")));
             this.zoomOutButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.zoomOutButton.Location = new System.Drawing.Point(524, 1);
+            this.zoomOutButton.Location = new System.Drawing.Point(549, 1);
             this.zoomOutButton.Name = "zoomOutButton";
             this.zoomOutButton.Size = new System.Drawing.Size(25, 25);
             this.zoomOutButton.TabIndex = 14;
@@ -617,11 +639,23 @@
             this.AddAnimButton.UseVisualStyleBackColor = true;
             this.AddAnimButton.Click += new System.EventHandler(this.AddAnimButton_Click);
             // 
+            // anchorCheckBox
+            // 
+            this.anchorCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.anchorCheckBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("anchorCheckBox.BackgroundImage")));
+            this.anchorCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.anchorCheckBox.Location = new System.Drawing.Point(499, 1);
+            this.anchorCheckBox.Name = "anchorCheckBox";
+            this.anchorCheckBox.Size = new System.Drawing.Size(25, 25);
+            this.anchorCheckBox.TabIndex = 18;
+            this.anchorCheckBox.UseVisualStyleBackColor = true;
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.anchorCheckBox);
             this.Controls.Add(this.AddAnimButton);
             this.Controls.Add(this.selectCheckBox);
             this.Controls.Add(this.handCheckBox);
@@ -715,6 +749,9 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.Button AddAnimButton;
+        private System.Windows.Forms.ToolStripMenuItem saveSpriteFileAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importPaletteToolStripMenuItem;
+        private System.Windows.Forms.CheckBox anchorCheckBox;
     }
 }
 

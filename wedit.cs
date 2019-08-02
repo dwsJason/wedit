@@ -23,6 +23,7 @@ namespace wedit
             VIEW,
             ANIM,
             IMPORT_FRAMES,
+            ANCHOR,
             IMPORT_PALETTES,
         };
 
@@ -229,6 +230,7 @@ namespace wedit
             // Setup callbacks for the radio button / toolbar
             handCheckBox.Click += new System.EventHandler(handCheckBox_Pressed);
             selectCheckBox.Click += new System.EventHandler(selectCheckBox_Pressed);
+            anchorCheckBox.Click += new System.EventHandler(anchorCheckBox_Pressed);
         }
 
         //
@@ -272,6 +274,9 @@ namespace wedit
                 case AppMode.IMPORT_FRAMES:
                     modeString = "IMPORT";
                     selectCheckBox_Pressed(null, null);  // Default into Select instead of Pan
+                    break;
+                case AppMode.ANCHOR:
+                    modeString = "ANCHOR";
                     break;
                 case AppMode.IMPORT_PALETTES:
                     modeString = "CLUT IMPORT";
@@ -1418,6 +1423,7 @@ namespace wedit
             // set the editor mode
             handCheckBox.Checked = true;
             selectCheckBox.Checked = false;
+            anchorCheckBox.Checked = false;
             this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
         }
 
@@ -1425,8 +1431,19 @@ namespace wedit
         {
             selectCheckBox.Checked = true;
             handCheckBox.Checked = false;
+            anchorCheckBox.Checked = false;
             this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
         }
+
+        private void anchorCheckBox_Pressed(object sender, EventArgs e)
+        {
+            SetMode(AppMode.ANCHOR);
+            anchorCheckBox.Checked = true;
+            handCheckBox.Checked = false;
+            selectCheckBox.Checked = false;
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
+        }
+
 
         private void zoomInButton_Click(object sender, EventArgs e)
         {
@@ -1483,6 +1500,16 @@ namespace wedit
             m_spriteFile.AddAnim();
             ShowAnimEditor(false);
             SpriteFileUpdate();
+        }
+
+        private void importPaletteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveSpriteFileAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
