@@ -63,6 +63,7 @@
             this.objectFramesView = new BrightIdeasSoftware.ObjectListView();
             this.ImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.pinCheckBox = new System.Windows.Forms.CheckBox();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openSpriteFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.RedButton = new System.Windows.Forms.Button();
@@ -78,6 +79,8 @@
             this.selectCheckBox = new System.Windows.Forms.CheckBox();
             this.AddAnimButton = new System.Windows.Forms.Button();
             this.anchorCheckBox = new System.Windows.Forms.CheckBox();
+            this.openPaletteFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveSpriteFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -479,6 +482,21 @@
             this.NameColumn.IsTileViewColumn = true;
             this.NameColumn.Text = "";
             // 
+            // pinCheckBox
+            // 
+            this.pinCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.pinCheckBox.AutoCheck = false;
+            this.pinCheckBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pinCheckBox.BackgroundImage")));
+            this.pinCheckBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pinCheckBox.FlatAppearance.CheckedBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(228)))), ((int)(((byte)(247)))));
+            this.pinCheckBox.Location = new System.Drawing.Point(599, 1);
+            this.pinCheckBox.Margin = new System.Windows.Forms.Padding(0);
+            this.pinCheckBox.Name = "pinCheckBox";
+            this.pinCheckBox.Size = new System.Drawing.Size(25, 25);
+            this.pinCheckBox.TabIndex = 16;
+            this.pinCheckBox.ThreeState = true;
+            this.pinCheckBox.UseVisualStyleBackColor = true;
+            // 
             // pictureBox
             // 
             this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -650,11 +668,24 @@
             this.anchorCheckBox.TabIndex = 18;
             this.anchorCheckBox.UseVisualStyleBackColor = true;
             // 
+            // openPaletteFileDialog
+            // 
+            this.openPaletteFileDialog.Filter = "pal|*.pal";
+            this.openPaletteFileDialog.RestoreDirectory = true;
+            this.openPaletteFileDialog.Title = "Import Palette";
+            // 
+            // saveSpriteFileDialog
+            // 
+            this.saveSpriteFileDialog.Filter = "Sprite|*.sp";
+            this.saveSpriteFileDialog.RestoreDirectory = true;
+            this.saveSpriteFileDialog.Title = "Save Sprite File";
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.pinCheckBox);
             this.Controls.Add(this.anchorCheckBox);
             this.Controls.Add(this.AddAnimButton);
             this.Controls.Add(this.selectCheckBox);
@@ -752,6 +783,9 @@
         private System.Windows.Forms.ToolStripMenuItem saveSpriteFileAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importPaletteToolStripMenuItem;
         private System.Windows.Forms.CheckBox anchorCheckBox;
+        private System.Windows.Forms.CheckBox pinCheckBox;
+        private System.Windows.Forms.OpenFileDialog openPaletteFileDialog;
+        private System.Windows.Forms.SaveFileDialog saveSpriteFileDialog;
     }
 }
 

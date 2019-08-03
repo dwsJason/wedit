@@ -123,13 +123,24 @@
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pinCheckBox.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EwAACxMBAJqcGAAAAAd0SU1FB+MIAxARC6bsfksAAAD5SURBVFhH7dWxasJQGMXxuBQE38A6KZTulurq
+        4NqxdChdnJz7Dha6VBzEF9BBnVxKfYV2KS4u3aVDJwuCtP2fuEjxikkuBOE78IPccPPdQzIkOIbc4AXT
+        iCa4ROIM8RvTPRIngyJm0NBzlBxuoT0DFOA1b9Dwk3C1OzVoTy9ceY4VsAJWwAqkVqCMMZY4tMAnOjhF
+        ojTwAw1VgWfo3+CKDnzHGnrmCxXEyhlW+MYd9h38Pzk8QiU+sO+tOdOCBoxQj2kOzbhC5PShh31oInIu
+        8IS2Qxcavti6t8sD8vAefWcVeA1XKcQKWAErYAWySLWAco3q5vIoEwR/X46PyugoJVAAAAAASUVORK5C
+        YII=
+</value>
+  </data>
   <metadata name="openSpriteFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>
   <metadata name="openImageFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>413, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="zoomInButton.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -203,20 +214,25 @@
   </data>
   <data name="anchorCheckBox.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfjCAIDEjsNxGdoAAACGklEQVRYR+3XO4wNYRiH
-        8SMRxCUhUbCNBoVWa+OSSDQSWygFLQmNKFQuWYlSXEJoqTZBECTEpaEQtYLoCKFy3Y3b80zmPXmNOWN3
-        z85q9p/8sud8837zfrtn5uw3nUlmCA/xHWO4iy2YlhzHrx72o9WsRzR7g8M4hg/lmNaitVyCTT5jhQNl
-        VmIUHjvtQFt5Cps8Kd79mTj2uHjXUq7DJq8xz4EyC/AeHrvsQFvZBZvoNgaxAY/KMW1Hq7mPaFZ1E61n
-        Ps7B+z8af8EJ5I+l9TxALOC8A21lBw7UeIlYgHdFXY1z+07cXpPh3L7z3xfQK7nRWwemOzMLmFnAlC9g
-        YflzvOlnAX/18vv9B57jIvyvtwpNmcgCPNdueG572Mue3WxGPmF4hysYQDW5rm4BzrkKz5Frgz27OYq6
-        In3ELFSTa+oW4Bzn5rrsCLq5h2rBCE7hLOqSa3t9BM49iRvI9bJnkdmIDWXmxrNph5trm64Bd02eK9fL
-        nvYuCmLQ/Vwucru9DnXJdb0WsAmfkGu9EOO1vTs74VXpwHJUHzy+4RDmICfXVBcwFz4zxHnDQSwrX3vM
-        3kXc1bq5jJxBnqgX2IslMPlYLGAp9uEV8nENI2IvezZmD76ieqKfcAeUx/wrPauMBT//7m860axB0y74
-        X9y6r0bf2Yhr8Gm4rlHm1e0tXFxgU53F2AYfSC/gDm6Vr73otmIRxplO5zfdzzLLEk0VBgAAAABJRU5E
-        rkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EwAACxMBAJqcGAAAAAd0SU1FB+MIAgMSOw3EZ2gAAAIaSURBVFhH7dc7jA1hGIfxIxHEJSFRsI0GhVZr
+        45JINBJbKAUtCY0oVC5ZiVJcQmipNkEQJMSloRC1gugIoXLdjdvzTOY9eY05Y3fPzmr2n/yy53zzfvN+
+        u2fm7DedSWYID/EdY7iLLZiWHMevHvaj1axHNHuDwziGD+WY1qK1XIJNPmOFA2VWYhQeO+1AW3kKmzwp
+        3v2ZOPa4eNdSrsMmrzHPgTIL8B4eu+xAW9kFm+g2BrEBj8oxbUeruY9oVnUTrWc+zsH7Pxp/wQnkj6X1
+        PEAs4LwDbWUHDtR4iViAd0VdjXP7Ttxek+HcvvPfF9ArudFbB6Y7MwuYWcCUL2Bh+XO86WcBf/Xy+/0H
+        nuMi/K+3Ck2ZyAI81254bnvYy57dbEY+YXiHKxhANbmubgHOuQrPkWuDPbs5iroifcQsVJNr6hbgHOfm
+        uuwIurmHasEITuEs6pJre30Ezj2JG8j1smeR2YgNZebGs2mHm2ubrgF3TZ4r18ue9i4KYtD9XC5yu70O
+        dcl1vRawCZ+Qa70Q47W9OzvhVenAclQfPL7hEOYgJ9dUFzAXPjPEecNBLCtfe8zeRdzVurmMnEGeqBfY
+        iyUw+VgsYCn24RXycQ0jYi97NmYPvqJ6op9wB5TH/Cs9q4wFP//ubzrRrEHTLvhf3LqvRt/ZiGvwabiu
+        UebV7S1cXGBTncXYBh9IL+AObpWvvei2YhHGmU7nN93PMssSTRUGAAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="openPaletteFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>580, 17</value>
+  </metadata>
+  <metadata name="saveSpriteFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>751, 17</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEA/foAAAEAIAAGbAAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAD9AAAA+ggGAAAAajBBRAAAIABJ

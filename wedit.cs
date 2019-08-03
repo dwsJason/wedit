@@ -231,6 +231,7 @@ namespace wedit
             handCheckBox.Click += new System.EventHandler(handCheckBox_Pressed);
             selectCheckBox.Click += new System.EventHandler(selectCheckBox_Pressed);
             anchorCheckBox.Click += new System.EventHandler(anchorCheckBox_Pressed);
+            pinCheckBox.Click += new System.EventHandler(pinCheckBox_Pressed);
         }
 
         //
@@ -1444,6 +1445,36 @@ namespace wedit
             this.pictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
         }
 
+        private void pinCheckBox_Pressed(object sender, EventArgs e)
+        {
+            Color backColor = anchorCheckBox.BackColor;
+            Color checkedColor = Color.FromArgb(255, 204, 228, 247);
+            Color doubleColor  = Color.FromArgb(255, 152, 228, 183);
+
+            //pinCheckBox.FlatAppearance.CheckedBackColor = Color.Red;
+
+            switch (pinCheckBox.CheckState)
+            {
+            case CheckState.Checked:
+                //pinCheckBox.Checked = true;
+                pinCheckBox.CheckState = CheckState.Indeterminate;
+                pinCheckBox.BackColor = doubleColor;
+                //pinCheckBox.FlatAppearance.CheckedBackColor = Color.Red;
+                break;
+            case CheckState.Indeterminate:
+                pinCheckBox.CheckState = CheckState.Unchecked;
+                pinCheckBox.BackColor = backColor;
+                //pinCheckBox.FlatAppearance.CheckedBackColor = checkedColor;
+                break;
+            case CheckState.Unchecked:
+                pinCheckBox.CheckState = CheckState.Checked;
+                pinCheckBox.BackColor = checkedColor;
+                //pinCheckBox.FlatAppearance.CheckedBackColor = checkedColor;
+                break;
+            default:
+                break;
+            }
+        }
 
         private void zoomInButton_Click(object sender, EventArgs e)
         {
