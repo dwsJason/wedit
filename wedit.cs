@@ -1535,12 +1535,30 @@ namespace wedit
 
         private void importPaletteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (null == m_spriteFile)
+                newToolStripMenuItem_Click(null, null);
 
+            DialogResult result = openPaletteFileDialog.ShowDialog();
+
+            if (DialogResult.OK == result)
+            {
+                //$$JGA TODO
+                // Read in the palette, file, and replace the initial palette in the m_spriteFile
+
+                PaintSprite();
+            }
         }
 
         private void saveSpriteFileAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DialogResult result = saveSpriteFileDialog.ShowDialog();
 
+            if (DialogResult.OK == result)
+            {
+                //$$JGA TODO
+                // Save the sprite file
+
+            }
         }
     }
 }
