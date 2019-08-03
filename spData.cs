@@ -418,6 +418,38 @@ namespace wedit
                         }
                         break;
 
+                       // SPRITE PIXEL MASK
+                    case 0x4D505353: // 'SSPM'
+                        {
+                            // 2 byte header
+                            // w frameNo
+                            // mask pixels
+
+                            UInt16 frameNo = b.ReadUInt16();
+                            length -= 2;
+
+                            Console.WriteLine("     Mask frameNo {0}",
+                                              frameNo
+                                              );
+
+                            // Read in the pixels
+                            List<byte> mask = new List<byte>();
+
+                            // pixel data (w x h)
+                            while (0 != length)
+                            {
+                                mask.Add(b.ReadByte());
+                                length--;
+                            }
+
+                            // Create a pixel frame
+                            // if the frame doesn't exist, the file
+                            // is broken, so let it crash
+                            spPixels pixelFrame = m_frames[ frameNo ];
+                            pixelFrame.m_mask = mask;
+                        }
+                        break;
+
 
                     case 0x4D4E4153:  // 'SANM'
                                       /* 
@@ -548,6 +580,7 @@ namespace wedit
                                         u8 = b.ReadByte(); length--;
                                         Console.WriteLine("({0})  GotoSeq {1}", lineNo, u8);
                                         animCmd.m_command = (int)spAnimCommand.cmd.GotoSeq;
+                                        animCmd.m_arg = u8;
                                         break;
                                     case 4:
                                         u8 = b.ReadByte(); length--;
@@ -1017,9 +1050,10 @@ namespace wedit
 
                 switch (fileLength)
                 {
+                    // 48 byte palettes
                 case 48:
                 case 768:
-                    // Read in first 16 colors, R8G8B8
+                    // Read in first 16 colors, R8G8B8, ProMotion .PAL files
                     for (int idx = 0; idx < 16; ++idx)
                     {
                         red   = b.ReadByte();
@@ -1030,6 +1064,8 @@ namespace wedit
                     }
 
                     break;
+
+                     // 64 byte palettes
                 case 64:
                 case 1024:
                     // Read in first 16 colors, R8G8B8A8
@@ -1065,5 +1101,272 @@ namespace wedit
 
             }
         }
+
+        public void Save(string pathName)
+        {
+            Console.WriteLine("save: {0}", pathName);
+            uint length = 0;
+
+            using (BinaryWriter b = new BinaryWriter(
+                File.Open(pathName, FileMode.Create)))
+            {
+                // File Header
+                b.Write((uint)0x41454853); // 'SHEA'
+                b.Write((ushort)4); // hard coded header length 4 bytes
+                b.Write((ushort)0x0100); // version 0
+                b.Write((ushort)0x0101); // version 1
+
+                // Palettes
+                //$$JGA for now Hardcoded to a single palette
+                b.Write((uint)0x45505353);      // 'SSPE'
+                b.Write((ushort)(1 + 48 + 1));  // length
+
+                spPalette pal = m_palettes[0];
+                b.Write((byte) 0);  // palette #0
+
+                for (int idx = 0; idx < 16; ++idx)
+                {
+                    b.Write((byte)pal.colors[idx].R);
+                    b.Write((byte)pal.colors[idx].G);
+                    b.Write((byte)pal.colors[idx].B);
+                }
+
+                b.Write((byte)0xFF); // palette #255, done
+
+                // Pixels
+                for (int frameNo = 0; frameNo < m_frames.Count; ++frameNo)
+                {
+                    // For Each Frame
+                    spPixels pixelFrame = m_frames[ frameNo ];
+
+                    int width  = pixelFrame.m_width;
+                    int height = pixelFrame.m_height;
+
+                    b.Write((uint)0x50505353);  // 'SSPP'
+                    length = 10;                // header
+                    length += (uint)(width * height); // pixel byte length
+                    b.Write((ushort) length);   // length
+
+                    b.Write((ushort) 0);    // discards
+
+                    b.Write((byte)pixelFrame.m_width);  // width
+                    b.Write((byte)pixelFrame.m_height); // height
+                    
+                    b.Write((byte)0); // discard
+
+                    b.Write((short)pixelFrame.m_offset_x); // offset X
+                    b.Write((short)pixelFrame.m_offset_y); // offset Y
+
+                    b.Write((byte)0); // discard
+
+                    // write the pixels
+                    b.Write(pixelFrame.m_pixels.ToArray());
+                }
+
+                // Masks
+                for (int frameNo = 0; frameNo < m_frames.Count; ++frameNo)
+                {
+                    // For Each Frame
+                    spPixels pixelFrame = m_frames[ frameNo ];
+
+                    if (null == pixelFrame.m_mask)
+                        continue;
+
+                    int width  = pixelFrame.m_width;
+                    int height = pixelFrame.m_height;
+
+                    b.Write((uint)0x4D505353);  // 'SSPM'
+                    length = 2;                 // header size
+                    length += (uint)(width * height); // pixel byte length
+                    b.Write((ushort) length);   // length
+
+                    // write the frame #
+                    b.Write((ushort)frameNo);
+
+                    // write the pixels
+                    b.Write(pixelFrame.m_mask.ToArray());
+                }
+
+                // Animations
+                for (int animNo = 0; animNo < m_anims.Count; ++animNo)
+                {
+                    spAnim anim = m_anims[ animNo ];
+
+                    // Export Wedit compatible Anim
+                    b.Write((uint)0x4D4E4153); // 'SANM'
+                    long position = b.Seek(0, System.IO.SeekOrigin.Current);  // Get current position in the Stream
+                    b.Write((uint)0); // placeholder for len16, len16
+
+                    for (int cmdIdx = 0; cmdIdx < anim.m_commands.Count; ++cmdIdx)
+                    {
+                        // Write out the commands
+                        spAnimCommand animCmd = anim.m_commands[ cmdIdx ];
+
+                        int lineNo = cmdIdx + 1;
+
+                        if (animCmd.m_frameNo < 0)
+                        {
+                            byte u8;
+                            ushort u16;
+                            // It's a command
+                            b.Write((byte)0xFF); // command
+                            b.Write((byte)animCmd.m_command);
+
+                            switch ((spAnimCommand.cmd)animCmd.m_command)
+                            {
+                            case spAnimCommand.cmd.End:
+                                Console.WriteLine("({0})  End", lineNo);
+                                break;
+                            case spAnimCommand.cmd.Loop:
+                                Console.WriteLine("({0})  Loop",lineNo);
+                                break;
+                            case spAnimCommand.cmd.Goto:
+                                u16 = (ushort) animCmd.m_arg;
+                                Console.WriteLine("({0})  Goto {1}", lineNo, u16);
+                                b.Write((ushort)u16);
+                                break;
+                            case spAnimCommand.cmd.GotoSeq:
+                                u8 = (byte) animCmd.m_arg;
+                                Console.WriteLine("({0})  GotoSeq {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.Pause:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  Pause {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.SetRate:
+                                u16 = (ushort)animCmd.m_arg;
+                                Console.WriteLine("({0})  SetRate ${1:X4}", lineNo, u16);
+                                b.Write((ushort)u16);
+                                break;
+                            case spAnimCommand.cmd.SetSpeed:
+                                u16 = (ushort)animCmd.m_arg;
+                                Console.WriteLine("({0})  SetSpeed ${1:X4}", lineNo, u16);
+                                b.Write((ushort)u16);
+                                break;
+                            case spAnimCommand.cmd.MultiOp:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  MultiOp {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.Delete:
+                                Console.WriteLine("({0})  Delete", lineNo);
+                                break;
+                            case spAnimCommand.cmd.SetFlag:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  SetFlag {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.Sound:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  Sound {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.HFlip:
+                                Console.WriteLine("({0})  HFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.VFlip:
+                                Console.WriteLine("({0})  VFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.Nop:
+                                Console.WriteLine("({0})  Nop", lineNo);
+                                break;
+                            case spAnimCommand.cmd.Process:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  Process {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.ClearFlag:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  ClearFlag {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.GotoLast:
+                                Console.WriteLine("({0})  GotoLast", lineNo);
+                                break;
+                            case spAnimCommand.cmd.Blank:
+                                Console.WriteLine("({0})  Blank", lineNo);
+                                break;
+                            case spAnimCommand.cmd.RndPause:
+                                {
+                                    u16 = (ushort)animCmd.m_arg;
+                                    byte min = (byte)(u16 & 0xFF);
+                                    byte max = (byte)(u16 >> 8);
+                                    Console.WriteLine("({0})  RndPause {1},{2}", lineNo, min, max);
+                                    b.Write((ushort)u16);
+                                }
+                                break;
+                            case spAnimCommand.cmd.SetHFlip:
+                                Console.WriteLine("({0})  Set HFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.ClrHFlip:
+                                Console.WriteLine("({0})  Clr HFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.SetVFlip:
+                                Console.WriteLine("({0})  Set VFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.ClrVFlip:
+                                Console.WriteLine("({0})  Clr VFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.HVFlip:
+                                Console.WriteLine("({0})  HVFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.SetHVFlip:
+                                Console.WriteLine("({0})  Set HVFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.ClrHVFlip:
+                                Console.WriteLine("({0})  Clr HVFlip", lineNo);
+                                break;
+                            case spAnimCommand.cmd.ExtSprite:
+                                u16 = (ushort)animCmd.m_arg;
+                                Console.WriteLine("({0})  ExtSprite {1}", lineNo, u16);
+                                b.Write((ushort)u16);
+                                break;
+                            case spAnimCommand.cmd.Brk:
+                                Console.WriteLine("({0})  Brk", lineNo);
+                                break;
+                            case spAnimCommand.cmd.OnBrk:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  OnBrk {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+                            case spAnimCommand.cmd.DynSound:
+                                u8 = (byte)animCmd.m_arg;
+                                Console.WriteLine("({0})  DynSound {1}", lineNo, u8);
+                                b.Write((byte)u8);
+                                break;
+
+                            default:
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("({0})  Frame {1}", lineNo, (byte)animCmd.m_frameNo);
+                            // It's an 8 bit frameNo
+                            b.Write((byte)animCmd.m_frameNo);
+                        }
+
+
+                    }
+
+                    // Back patch the length
+                    long lastpos = b.Seek((int)position, System.IO.SeekOrigin.Begin);
+
+                    b.Write((ushort)lastpos - position);
+                    b.Write((ushort)lastpos - position);
+
+                    b.Seek((int)lastpos, System.IO.SeekOrigin.Begin);
+
+                    // Export Extra Anim Data that I want
+
+                }
+
+                // Terminate File
+                b.Write((uint)0xFFFFFFFF);
+            }
+        }
+
     }
 }

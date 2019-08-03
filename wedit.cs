@@ -1555,9 +1555,8 @@ namespace wedit
 
             if (DialogResult.OK == result)
             {
-                //$$JGA TODO
                 // Save the sprite file
-
+                m_spriteFile.Save(saveSpriteFileDialog.FileName);
             }
         }
     }
