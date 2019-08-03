@@ -1169,7 +1169,7 @@ namespace wedit
                     // For Each Frame
                     spPixels pixelFrame = m_frames[ frameNo ];
 
-                    if (null == pixelFrame.m_mask)
+                    if (0 == pixelFrame.m_mask.Count)
                         continue;
 
                     int width  = pixelFrame.m_width;
@@ -1347,19 +1347,39 @@ namespace wedit
                             // It's an 8 bit frameNo
                             b.Write((byte)animCmd.m_frameNo);
                         }
-
-
                     }
 
                     // Back patch the length
-                    long lastpos = b.Seek((int)position, System.IO.SeekOrigin.Begin);
+                    long lastpos = b.Seek(0, System.IO.SeekOrigin.Current);  // Get current position in the Stream
+                    b.Seek((int)position, System.IO.SeekOrigin.Begin);
 
-                    b.Write((ushort)lastpos - position);
-                    b.Write((ushort)lastpos - position);
+                    ushort delta = (ushort)(lastpos - position);
+                    delta -= 2;
+
+                    b.Write((ushort)delta);
+                    b.Write((ushort)delta);
 
                     b.Seek((int)lastpos, System.IO.SeekOrigin.Begin);
 
                     // Export Extra Anim Data that I want
+
+                    if (anim.m_name.Count() > 0)
+                    {
+                        // Save out the extra anim data
+                        b.Write((uint)0x4E4E4153); // 'SANN'
+
+                        length = (ushort)anim.m_name.Count();
+                        length+=2;
+
+                        b.Write((ushort)length);
+
+                        b.Write((ushort)animNo);
+
+                        for (int idx = 0; idx < anim.m_name.Count(); ++idx)
+                        {
+                            b.Write((byte)anim.m_name[idx]);
+                        }
+                    }
 
                 }
 
