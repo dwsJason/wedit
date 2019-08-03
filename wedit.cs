@@ -1542,8 +1542,8 @@ namespace wedit
 
             if (DialogResult.OK == result)
             {
-                //$$JGA TODO
                 // Read in the palette, file, and replace the initial palette in the m_spriteFile
+                m_spriteFile.ImportPalette(openPaletteFileDialog.FileName);
 
                 PaintSprite();
             }

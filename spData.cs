@@ -998,5 +998,72 @@ namespace wedit
             anim.m_name = "New Anim";
             m_anims.Add( anim );
         }
+
+        public void ImportPalette(string pathName)
+        {
+            Console.WriteLine("import: {0}", pathName);
+
+            using (BinaryReader b = new BinaryReader(
+                File.Open(pathName, FileMode.Open)))
+            {
+                // Use BaseStream.
+                long fileLength = b.BaseStream.Length;
+
+                spPalette pal = new spPalette();
+                byte red;
+                byte green;
+                byte blue;
+                byte alpha;
+
+                switch (fileLength)
+                {
+                case 48:
+                case 768:
+                    // Read in first 16 colors, R8G8B8
+                    for (int idx = 0; idx < 16; ++idx)
+                    {
+                        red   = b.ReadByte();
+                        green = b.ReadByte();
+                        blue  = b.ReadByte();
+
+                        pal.colors.Add( Color.FromArgb(255,red,green,blue) );
+                    }
+
+                    break;
+                case 64:
+                case 1024:
+                    // Read in first 16 colors, R8G8B8A8
+                    for (int idx = 0; idx < 16; ++idx)
+                    {
+                        red   = b.ReadByte();
+                        green = b.ReadByte();
+                        blue  = b.ReadByte();
+                        alpha = b.ReadByte();
+
+                        pal.colors.Add( Color.FromArgb(alpha,red,green,blue) );
+                    }
+
+                    break;
+                default:
+                    Console.WriteLine("Invalid PAL File");
+                    break;
+                }
+
+                // If it looks like a good palette, replace
+                // the existing one
+                if (16 == pal.colors.Count)
+                {
+                    if (m_palettes.Count > 0)
+                    {
+                        m_palettes[0] = pal;
+                    }
+                    else
+                    {
+                        m_palettes.Add( pal );
+                    }
+                }
+
+            }
+        }
     }
 }
