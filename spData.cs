@@ -1219,6 +1219,9 @@ namespace wedit
                     long position = b.Seek(0, System.IO.SeekOrigin.Current);  // Get current position in the Stream
                     b.Write((uint)0); // placeholder for len16, len16
 
+                    // This for sanity?
+                    b.Write((ushort)anim.m_commands.Count); // number of lines
+
                     for (int cmdIdx = 0; cmdIdx < anim.m_commands.Count; ++cmdIdx)
                     {
                         // Write out the commands
