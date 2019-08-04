@@ -217,6 +217,9 @@ namespace wedit
             this.animListView.SelectionChanged += new System.EventHandler(OnAnimSelectionChanged);
             // Animation DoubleClick
             animListView.DoubleClick += new System.EventHandler(OnAnimDoubleClicked);
+            // An item changed in the anim list
+            //animListView.ItemsChanged += new System.EventHandler(OnAnimListChanged);
+            animListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(OnAnimListChanged);
 
             // Animation Editor Events
             cmdListView.SelectionChanged += new System.EventHandler(OnCommandSelectionChanged);
@@ -339,6 +342,7 @@ namespace wedit
             {
                 ShowAnimEditor(true);
                 Console.WriteLine("Double Clicked {0} {1}", ae.m_animNo, ae.m_name);
+                m_spriteFile.SetAnimName(ae.m_animNo, ae.m_name);
 
                 m_animNo = ae.m_animNo;
                 PaintAnimEditor();
@@ -352,6 +356,17 @@ namespace wedit
             if (null != ae)
             {
                 Console.WriteLine("{0} {1}", ae.m_animNo, ae.m_name);
+            }
+        }
+
+        void OnAnimListChanged(object sender, System.EventArgs e)
+        {
+            AnimEntry ae = animListView.SelectedObject as AnimEntry;
+
+            if (null != ae)
+            {
+                Console.WriteLine("OnAnimListChanged {0} {1}", ae.m_animNo, ae.m_name);
+                m_spriteFile.SetAnimName(ae.m_animNo, ae.m_name);
             }
         }
 

@@ -736,6 +736,28 @@ namespace wedit
                         }
                         break;
 
+                        // Animation Name
+                    case 0x4E4E4153:  // 'SANN'
+                        {
+                            UInt16 animNom = b.ReadUInt16();
+
+                            spAnim anim = m_anims[ animNom ];
+
+                            string name = "";
+
+                            length -= 2;
+
+                            while (length > 0)
+                            {
+                                length--;
+                                byte c = b.ReadByte();
+                                name += Convert.ToChar(c);
+                            }
+
+                            anim.m_name = name;
+                        }
+                        break;
+
                     default:
                         {
                             // Skip the Chunk, since we don't know what it is
@@ -1385,6 +1407,15 @@ namespace wedit
 
                 // Terminate File
                 b.Write((uint)0xFFFFFFFF);
+            }
+        }
+
+        public void SetAnimName(int animNo, string animName)
+        {
+            if ((animNo >= 0) &&
+                (animNo < m_anims.Count))
+            {
+                m_anims[ animNo ].m_name = animName;
             }
         }
 
