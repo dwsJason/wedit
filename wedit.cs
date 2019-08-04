@@ -218,11 +218,12 @@ namespace wedit
             // Animation DoubleClick
             animListView.DoubleClick += new System.EventHandler(OnAnimDoubleClicked);
             // An item changed in the anim list
-            //animListView.ItemsChanged += new System.EventHandler(OnAnimListChanged);
             animListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(OnAnimListChanged);
 
             // Animation Editor Events
             cmdListView.SelectionChanged += new System.EventHandler(OnCommandSelectionChanged);
+            // A Cell was edited in the cmdListView
+            cmdListView.CellEditFinished += new BrightIdeasSoftware.CellEditEventHandler(OnCmdListCellEdited);
 
             m_animTimer.Tick += new EventHandler(animTimerEventProcessor);
             // Sets the timer interval to 5 seconds.
@@ -367,6 +368,22 @@ namespace wedit
             {
                 Console.WriteLine("OnAnimListChanged {0} {1}", ae.m_animNo, ae.m_name);
                 m_spriteFile.SetAnimName(ae.m_animNo, ae.m_name);
+            }
+        }
+
+        // Part of the current animation command list
+        // has been edited, we need to reflect the changes
+        // back into the spData
+        void OnCmdListCellEdited(object sender, System.EventArgs e)
+        {
+            AnimEditorEntry aee = cmdListView.SelectedObject as AnimEditorEntry;
+
+            if (null != aee)
+            {
+                Console.WriteLine("OnCmdListCellEdited {0} {1} {2}",
+                                  aee.m_lineNo,
+                                  aee.m_cmd,
+                                  aee.m_arg);
             }
         }
 
