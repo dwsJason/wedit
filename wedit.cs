@@ -74,6 +74,8 @@ namespace wedit
                 Brk,
                 OnBrk,
                 DynSound,
+
+                _new_
             };
 
             public static bool[] delay =
@@ -329,6 +331,14 @@ namespace wedit
 
                         lineNo++;
                     }
+
+                    // Add an extra "null" entry
+                    AnimEditorEntry last = new AnimEditorEntry();
+                    last.m_lineNo = lineNo;
+                    last.m_cmd = AnimEditorEntry.cmd._new_;
+                    last.m_arg = "";
+                    last.m_image = 0;
+                    m_anim.Add(last);
                 }
 
                 cmdListView.SetObjects(m_anim);
@@ -380,10 +390,46 @@ namespace wedit
 
             if (null != aee)
             {
+                spAnim anim = m_spriteFile.GetAnim(m_animNo);
+
                 Console.WriteLine("OnCmdListCellEdited {0} {1} {2}",
                                   aee.m_lineNo,
                                   aee.m_cmd,
                                   aee.m_arg);
+
+                spAnimCommand sac = null;
+
+                bool bInsert = false;
+
+                if (aee.m_lineNo > anim.m_commands.Count)
+                {
+                    sac = new spAnimCommand();
+                    anim.m_commands.Add( sac );
+                    bInsert = true;
+                }
+                else
+                {
+                    sac = anim.m_commands[ aee.m_lineNo - 1 ];
+                }
+
+                if (AnimEditorEntry.cmd.Sprite == aee.m_cmd)
+                {
+                    sac.m_frameNo = 0;
+                    Int32.TryParse(aee.m_arg, out sac.m_frameNo);
+                }
+                else
+                {
+                    sac.m_frameNo = -1;
+                    sac.m_command = ((int)aee.m_cmd) - 1;
+                    sac.m_arg = 0;
+                    Int32.TryParse(aee.m_arg, out sac.m_arg);
+                }
+
+                if (bInsert)
+                {
+                    PaintAnimEditor();
+                }
+
             }
         }
 
@@ -504,6 +550,43 @@ namespace wedit
         void Wedit_KeyDown(object obj, KeyEventArgs e)
         {
             Console.WriteLine("KeyDown: {0}", e.KeyCode);
+
+            switch (e.KeyCode)
+            {
+            case Keys.NumPad4:
+                {
+                    m_frameNo -= 1;
+                    if (m_frameNo < 0)
+                    {
+                        m_frameNo = 0;
+                    }
+                    PaintSprite();
+                    e.Handled = true;
+                }
+                break;
+
+            case Keys.NumPad6:
+                {
+
+                    if (null != m_spriteFile)
+                    {
+                        int numFrames = m_spriteFile.NumFrames();
+                        if (numFrames > 0) {
+                            m_frameNo++;
+                            if (m_frameNo >= numFrames)
+                            {
+                                m_frameNo = numFrames-1;
+                            }
+                        }
+                    }
+                    PaintSprite();
+                    e.Handled = true;
+                }
+                break;
+
+            default:
+                    break;
+            }
         }
         // Keyup Handler
         void Wedit_KeyUp(object obj, KeyEventArgs e)
@@ -906,35 +989,6 @@ namespace wedit
 
             switch (e.KeyChar)
             {
-                case (char)'4':
-                //case (char)Keys.NumPad4:
-                //case (char)Keys.Left:
-                    m_frameNo -= 1;
-                    if (m_frameNo < 0)
-                    {
-                        m_frameNo = 0;
-                    }
-                    PaintSprite();
-                    e.Handled = true;
-                    break;
-                case (char)'6':
-                //case (char)Keys.NumPad6:
-                //case (char)Keys.Right:
-
-                    if (null != m_spriteFile)
-                    {
-                        int numFrames = m_spriteFile.NumFrames();
-                        if (numFrames > 0) {
-                            m_frameNo++;
-                            if (m_frameNo >= numFrames)
-                            {
-                                m_frameNo = numFrames-1;
-                            }
-                        }
-                    }
-                    PaintSprite();
-                    e.Handled = true;
-                    break;
                 case (char)'-':
                     //case (char)Keys.Subtract:
                     zoomOutButton_Click(null, null);
