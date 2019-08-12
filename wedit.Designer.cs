@@ -63,8 +63,8 @@
             this.objectFramesView = new BrightIdeasSoftware.ObjectListView();
             this.ImageColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.NameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.pinCheckBox = new System.Windows.Forms.CheckBox();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.pinCheckBox = new System.Windows.Forms.CheckBox();
             this.openSpriteFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.RedButton = new System.Windows.Forms.Button();
             this.GreenButton = new System.Windows.Forms.Button();
@@ -81,6 +81,7 @@
             this.anchorCheckBox = new System.Windows.Forms.CheckBox();
             this.openPaletteFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveSpriteFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.centerButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -482,6 +483,18 @@
             this.NameColumn.IsTileViewColumn = true;
             this.NameColumn.Text = "";
             // 
+            // pictureBox
+            // 
+            this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(465, 369);
+            this.pictureBox.TabIndex = 0;
+            this.pictureBox.TabStop = false;
+            // 
             // pinCheckBox
             // 
             this.pinCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
@@ -497,18 +510,6 @@
             this.pinCheckBox.ThreeState = true;
             this.pinCheckBox.UseVisualStyleBackColor = true;
             // 
-            // pictureBox
-            // 
-            this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(465, 369);
-            this.pictureBox.TabIndex = 0;
-            this.pictureBox.TabStop = false;
-            // 
             // openSpriteFileDialog
             // 
             this.openSpriteFileDialog.Filter = "Sprite|*.sp";
@@ -521,7 +522,7 @@
             this.RedButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(15)))), ((int)(((byte)(16)))));
             this.RedButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.RedButton.ForeColor = System.Drawing.Color.Snow;
-            this.RedButton.Location = new System.Drawing.Point(328, 1);
+            this.RedButton.Location = new System.Drawing.Point(310, 1);
             this.RedButton.Name = "RedButton";
             this.RedButton.Size = new System.Drawing.Size(19, 23);
             this.RedButton.TabIndex = 5;
@@ -534,7 +535,7 @@
             this.GreenButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(128)))), ((int)(((byte)(34)))));
             this.GreenButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.GreenButton.ForeColor = System.Drawing.Color.Snow;
-            this.GreenButton.Location = new System.Drawing.Point(348, 1);
+            this.GreenButton.Location = new System.Drawing.Point(330, 1);
             this.GreenButton.Name = "GreenButton";
             this.GreenButton.Size = new System.Drawing.Size(19, 23);
             this.GreenButton.TabIndex = 6;
@@ -547,7 +548,7 @@
             this.BlueButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(110)))), ((int)(((byte)(169)))));
             this.BlueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BlueButton.ForeColor = System.Drawing.Color.Snow;
-            this.BlueButton.Location = new System.Drawing.Point(368, 1);
+            this.BlueButton.Location = new System.Drawing.Point(350, 1);
             this.BlueButton.Name = "BlueButton";
             this.BlueButton.Size = new System.Drawing.Size(19, 23);
             this.BlueButton.TabIndex = 7;
@@ -559,7 +560,7 @@
             // 
             this.WhiteButton.BackColor = System.Drawing.Color.Snow;
             this.WhiteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.WhiteButton.Location = new System.Drawing.Point(408, 1);
+            this.WhiteButton.Location = new System.Drawing.Point(390, 1);
             this.WhiteButton.Name = "WhiteButton";
             this.WhiteButton.Size = new System.Drawing.Size(19, 23);
             this.WhiteButton.TabIndex = 8;
@@ -572,7 +573,7 @@
             this.PurpleButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(64)))), ((int)(((byte)(128)))));
             this.PurpleButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PurpleButton.ForeColor = System.Drawing.Color.Snow;
-            this.PurpleButton.Location = new System.Drawing.Point(388, 1);
+            this.PurpleButton.Location = new System.Drawing.Point(370, 1);
             this.PurpleButton.Name = "PurpleButton";
             this.PurpleButton.Size = new System.Drawing.Size(19, 23);
             this.PurpleButton.TabIndex = 9;
@@ -680,11 +681,23 @@
             this.saveSpriteFileDialog.RestoreDirectory = true;
             this.saveSpriteFileDialog.Title = "Save Sprite File";
             // 
+            // centerButton
+            // 
+            this.centerButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("centerButton.BackgroundImage")));
+            this.centerButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.centerButton.Location = new System.Drawing.Point(424, 1);
+            this.centerButton.Name = "centerButton";
+            this.centerButton.Size = new System.Drawing.Size(25, 25);
+            this.centerButton.TabIndex = 19;
+            this.centerButton.UseVisualStyleBackColor = true;
+            this.centerButton.Click += new System.EventHandler(this.centerButton_Click);
+            // 
             // wedit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 423);
+            this.Controls.Add(this.centerButton);
             this.Controls.Add(this.pinCheckBox);
             this.Controls.Add(this.anchorCheckBox);
             this.Controls.Add(this.AddAnimButton);
@@ -786,6 +799,7 @@
         private System.Windows.Forms.CheckBox pinCheckBox;
         private System.Windows.Forms.OpenFileDialog openPaletteFileDialog;
         private System.Windows.Forms.SaveFileDialog saveSpriteFileDialog;
+        private System.Windows.Forms.Button centerButton;
     }
 }
 

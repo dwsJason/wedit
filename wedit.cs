@@ -142,6 +142,7 @@ namespace wedit
 
         // Sprite Frame Render Info
         Bitmap m_bitmap = null;
+        int    m_bitmapFrameNo = -1;
         int    m_offset_x = 0;
         int    m_offset_y = 0;
         int    m_zoom = 1;  // pow2 zoom
@@ -149,6 +150,9 @@ namespace wedit
         // Grid Canvas Render Options
         int m_canvas_offset_x = 0;
         int m_canvas_offset_y = 0;
+        // Anchor temp variables for panner
+        int m_canvas_offset_anchor_x = 0;
+        int m_canvas_offset_anchor_y = 0;
 
         // Mouse Position
         int m_canvas_mouse_x = 0;
@@ -479,6 +483,8 @@ namespace wedit
                     // On mouse down, set the anchor
                     m_canvas_mouse_anchor_x = e.X;
                     m_canvas_mouse_anchor_y = e.Y;
+                    m_canvas_offset_anchor_x = m_canvas_offset_x;
+                    m_canvas_offset_anchor_y = m_canvas_offset_y;
                 }
                 else
                 {
@@ -499,12 +505,13 @@ namespace wedit
                 {
                 case AppMode.VIEW:
                     {
-                        // Cheap-O recenter the origin based on mouse position
-                        int cx = width / 2;
-                        int cy = height / 2;
+                        int dx = m_canvas_mouse_x - m_canvas_mouse_anchor_x;
+                        int dy = m_canvas_mouse_y - m_canvas_mouse_anchor_y;
 
-                        m_canvas_offset_x = e.X - cx;
-                        m_canvas_offset_y = e.Y - cy;
+                        //MouseXYToImportXY(ref dx, ref dy);
+
+                        m_canvas_offset_x = m_canvas_offset_anchor_x + dx;
+                        m_canvas_offset_y = m_canvas_offset_anchor_y + dy;
 
                         PaintSprite();
                         break;
@@ -513,6 +520,34 @@ namespace wedit
                     {
                         break;
                     }
+
+                case AppMode.ANCHOR:
+                    {
+                        // Move the Anchor on the displayed Frame
+                        if (null != m_spriteFile)
+                        {
+                            spPixels pix = m_spriteFile.GetFrame(m_frameNo);
+
+                            if (null != pix)
+                            {
+                                m_offset_x = -pix.m_offset_x;
+                                m_offset_y = -pix.m_offset_y;
+
+                                int dx = m_canvas_mouse_x - m_canvas_mouse_anchor_x;
+                                int dy = m_canvas_mouse_y - m_canvas_mouse_anchor_y;
+
+                                MouseXYToImportXY(ref dx, ref dy);
+
+                                m_offset_x += dx;
+                                m_offset_y += dy;
+
+                                PaintSprite();
+                            }
+
+                        }
+
+                    }
+                    break;
 
                 default:
                     break;
@@ -530,8 +565,23 @@ namespace wedit
                                     m_canvas_mouse_anchor_y,
                                     m_canvas_mouse_x,
                                     m_canvas_mouse_y);
-                        break;
                     }
+                    break;
+                case AppMode.ANCHOR:
+                    {
+                        // Commit the change
+                        if (null != m_spriteFile)
+                        {
+                            spPixels pix = m_spriteFile.GetFrame(m_frameNo);
+
+                            if (null != pix)
+                            {
+                                pix.m_offset_x = -m_offset_x;
+                                pix.m_offset_y = -m_offset_y;
+                            }
+                        }
+                    }
+                    break;
                 }
             }
 
@@ -612,12 +662,17 @@ namespace wedit
         {
             if (null != m_spriteFile && !m_spriteFile.IsEmpty())
             {
-                m_bitmap = m_spriteFile.BitmapFromFrame(m_frameNo);
-                if (null != m_bitmap)
+                if (m_frameNo != m_bitmapFrameNo)
                 {
-                    spPixels pix = m_spriteFile.GetFrame(m_frameNo);
-                    m_offset_x = -pix.m_offset_x;
-                    m_offset_y = -pix.m_offset_y;
+                    m_bitmapFrameNo = m_frameNo;
+
+                    m_bitmap = m_spriteFile.BitmapFromFrame(m_frameNo);
+                    if (null != m_bitmap)
+                    {
+                        spPixels pix = m_spriteFile.GetFrame(m_frameNo);
+                        m_offset_x = -pix.m_offset_x;
+                        m_offset_y = -pix.m_offset_y;
+                    }
                 }
             }
 
@@ -1604,6 +1659,7 @@ namespace wedit
             animListView.SetObjects(anims);
 
             m_bitmap = null;
+            m_bitmapFrameNo = -1;
 
             SpriteFileUpdate();          
         }
@@ -1644,6 +1700,22 @@ namespace wedit
                 // Save the sprite file
                 m_spriteFile.Save(saveSpriteFileDialog.FileName);
             }
+        }
+
+        private void centerButton_Click(object sender, EventArgs e)
+        {
+            //Panel p = splitContainer1.Panel2;
+
+            //int width = p.Size.Width;
+            //int height = p.Size.Height;
+
+            //m_canvas_offset_x = -width / 2;
+            //m_canvas_offset_y = -height / 2;
+
+            m_canvas_offset_x = 0;
+            m_canvas_offset_y = 0;
+
+            PaintSprite();
         }
     }
 }
