@@ -278,6 +278,7 @@ namespace wedit
                 {
                 case AppMode.VIEW:
                     modeString = "VIEW";
+                    PaintSprite();
                     break;
                 case AppMode.ANIM:
                     modeString = "ANIM";
@@ -288,6 +289,7 @@ namespace wedit
                     break;
                 case AppMode.ANCHOR:
                     modeString = "ANCHOR";
+                    PaintSprite();
                     break;
                 case AppMode.IMPORT_PALETTES:
                     modeString = "CLUT IMPORT";
@@ -940,6 +942,34 @@ namespace wedit
                     //gr.DrawImage(m_bitmap, cx + m_offset_x, cy + m_offset_y);
                     gr.DrawImage(m_bitmap, cx + (m_offset_x << m_zoom), cy + (m_offset_y << m_zoom),
                         m_bitmap.Width << m_zoom, m_bitmap.Height << m_zoom);
+
+                    if (AppMode.ANCHOR == m_mode)
+                    {
+                        int zoom = 1 << m_zoom;
+
+                        Color crossColor = Color.FromArgb(128, 0, 255, 0);
+
+                        Pen penCross = new Pen(crossColor);
+                        penCross.Width = zoom;
+
+                        int x = cx;
+                        int y = cy;
+
+                        if (zoom > 1)
+                        {
+                            //x &= ~(zoom - 1);
+                            //y &= ~(zoom - 1);
+                        }
+
+                        x += (zoom >> 1);
+                        y += (zoom >> 1);
+
+                        gr.DrawLine(penCross, x, 0, x, height);
+                        gr.DrawLine(penCross, 0, y, width, y);
+
+                        penCross.Dispose();
+                    }
+
                 }
             }
 
