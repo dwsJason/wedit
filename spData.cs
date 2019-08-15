@@ -366,10 +366,10 @@ namespace wedit
                             byte ub = 0;
 
                             ub = b.ReadByte(); // Discard
-                            Debug.Assert(0 == ub);
+                            //Debug.Assert(0 == ub);
 
                             ub = b.ReadByte(); // Discard
-                            Debug.Assert(0 == ub);
+                            //Debug.Assert(0 == ub);
 
                             byte width  = b.ReadByte();
                             byte height = b.ReadByte();
@@ -530,10 +530,14 @@ namespace wedit
                             // Number of frames in the animation
                             // (I think we don't need this, as it
                             //  can be computed later)
-                            byte frameCount = b.ReadByte();
-                            length--;
-                            byte frameCount2 = b.ReadByte();
-                            length--;
+                            //if (v1 > 0x100)
+                            //{
+                                byte frameCount = b.ReadByte();
+                                length--;
+                                byte frameCount2 = b.ReadByte();
+                                length--;
+                            //}
+
 
                             animNo++;
                             int lineNo = 1;
