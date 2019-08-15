@@ -781,9 +781,9 @@ namespace wedit
 
             pictureBox.Image = bmp;
 
-            pictureBox.Invalidate();
-        
             gr.Dispose();
+
+            pictureBox.Refresh();
 
         }
 
@@ -980,10 +980,9 @@ namespace wedit
             }
             pictureBox.Image = bmp;
 
-            pictureBox.Invalidate();
-        
             gr.Dispose();
 
+            pictureBox.Refresh();
         }
 
         //
