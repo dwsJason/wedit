@@ -235,19 +235,22 @@
   </metadata>
   <data name="centerButton.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfjCAwAEhxKVxtpAAACEElEQVRYR+2XTagNYRiA
-        Dy6iqyxkczdufkKx8FdWrKxubJCVlSSykIWwsJEsZIGs7G5ZKSURZWXlbyeSFVZi66fk53nemaOvY2bO
-        nDtzOpSnnvre7+ed95zzzXxzOv861/BM1hwNT/F61hwNIytgFq7BF3gX1+FsHCpeYC/exs/4s8ev6Nhu
-        tMBW2YZ+2h/oJz6MW/AxPsrb9jlmMc9xK7bCcfTC93CtHQkPclOc49zveMSOJpxEP9GpiP6kqIAup9G1
-        RyOaAVNoghMRFVNVgLjWb297RAOwAN/inYiaYY5XODeimvjbWfmqiJphDnPtj6gm7uxbWbMVzHU/a/Zn
-        MfrbH4qomg25/TDXN5wTUR82oQVsjqicK+g8vWxHBT4nnLc+ogJ8pneTlbkRU3rHU5zbO97ra/zNHvRJ
-        pufRCWfxYOISTDFBYTJwbrrWXM47l/Ttw0KWopN3RlTOCpzOtV3FLjTnyohq8AYvZM1WMNf7rFmP7oJ5
-        ETVjPprrakQ1WY7eNh5ETekeZqsjGoCL+Al98SjjWG4ZrjXHpYgGZCE+QffDMjsKqDqMXOPaZ2iuGTGB
-        L/EDFt0VZQW4613jS4w5GrEIb6K3kRfzmB5DSQuwzzFj597AcWwNk/sKZvIv6IH1Mde2fY49xB04NNxY
-        7mz/lLxDv2pvsQNYtleGhv8JPEdGxv8CJrHqQfW30+n8Ao1HkXwy7Jd+AAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EwAACxMBAJqcGAAAAAd0SU1FB+MIDAASHEpXG2kAAAIQSURBVFhH7ZdNqA1hGIAPLqKrLGRzN25+QrHw
+        V1asrG5skJWVJLKQhbCwkSxkgazsblkpJRFlZeVvJ5IVVmLrp+Tned6Zo69jZs6cO3M6lKee+t7v5533
+        nPPNfHM6/zrX8EzWHA1P8XrWHA0jK2AWrsEXeBfX4WwcKl5gL97Gz/izx6/o2G60wFbZhn7aH+gnPoxb
+        8DE+ytv2OWYxz3ErtsJx9ML3cK0dCQ9yU5zj3O94xI4mnEQ/0amI/qSogC6n0bVHI5oBU2iCExEVU1WA
+        uNZvb3tEA7AA3+KdiJphjlc4N6Ka+NtZ+aqImmEOc+2PqCbu7FtZsxXMdT9r9mcx+tsfiqiaDbn9MNc3
+        nBNRHzahBWyOqJwr6Dy9bEcFPiectz6iAnymd5OVuRFTesdTnNs73utr/M0e9Emm59EJZ/Fg4hJMMUFh
+        MnBuutZczjuX9O3DQpaik3dGVM4KnM61XcUuNOfKiGrwBi9kzVYw1/usWY/ugnkRNWM+mutqRDVZjt42
+        HkRN6R5mqyMagIv4CX3xKONYbhmuNceliAZkIT5B98MyOwqoOoxc49pnaK4ZMYEv8QMW3RVlBbjrXeNL
+        jDkasQhvoreRF/OYHkNJC7DPMWPn3sBxbA2T+wpm8i/ogfUx17Z9jj3EHTg03FjubP+UvEO/am+xA1i2
+        V4aG/wk8R0bG/wImsepB9bfT6fwCjUeRfDLsl34AAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="exportMrSpriteFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>912, 17</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEA/foAAAEAIAAGbAAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAD9AAAA+ggGAAAAajBBRAAAIABJ

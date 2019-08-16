@@ -1426,5 +1426,23 @@ namespace wedit
             }
         }
 
+        //----------------------------------------------------------------------
+        //
+        // Save a sprite Sheet, in Mr.Sprite Format
+        //
+        public void ExportMrSprite(string pathName)
+        {
+            // Mr.Sprite needs a GIF Sprite Sheet
+            // we also need two colors that are not in the Sprite
+            // A "Frame" color, and a "Transparent" color for the mask
+            //
+            // Also kick out a ".bat" file that you can use to invoke
+            // Mr.Sprite
+            // Also spit out an .asm file with the animation definitions
+            //
+
+        }
+        //----------------------------------------------------------------------
+
     }
 }

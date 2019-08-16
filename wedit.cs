@@ -1746,5 +1746,16 @@ namespace wedit
 
             PaintSprite();
         }
+
+        private void exportForMrSpriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = exportMrSpriteFileDialog.ShowDialog();
+
+            if (DialogResult.OK == result)
+            {
+                // Save the sprite file
+                m_spriteFile.ExportMrSprite(exportMrSpriteFileDialog.FileName);
+            }
+        }
     }
 }
