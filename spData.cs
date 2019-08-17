@@ -1447,6 +1447,75 @@ namespace wedit
                 // for all the frames
                 spPixels pix = m_frames[0];
 
+#if true   // shrink each sprite, depend on offsets
+
+                int maxWidth  = pix.m_width;
+                int maxHeight = pix.m_height;
+                int bmpHeight = pix.m_height;
+
+                for (int idx = 1; idx < m_frames.Count; ++idx)
+                {
+                    pix = m_frames[ idx ];
+
+                    if (maxWidth < pix.m_width) maxWidth = pix.m_width;
+                    if (maxHeight < pix.m_height) maxHeight = pix.m_height;
+
+                    bmpHeight += pix.m_height;
+                }
+
+                // Basically the max frame extents
+                int outWidth  = maxWidth * 2;
+                int outHeight = maxHeight;
+
+                // Dimensions of the output bitmap
+                int bmpWidth = outWidth+2;
+                bmpHeight += 4 * m_frames.Count;
+
+                Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight);
+                
+                // Create a Graphics interface, so we can draw
+                // into the output using accelerated commands
+                Graphics gr = Graphics.FromImage(outBmp);
+                gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
+                Color backColor = GetBackColor(m_palettes[0]);
+                Color frameColor = GetFrameColor(m_palettes[0]);
+
+                Pen penFrame = new Pen(frameColor);
+
+                gr.Clear(backColor);
+
+                int current_y = 0;
+
+                // Draw Frames
+                for(int idx = 0; idx < m_frames.Count; ++idx)
+                {
+                    pix = m_frames[ idx ];
+
+                    int y = current_y;
+                    int y2 = y + pix.m_height + 1;
+                    int x = 0;
+                    int x2 = x + 1 + (pix.m_width * 2);
+
+                    gr.DrawLine(penFrame, x, y, x2, y);
+                    gr.DrawLine(penFrame, x, y2, x2, y2);
+                    gr.DrawLine(penFrame, x, y, x, y2);
+                    gr.DrawLine(penFrame, x2, y, x2, y2);
+
+                    Bitmap bmp = BitmapFromFrame(idx);
+
+                    gr.DrawImage(bmp, 1,
+                                 y + 1,
+                                 bmp.Width, bmp.Height);
+
+                    current_y += 4 + pix.m_height;
+                }
+
+                penFrame.Dispose();
+                gr.Dispose();
+#endif
+
+#if false  // Unioned fixed Size Frames
                 int minX = -pix.m_offset_x;
                 int maxX = minX + (pix.m_width*2);
                 int minY = -pix.m_offset_y;
@@ -1476,7 +1545,6 @@ namespace wedit
                 int bmpHeight = (outHeight+4)*m_frames.Count;
 
                 Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight);
-//              Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
                 
                 // Create a Graphics interface, so we can draw
                 // into the output using accelerated commands
@@ -1512,6 +1580,7 @@ namespace wedit
 
                 penFrame.Dispose();
                 gr.Dispose();
+#endif
 
                 //--------------------------------------------------------------
                 // GIF I need to manually set the pixels
