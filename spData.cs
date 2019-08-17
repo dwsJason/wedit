@@ -1441,6 +1441,199 @@ namespace wedit
             // Also spit out an .asm file with the animation definitions
             //
 
+            if (m_frames.Count > 0)
+            {
+                // we need the union of the frame bounds
+                // for all the frames
+                spPixels pix = m_frames[0];
+
+                int minX = -pix.m_offset_x;
+                int maxX = minX + (pix.m_width*2);
+                int minY = -pix.m_offset_y;
+                int maxY = minY + pix.m_height;
+
+                for (int idx = 1; idx < m_frames.Count; ++idx)
+                {
+                    pix = m_frames[ idx ];
+
+                    int mnX = -pix.m_offset_x;
+                    int mxX = mnX + (pix.m_width*2);
+                    int mnY = -pix.m_offset_y;
+                    int mxY = mnY + pix.m_height;
+
+                    if (mnX < minX) minX = mnX;
+                    if (mxX > maxX) maxX = mxX;
+                    if (mnY < minY) minY = mnY;
+                    if (mxY > maxY) maxY = mxY;
+                }
+
+                // Basically the max frame extents
+                int outWidth  = maxX - minX;
+                int outHeight = maxY - minY;
+
+                // Dimensions of the output bitmap
+                int bmpWidth = outWidth+2;
+                int bmpHeight = (outHeight+4)*m_frames.Count;
+
+                Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight);
+//              Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+                
+                // Create a Graphics interface, so we can draw
+                // into the output using accelerated commands
+                Graphics gr = Graphics.FromImage(outBmp);
+                gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
+                Color backColor = GetBackColor(m_palettes[0]);
+                Color frameColor = GetFrameColor(m_palettes[0]);
+
+                //outBmp.Palette.Entries[0] = backColor;
+                //outBmp.Palette.Entries[17] = frameColor;
+
+                //for (int idx = 0; idx < 16; ++idx)
+                //{
+                //    outBmp.Palette.Entries[1 + idx] = m_palettes[0].colors[idx];
+                //}
+
+                Pen penFrame = new Pen(frameColor);
+
+                gr.Clear(backColor);
+
+                // Draw Frames
+                for(int idx = 0; idx < m_frames.Count; ++idx)
+                {
+                    int y = (outHeight+4) * idx;
+                    int y2 = y + outHeight + 1;
+
+                    gr.DrawLine(penFrame, 0, y, bmpWidth, y);
+                    gr.DrawLine(penFrame, 0, y2, bmpWidth, y2);
+                    gr.DrawLine(penFrame, 0, y, 0, y2);
+                    gr.DrawLine(penFrame, bmpWidth-1, y, bmpWidth-1, y2);
+
+                    pix = m_frames[ idx ];
+
+                    Bitmap bmp = BitmapFromFrame(idx);
+
+                    gr.DrawImage(bmp, 1 - minX - pix.m_offset_x,
+                                 y + 1 - minY - pix.m_offset_y,
+                                 bmp.Width, bmp.Height);
+                }
+
+                penFrame.Dispose();
+                gr.Dispose();
+
+                Bitmap rmap = outBmp.Clone(new Rectangle(0, 0, outBmp.Width, outBmp.Height),
+                      System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+
+                outBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Png);
+                //rmap.Save(pathName, System.Drawing.Imaging.ImageFormat.Gif);
+            }
+
+        }
+
+        Color GetBackColor(spPalette excludes)
+        {
+            // Potential Background Colors, 17 of them
+            // Because there are 16 input colors
+            List<Color> colors = new List<Color>();
+            colors.Add( Color.FromArgb(255,0,0,0) );
+            colors.Add( Color.FromArgb(255,0x00,0x10,0x00) );
+            colors.Add( Color.FromArgb(255,0x10,0x00,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x00,0x10) );
+            colors.Add( Color.FromArgb(255,0x10,0x10,0x00) );
+
+            colors.Add( Color.FromArgb(255,0x00,0x10,0x10) );
+            colors.Add( Color.FromArgb(255,0x10,0x00,0x10) );
+            colors.Add( Color.FromArgb(255,0x20,0x00,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x20,0x00) );
+
+            colors.Add( Color.FromArgb(255,0x00,0x00,0x20) );
+            colors.Add( Color.FromArgb(255,0x20,0x20,0x00) );
+            colors.Add( Color.FromArgb(255,0x20,0x00,0x20) );
+            colors.Add( Color.FromArgb(255,0x00,0x20,0x20) );
+
+            colors.Add( Color.FromArgb(255,0x30,0x00,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x30,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x00,0x30) );
+            colors.Add( Color.FromArgb(255,0x30,0x00,0x30) );
+
+            Color result = Color.FromArgb(255, 255, 255, 255);
+
+            for (int idx = 0; idx < colors.Count; ++idx)
+            {
+                bool bMatch = false;
+
+                for (int exIdx = 0; exIdx < excludes.colors.Count; ++exIdx)
+                {
+                    if ( (colors[idx].R == excludes.colors[ exIdx ].R) &&
+                         (colors[idx].G == excludes.colors[ exIdx ].G) &&
+                         (colors[idx].B == excludes.colors[ exIdx ].B) )
+                    {
+                        bMatch = true;
+                        break;
+                    }
+                }
+
+                if (bMatch) continue;
+
+                // No Match
+                result = colors[ idx ];
+                break;
+            }
+            
+            return result;
+        }
+
+        Color GetFrameColor(spPalette excludes)
+        {
+            // Potential Background Colors, 17 of them
+            // Because there are 16 input colors
+            List<Color> colors = new List<Color>();
+            colors.Add( Color.FromArgb(255,0xFF,0xFF,0xFF) );
+            colors.Add( Color.FromArgb(255,0x00,0xF0,0x00) );
+            colors.Add( Color.FromArgb(255,0xF0,0x00,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x00,0xF0) );
+
+            colors.Add( Color.FromArgb(255,0xF0,0xF0,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0xF0,0xF0) );
+            colors.Add( Color.FromArgb(255,0xF0,0x00,0xF0) );
+            colors.Add( Color.FromArgb(255,0xE0,0x00,0x00) );
+
+            colors.Add( Color.FromArgb(255,0x00,0xE0,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x00,0xE0) );
+            colors.Add( Color.FromArgb(255,0xE0,0xE0,0x00) );
+            colors.Add( Color.FromArgb(255,0xE0,0x00,0xE0) );
+
+            colors.Add( Color.FromArgb(255,0x00,0xE0,0xE0) );
+            colors.Add( Color.FromArgb(255,0xF8,0x00,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0xF8,0x00) );
+            colors.Add( Color.FromArgb(255,0x00,0x00,0xF8) );
+            colors.Add( Color.FromArgb(255,0xF8,0x00,0xF8) );
+
+            Color result = Color.FromArgb(255,255,255,255);
+
+            for (int idx = 0; idx < colors.Count; ++idx)
+            {
+                bool bMatch = false;
+
+                for (int exIdx = 0; exIdx < excludes.colors.Count; ++exIdx)
+                {
+                    if ( (colors[idx].R == excludes.colors[ exIdx ].R) &&
+                         (colors[idx].G == excludes.colors[ exIdx ].G) &&
+                         (colors[idx].B == excludes.colors[ exIdx ].B) )
+                    {
+                        bMatch = true;
+                        break;
+                    }
+                }
+
+                if (bMatch) continue;
+
+                // No Match
+                result = colors[ idx ];
+                break;
+            }
+            
+            return result;
         }
         //----------------------------------------------------------------------
 
