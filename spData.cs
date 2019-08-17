@@ -1591,12 +1591,12 @@ namespace wedit
                 Color[] entries = palette.Entries;
 
                 // Setup the palette in the indexBmp
-                entries[0] = backColor;
+                entries[16] = backColor;
                 entries[17] = frameColor;
 
                 for (int idx = 0; idx < 16; ++idx)
                 {
-                    entries[1 + idx] = m_palettes[0].colors[idx];
+                    entries[idx] = m_palettes[0].colors[idx];
                 }
 
                 // Fill in the last colors
@@ -1649,8 +1649,106 @@ namespace wedit
                 
                 //outBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Png);
                 indexBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Gif);
+
+                //--------------------------------------------------------------
+                // Convert the path into a "root", so we can export some support files
+                // to go with this sprite
+                String basePath = pathName.Remove(pathName.Length-4);
+                String batPath = basePath + ".bat";
+                String asmPath = basePath + ".asm";
+
+                Console.WriteLine("Export Mr.Sprite Support Files");
+                Console.WriteLine("Export {0}", batPath);
+
+                String fileName = Path.GetFileName( pathName );
+                String baseName = Path.GetFileNameWithoutExtension( pathName );
+
+                try
+                {
+                    System.IO.TextWriter t = new StreamWriter(batPath);
+
+                    t.WriteLine("rem");
+                    t.WriteLine("rem Process a spritesheet GIF");
+                    t.WriteLine("rem into compiled Mr.Sprite Data");
+                    t.WriteLine("rem");
+                    t.WriteLine("");
+
+                    String work_dir = baseName+"_work";
+                    t.WriteLine("rem Recreate a work directory");
+                    t.Write("rmdir /S /Q ");
+                    t.WriteLine(work_dir);
+                    t.Write("mkdir ");
+                    t.WriteLine(work_dir);
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine("rem Extract the Sprite Frames");
+                    t.WriteLine("");
+                    t.Write("cd "); t.WriteLine(work_dir);
+                    t.Write("MrSprite EXTRACT ");
+                    t.Write(pathName);
+                    t.Write(" ");
+                    t.Write( ColorToString( backColor ) );
+                    t.Write(" ");
+                    t.WriteLine( ColorToString( frameColor ) );
+                    t.WriteLine("cd ..");
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine("rem Generate HFlips");
+                    t.WriteLine("");
+                    t.Write("MrSprite MIRROR ");
+                    t.Write(work_dir);
+                    t.Write("\\* ");
+                    t.WriteLine( ColorToString( backColor ) );
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine("rem Generate Odd positions");
+                    t.WriteLine("");
+                    t.Write("MrSprite ODD ");
+                    t.Write(work_dir);
+                    t.Write("\\* ");
+                    t.WriteLine( ColorToString( backColor ) );
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine("rem Generate Compiled Code");
+                    t.WriteLine("");
+                    t.Write("MrSprite CODE -V ");
+                    t.Write(work_dir);
+                    t.Write("\\* ");
+                    t.Write( ColorToString( backColor ) );
+                    for (int idx = 0; idx < 16; ++idx)
+                    {
+                        t.Write(" ");
+                        t.Write( ColorToString( entries[ idx ] ) );
+                    }
+                    t.WriteLine("");
+                    t.WriteLine("");
+
+//\dev\brutaldeluxe\MrSprite_v1.0a\MrSprite.exe BANK spr\*.txt xrick
+//
+
+
+                    t.Flush();
+                    t.Close();
+                    t = null;
+                }
+                catch (IOException ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.ToString());
+                }
+
             }
 
+        }
+
+        String ColorToString( Color color )
+        {
+            return String.Format("{0:x2}{1:x2}{2:x2}",
+                                 color.R, color.G, color.B
+                                 );
         }
 
         Color GetBackColor(spPalette excludes)
