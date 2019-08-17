@@ -1486,14 +1486,6 @@ namespace wedit
                 Color backColor = GetBackColor(m_palettes[0]);
                 Color frameColor = GetFrameColor(m_palettes[0]);
 
-                //outBmp.Palette.Entries[0] = backColor;
-                //outBmp.Palette.Entries[17] = frameColor;
-
-                //for (int idx = 0; idx < 16; ++idx)
-                //{
-                //    outBmp.Palette.Entries[1 + idx] = m_palettes[0].colors[idx];
-                //}
-
                 Pen penFrame = new Pen(frameColor);
 
                 gr.Clear(backColor);
@@ -1521,11 +1513,73 @@ namespace wedit
                 penFrame.Dispose();
                 gr.Dispose();
 
-                Bitmap rmap = outBmp.Clone(new Rectangle(0, 0, outBmp.Width, outBmp.Height),
-                      System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+                //--------------------------------------------------------------
+                // GIF I need to manually set the pixels
+                // or .NET uses a dumb palette
+                Bitmap indexBmp = new Bitmap(bmpWidth, bmpHeight, System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
 
-                outBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Png);
-                //rmap.Save(pathName, System.Drawing.Imaging.ImageFormat.Gif);
+                System.Drawing.Imaging.ColorPalette palette = indexBmp.Palette;
+                Color[] entries = palette.Entries;
+
+                // Setup the palette in the indexBmp
+                entries[0] = backColor;
+                entries[17] = frameColor;
+
+                for (int idx = 0; idx < 16; ++idx)
+                {
+                    entries[1 + idx] = m_palettes[0].colors[idx];
+                }
+
+                // Fill in the last colors
+                for (int idx = 18; idx < 256; ++idx)
+                {
+                    entries[ idx ] = backColor;
+                }
+
+                indexBmp.Palette = palette;
+                //--------------------------------------------------------------
+
+                // I have to manually poke the colors into the color indexed
+                // bitmap
+
+                var data = indexBmp.LockBits(new Rectangle(0, 0, indexBmp.Width, indexBmp.Height),
+                                             System.Drawing.Imaging.ImageLockMode.WriteOnly,
+                                             System.Drawing.Imaging.PixelFormat.Format8bppIndexed);
+
+                var bytes = new byte[data.Height * data.Stride];
+                System.Runtime.InteropServices.Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+
+                for (int pixelY = 0; pixelY < bmpHeight; ++pixelY)
+                {
+                    for (int pixelX = 0; pixelX < bmpWidth; ++pixelX)
+                    {
+                        // Source True Color
+                        Color pixel = outBmp.GetPixel(pixelX, pixelY);
+
+                        // Match the color to an index
+                        byte index = 0;
+
+                        for (int idx = 0; idx < 18; ++idx)
+                        {
+                            if (pixel == entries[ idx ])
+                            {
+                                index = (byte) idx;
+                                break;
+                            }
+                        }
+
+                        // Poke out the index
+                        bytes[(pixelY * data.Stride) + pixelX] = index;
+                        //indexBmp.SetPixel(pixelX, pixelY, outBmp.GetPixel(pixelX, pixelY) );
+                    }
+                }
+
+                System.Runtime.InteropServices.Marshal.Copy(bytes, 0, data.Scan0, bytes.Length);
+                indexBmp.UnlockBits(data);
+                //--------------------------------------------------------------
+                
+                //outBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Png);
+                indexBmp.Save(pathName, System.Drawing.Imaging.ImageFormat.Gif);
             }
 
         }
