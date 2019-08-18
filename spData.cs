@@ -1447,6 +1447,14 @@ namespace wedit
                 // for all the frames
                 spPixels pix = m_frames[0];
 
+                // To gather pixel accurate width, and height of each frame
+                // (legacy wedit files will push dimensions out to a multiple of 8 or 16)
+                // Even new files could be off by 1 on the width
+                // For clipping we want to be perfect (so we aren't drawing something,
+                // that you can't see)
+                List<int> frames_width  = new List<int>();
+                List<int> frames_height = new List<int>(); 
+
 #if true   // shrink each sprite, depend on offsets
 
                 int maxWidth  = pix.m_width;
@@ -1504,6 +1512,9 @@ namespace wedit
 
                     Bitmap bmp = BitmapFromFrame(idx);
 
+                    frames_width.Add(GetRealWidth(ref bmp));
+                    frames_height.Add(GetRealHeight(ref bmp));
+
                     gr.DrawImage(bmp, 1,
                                  y + 1,
                                  bmp.Width, bmp.Height);
@@ -1546,6 +1557,9 @@ namespace wedit
 
                 Bitmap outBmp = new Bitmap(bmpWidth, bmpHeight);
                 
+                frames_width.Add(GetRealWidth(bmp));
+                frames_height.Add(GetRealHeight(bmp));
+
                 // Create a Graphics interface, so we can draw
                 // into the output using accelerated commands
                 Graphics gr = Graphics.FromImage(outBmp);
@@ -1684,29 +1698,32 @@ namespace wedit
                     t.WriteLine("");
                     t.WriteLine("rem Extract the Sprite Frames");
                     t.WriteLine("");
+                    t.Write("copy "); t.Write(fileName);
+                    t.Write(" "); t.WriteLine(work_dir);
                     t.Write("cd "); t.WriteLine(work_dir);
                     t.Write("MrSprite EXTRACT ");
-                    t.Write(pathName);
+                    t.Write(fileName);
                     t.Write(" ");
                     t.Write( ColorToString( backColor ) );
                     t.Write(" ");
                     t.WriteLine( ColorToString( frameColor ) );
+                    t.Write("del "); t.WriteLine(fileName);
                     t.WriteLine("cd ..");
-                    t.WriteLine("");
-
-                    t.WriteLine("");
-                    t.WriteLine("rem Generate HFlips");
-                    t.WriteLine("");
-                    t.Write("MrSprite MIRROR ");
-                    t.Write(work_dir);
-                    t.Write("\\* ");
-                    t.WriteLine( ColorToString( backColor ) );
                     t.WriteLine("");
 
                     t.WriteLine("");
                     t.WriteLine("rem Generate Odd positions");
                     t.WriteLine("");
                     t.Write("MrSprite ODD ");
+                    t.Write(work_dir);
+                    t.Write("\\* ");
+                    t.WriteLine( ColorToString( backColor ) );
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine("rem Generate HFlips");
+                    t.WriteLine("");
+                    t.Write("MrSprite MIRROR ");
                     t.Write(work_dir);
                     t.Write("\\* ");
                     t.WriteLine( ColorToString( backColor ) );
@@ -1727,9 +1744,78 @@ namespace wedit
                     t.WriteLine("");
                     t.WriteLine("");
 
-//\dev\brutaldeluxe\MrSprite_v1.0a\MrSprite.exe BANK spr\*.txt xrick
-//
+                    t.WriteLine("");
+                    t.WriteLine("rem Generate Sprite Banks");
+                    t.WriteLine("");
+                    t.Write("MrSprite BANK ");
+                    t.Write(work_dir);
+                    t.Write("\\*.txt ");
+                    t.WriteLine(baseName);
+                    t.WriteLine("");
 
+                    t.Flush();
+                    t.Close();
+                    t = null;
+                }
+                catch (IOException ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.ToString());
+                }
+
+                //--------------------------------------------------------------
+                // Support ASM Files
+                //
+                Console.WriteLine("Export {0}", asmPath);
+
+                try
+                {
+                    System.IO.TextWriter t = new StreamWriter(asmPath);
+
+                    t.WriteLine("***********************************************");
+                    t.WriteLine("* Mr. Sprite Support Data");
+                    t.WriteLine("*");
+                    t.WriteLine("* - Offset / Render Clipping Data");
+                    t.WriteLine("* - Animation Definitions");
+                    t.WriteLine("*");
+                    t.WriteLine("***********************************************");
+                    t.WriteLine("");
+                    t.WriteLine(String.Format("{0}_hs_offset_x", baseName));
+                    int column = 0;
+                    for (int idx = 0; idx < m_frames.Count; ++idx)
+                    {
+                        pix = m_frames[idx];
+                        WriteHex(ref t, ref column, pix.m_offset_x);
+                    }
+                    t.WriteLine("");
+
+
+                    t.WriteLine("");
+                    t.WriteLine(String.Format("{0}_hs_offset_y", baseName));
+                    column = 0;
+                    for (int idx = 0; idx < m_frames.Count; ++idx)
+                    {
+                        pix = m_frames[idx];
+                        WriteHex(ref t, ref column, pix.m_offset_y);
+                    }
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine(String.Format("{0}_width", baseName));
+                    column = 0;
+                    for (int idx = 0; idx < m_frames.Count; ++idx)
+                    {
+                        WriteHex(ref t, ref column, frames_width[ idx ]);
+                    }
+                    t.WriteLine("");
+
+                    t.WriteLine("");
+                    t.WriteLine(String.Format("{0}_height", baseName));
+                    column = 0;
+                    for (int idx = 0; idx < m_frames.Count; ++idx)
+                    {
+                        WriteHex(ref t, ref column, frames_height[ idx ]);
+                    }
+                    t.WriteLine("");
 
                     t.Flush();
                     t.Close();
@@ -1742,6 +1828,87 @@ namespace wedit
 
             }
 
+        }
+
+        void WriteHex(ref System.IO.TextWriter t, ref int column, int value)
+        {
+            if (0 == column)
+            {
+                t.Write(String.Format("\tdw\t${0:x4}", value & 0xFFFF));
+            }
+            else
+            {
+                t.Write(String.Format(",${0:x4}", value & 0xFFFF));
+            }
+            column++;
+            if (16 == column)
+            {
+                column = 0;
+                t.WriteLine("");
+            }
+        }
+
+        // This more accurately gets a "trimmed" width
+        int GetRealWidth( ref Bitmap bmp )
+        {
+            int width  = bmp.Width;
+            int height = bmp.Height;
+
+            for (int x = width - 1; x >=0; --x)
+            {
+                bool bPixelFound = false;
+
+                for (int y = 0; y < height; ++y)
+                {
+                    Color pix = bmp.GetPixel(x, y);
+
+                    if (255 == pix.A)
+                    {
+                        bPixelFound = true;
+                        break;
+                    }
+                }
+
+                if (bPixelFound)
+                {
+                    width = x + 1;
+                    break;
+                }
+            }
+
+            return width;
+        }
+
+
+        // This more accurately gets a "trimmed" height
+        int GetRealHeight( ref Bitmap bmp )
+        {
+            int width  = bmp.Width;
+            int height = bmp.Height;
+
+            for (int y = height - 1; y >=0; --y)
+            {
+                bool bPixelFound = false;
+
+                for (int x = 0; x < width; ++x)
+                {
+                    Color pix = bmp.GetPixel(x, y);
+
+                    if (255 == pix.A)
+                    {
+                        bPixelFound = true;
+                        break;
+                    }
+                }
+
+                if (bPixelFound)
+                {
+                    height = y + 1;
+                    break;
+                }
+            }
+
+            return height;
         }
 
         String ColorToString( Color color )
