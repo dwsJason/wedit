@@ -1784,7 +1784,7 @@ namespace wedit
                     for (int idx = 0; idx < m_frames.Count; ++idx)
                     {
                         pix = m_frames[idx];
-                        WriteHex(ref t, ref column, pix.m_offset_x);
+                        WriteHex(ref t, ref column, -pix.m_offset_x);
                     }
                     t.WriteLine("");
 
@@ -1795,7 +1795,7 @@ namespace wedit
                     for (int idx = 0; idx < m_frames.Count; ++idx)
                     {
                         pix = m_frames[idx];
-                        WriteHex(ref t, ref column, pix.m_offset_y);
+                        WriteHex(ref t, ref column, -pix.m_offset_y);
                     }
                     t.WriteLine("");
 
@@ -1815,6 +1815,142 @@ namespace wedit
                     {
                         WriteHex(ref t, ref column, frames_height[ idx ]);
                     }
+                    t.WriteLine("");
+
+                    // Kick out Animation definition Table
+                    t.WriteLine("");
+                    t.WriteLine(String.Format("{0}_anim", baseName));
+                    column = 0;
+                    for (int idx = 0; idx < m_anims.Count; ++idx)
+                    {
+                        WriteString(ref t, ref column, String.Format(":{0}", idx));
+                    }
+                    t.WriteLine("");
+                    t.WriteLine("");
+
+                    // Kickout the Animations
+                    for (int animIdx = 0; animIdx < m_anims.Count; ++animIdx)
+                    {
+                        spAnim anim = m_anims[ animIdx ];
+                        t.WriteLine(String.Format(":{0}", animIdx));
+                        column = 0;
+                        for (int cmdIdx = 0; cmdIdx < anim.m_commands.Count; ++cmdIdx)
+                        {
+                            spAnimCommand animCmd = anim.m_commands[ cmdIdx ];
+
+                            int lineNo = cmdIdx + 1;
+
+                            if (animCmd.m_frameNo < 0)
+                            {
+                                byte u8;
+                                ushort u16;
+                                // It's a command
+                                WriteString(ref t, ref column, String.Format("${0:x2}",(byte)0xFF));      // command
+                                WriteString(ref t, ref column, String.Format("${0:x2}",(byte)animCmd.m_command));
+
+                                switch ((spAnimCommand.cmd)animCmd.m_command)
+                                {
+                                case spAnimCommand.cmd.End:
+                                case spAnimCommand.cmd.Loop:
+                                    break;
+                                case spAnimCommand.cmd.Goto:
+                                    u16 = (ushort) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16&0xFF)));
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16>>8)));
+                                    break;
+                                case spAnimCommand.cmd.GotoSeq:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.Pause:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.SetRate:
+                                    u16 = (ushort) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16&0xFF)));
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16>>8)));
+                                    break;
+                                case spAnimCommand.cmd.SetSpeed:
+                                    u16 = (ushort) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16&0xFF)));
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16>>8)));
+                                    break;
+                                case spAnimCommand.cmd.MultiOp:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.Delete:
+                                    break;
+                                case spAnimCommand.cmd.SetFlag:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.Sound:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.HFlip:
+                                case spAnimCommand.cmd.VFlip:
+                                case spAnimCommand.cmd.Nop:
+                                    break;
+                                case spAnimCommand.cmd.Process:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.ClearFlag:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.GotoLast:
+                                case spAnimCommand.cmd.Blank:
+                                    break;
+                                case spAnimCommand.cmd.RndPause:
+                                    u16 = (ushort) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16&0xFF)));
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16>>8)));
+                                    break;
+                                case spAnimCommand.cmd.SetHFlip:
+                                case spAnimCommand.cmd.ClrHFlip:
+                                case spAnimCommand.cmd.SetVFlip:
+                                case spAnimCommand.cmd.ClrVFlip:
+                                case spAnimCommand.cmd.HVFlip:
+                                case spAnimCommand.cmd.SetHVFlip:
+                                case spAnimCommand.cmd.ClrHVFlip:
+                                    break;
+                                case spAnimCommand.cmd.ExtSprite:
+                                    u16 = (ushort) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16&0xFF)));
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)(u16>>8)));
+                                    break;
+                                case spAnimCommand.cmd.Brk:
+                                    break;
+                                case spAnimCommand.cmd.OnBrk:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+                                case spAnimCommand.cmd.DynSound:
+                                    u8 = (byte) animCmd.m_arg;
+                                    WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                                    break;
+
+                                default:
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                byte u8 = (byte) animCmd.m_frameNo;
+                                WriteString(ref t, ref column, String.Format("${0:x2}",(byte)u8));
+                            }
+                        }
+                        t.WriteLine("");
+                    }
+
+
+
+
+                    t.WriteLine("***********************************************");
                     t.WriteLine("");
 
                     t.Flush();
@@ -1839,6 +1975,24 @@ namespace wedit
             else
             {
                 t.Write(String.Format(",${0:x4}", value & 0xFFFF));
+            }
+            column++;
+            if (16 == column)
+            {
+                column = 0;
+                t.WriteLine("");
+            }
+        }
+
+        void WriteString(ref System.IO.TextWriter t, ref int column, String str)
+        {
+            if (0 == column)
+            {
+                t.Write(String.Format("\tdw\t{0}", str));
+            }
+            else
+            {
+                t.Write(String.Format(",{0}", str));
             }
             column++;
             if (16 == column)
