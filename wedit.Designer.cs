@@ -36,6 +36,8 @@
             this.saveSpriteFileAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFramesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importPaletteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exportForMrSpriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.mode = new System.Windows.Forms.ToolStripStatusLabel();
@@ -82,9 +84,9 @@
             this.openPaletteFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveSpriteFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.centerButton = new System.Windows.Forms.Button();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exportForMrSpriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMrSpriteFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.exportForDxSpriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportDxSpriteFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -122,7 +124,8 @@
             this.importFramesToolStripMenuItem,
             this.importPaletteToolStripMenuItem,
             this.toolStripSeparator1,
-            this.exportForMrSpriteToolStripMenuItem});
+            this.exportForMrSpriteToolStripMenuItem,
+            this.exportForDxSpriteToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -162,6 +165,18 @@
             this.importPaletteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.importPaletteToolStripMenuItem.Text = "Import Palette";
             this.importPaletteToolStripMenuItem.Click += new System.EventHandler(this.importPaletteToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(191, 6);
+            // 
+            // exportForMrSpriteToolStripMenuItem
+            // 
+            this.exportForMrSpriteToolStripMenuItem.Name = "exportForMrSpriteToolStripMenuItem";
+            this.exportForMrSpriteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.exportForMrSpriteToolStripMenuItem.Text = "Export for Mr.Sprite";
+            this.exportForMrSpriteToolStripMenuItem.Click += new System.EventHandler(this.exportForMrSpriteToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -697,22 +712,22 @@
             this.centerButton.UseVisualStyleBackColor = true;
             this.centerButton.Click += new System.EventHandler(this.centerButton_Click);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(191, 6);
-            // 
-            // exportForMrSpriteToolStripMenuItem
-            // 
-            this.exportForMrSpriteToolStripMenuItem.Name = "exportForMrSpriteToolStripMenuItem";
-            this.exportForMrSpriteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.exportForMrSpriteToolStripMenuItem.Text = "Export for Mr.Sprite";
-            this.exportForMrSpriteToolStripMenuItem.Click += new System.EventHandler(this.exportForMrSpriteToolStripMenuItem_Click);
-            // 
             // exportMrSpriteFileDialog
             // 
             this.exportMrSpriteFileDialog.Filter = "MrSprite|*.gif";
             this.exportMrSpriteFileDialog.Title = "Export for Mr.Sprite";
+            // 
+            // exportForDxSpriteToolStripMenuItem
+            // 
+            this.exportForDxSpriteToolStripMenuItem.Name = "exportForDxSpriteToolStripMenuItem";
+            this.exportForDxSpriteToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.exportForDxSpriteToolStripMenuItem.Text = "Export for dxSprite";
+            this.exportForDxSpriteToolStripMenuItem.Click += new System.EventHandler(this.exportForDxSpriteToolStripMenuItem_Click);
+            // 
+            // exportDxSpriteFileDialog
+            // 
+            this.exportDxSpriteFileDialog.Filter = "dxSprite|*.txt";
+            this.exportDxSpriteFileDialog.Title = "Export for dxSprite";
             // 
             // wedit
             // 
@@ -825,6 +840,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exportForMrSpriteToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog exportMrSpriteFileDialog;
+        private System.Windows.Forms.ToolStripMenuItem exportForDxSpriteToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog exportDxSpriteFileDialog;
     }
 }
 

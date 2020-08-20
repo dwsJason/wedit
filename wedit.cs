@@ -1757,5 +1757,16 @@ namespace wedit
                 m_spriteFile.ExportMrSprite(exportMrSpriteFileDialog.FileName);
             }
         }
+
+        private void exportForDxSpriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = exportDxSpriteFileDialog.ShowDialog();
+
+            if (DialogResult.OK == result)
+            {
+                // Save the sprite file
+                m_spriteFile.ExportDxSprite(exportDxSpriteFileDialog.FileName);
+            }
+        }
     }
 }

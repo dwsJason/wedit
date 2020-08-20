@@ -1428,6 +1428,15 @@ namespace wedit
 
         //----------------------------------------------------------------------
         //
+        // Save a sprite Sheet, in dxSprite Format
+        //
+        public void ExportDxSprite(string pathName)
+        {
+
+        }
+
+        //----------------------------------------------------------------------
+        //
         // Save a sprite Sheet, in Mr.Sprite Format
         //
         public void ExportMrSprite(string pathName)
