@@ -1431,8 +1431,8 @@ namespace wedit
         public class CompiledData
         {
             // Use Dictionary as a map.
-            Dictionary<byte, List<int>>   byte_map = new Dictionary<byte, List<int>>();
-            Dictionary<ushort, List<int>> short_map = new Dictionary<ushort, List<int>>();
+            public Dictionary<byte, List<int>>   byte_map = new Dictionary<byte, List<int>>();
+            public Dictionary<ushort, List<int>> short_map = new Dictionary<ushort, List<int>>();
 
             // ... Add some keys and values.
             //map.Add("cat", "orange");
@@ -1489,6 +1489,10 @@ namespace wedit
                                 offsets.Add(index);
                                 byte_map.Remove(token);
                             }
+                            else
+                            {
+                                offsets = new List<int>();
+                            }
 
                             offsets.Add(index);
                             byte_map.Add(token, offsets);
@@ -1510,6 +1514,10 @@ namespace wedit
                             {
                                 offsets.Add(index);
                                 short_map.Remove(token);
+                            }
+                            else
+                            {
+                                offsets = new List<int>();
                             }
 
                             offsets.Add(index);
@@ -1578,7 +1586,11 @@ namespace wedit
                             px <<= 4;
                         }
 
-                        canvas[canvas_index] |= px;
+                        if ((canvas_index >= 0) &&
+                            (canvas_index < canvas.Count))
+                        {
+                            canvas[canvas_index] |= px;
+                        }
                     }
                 }
 
@@ -1608,7 +1620,11 @@ namespace wedit
                             px <<= 4;
                         }
 
-                        canvas[ canvas_index ] |= px;
+                        if ((canvas_index >= 0) &&
+                            (canvas_index < canvas.Count))
+                        {
+                            canvas[ canvas_index ] |= px;
+                        }
                     }
                 }
             }
@@ -1623,8 +1639,11 @@ namespace wedit
         //
         public void ExportDxSprite(string pathName)
         {
+            String fileName = Path.GetFileName( pathName );
+            String baseName = Path.GetFileNameWithoutExtension( pathName );
+
             // I want everything Mr Sprite Export is going to give me
-            ExportMrSprite(pathName);
+            ExportMrSprite(baseName + ".gif");
 
             // I also want more...
             // I want to export source code for compiled sprites specifically
@@ -1645,8 +1664,8 @@ namespace wedit
             // spPixels, texel format is already the same as a GS!, that seems
             // random to me, but maybe SP did that on purpose
 
-            List<byte> source_canvas = new List<byte>(160*200);
-            List<byte> dest_canvas   = new List<byte>(160*200);
+            List<byte> source_canvas = new List<byte>( new byte[160*200] );
+            List<byte> dest_canvas   = new List<byte>( new byte[160*200] );
 
             // a List of compiled results
             List<CompiledData> data = new List<CompiledData>();
@@ -1663,6 +1682,46 @@ namespace wedit
 
                 data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
             }
+
+            Console.WriteLine("Export dxSprite Support Files");
+            Console.WriteLine("Export {0}", pathName);
+
+            try
+            {
+                System.IO.TextWriter t = new StreamWriter(pathName);
+
+                for (int dataidx = 0; dataidx < data.Count; ++dataidx)
+                {
+                    t.WriteLine(String.Format("data_{0}", dataidx ));
+
+                    CompiledData compiled_data = data[ dataidx ];
+
+                    foreach (var pair in compiled_data.byte_map)
+                    {
+                        t.Write(String.Format("{0:x2} -> ", pair.Key));
+                        List<int> offsets = pair.Value;
+                        t.WriteLine(String.Format("{0} locations",offsets.Count));
+                    }
+
+                    foreach (var pair in compiled_data.short_map)
+                    {
+                        t.Write(String.Format("{0:x4} -> ", pair.Key));
+                        List<int> offsets = pair.Value;
+                        t.WriteLine(String.Format("{0} locations",offsets.Count));
+                    }
+
+                    t.WriteLine(";-----------------------------------------------");
+                }
+
+                t.Flush();
+                t.Close();
+                t = null;
+            }
+            catch (IOException ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+
 
         }
 
