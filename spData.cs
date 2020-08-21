@@ -1555,8 +1555,8 @@ namespace wedit
             int width  = pix.m_width * 2;
             int height = pix.m_height;
 
-            int canvas_x = pos_x + pix.m_offset_x;
-            int canvas_y = pos_y + pix.m_offset_y;
+            int canvas_x = pos_x - pix.m_offset_x;
+            int canvas_y = pos_y - pix.m_offset_y;
 
             if (pix.m_mask.Count > 0)
             {
@@ -1692,23 +1692,77 @@ namespace wedit
 
                 for (int dataidx = 0; dataidx < data.Count; ++dataidx)
                 {
-                    t.WriteLine(String.Format("data_{0}", dataidx ));
-
                     CompiledData compiled_data = data[ dataidx ];
 
-                    foreach (var pair in compiled_data.byte_map)
+                    //--------------------------------------------------------------
+                    // How many clocks
+
+                    int cycles = 6;  // +6 RTS
+
+                    if (compiled_data.byte_map.Count > 0)
                     {
-                        t.Write(String.Format("{0:x2} -> ", pair.Key));
-                        List<int> offsets = pair.Value;
-                        t.WriteLine(String.Format("{0} locations",offsets.Count));
+                        cycles += 6; // +3 SEP, +3 REP
+
+                        foreach (var pair in compiled_data.byte_map)
+                        {
+                            cycles += 2;    // +2 LDA #$12
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*5); // +5 STA |$1234,x
+                        }
                     }
 
                     foreach (var pair in compiled_data.short_map)
                     {
-                        t.Write(String.Format("{0:x4} -> ", pair.Key));
+                        cycles += 3;  // +3 LDA #$1234
                         List<int> offsets = pair.Value;
-                        t.WriteLine(String.Format("{0} locations",offsets.Count));
+                        cycles += (offsets.Count*6); // +6 STA |$1234,x
                     }
+
+                    t.WriteLine(String.Format("data_{0}\t; cycles = {1}, scanlines = {2}", dataidx, cycles, cycles / 65 ));
+
+                    //--------------------------------------------------------------
+
+                    // A9 - LDA #
+                    // 9D - STA |NNNN,x ; 5/6
+                    // C2 - REP #
+                    // E2 - SEP #
+                    // 60 - RTS, 6B - RTL
+
+                    if (compiled_data.byte_map.Count > 0) {
+
+                        t.WriteLine("\tSEP\t#$20\t; mx=10   cyc=3");
+
+                        foreach (var pair in compiled_data.byte_map)
+                        {
+                            //t.Write(String.Format("{0:x2} -> ", pair.Key));
+                            t.WriteLine("\tLDA\t#${0:x2}\t; cyc=2", pair.Key);
+                            List<int> offsets = pair.Value;
+                            //t.WriteLine(String.Format("{0} locations",offsets.Count));
+
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                            }
+                        }
+
+                        t.WriteLine("\tREP\t#$31\t; mxc=000  cyc=3");
+                    }
+
+
+                    foreach (var pair in compiled_data.short_map)
+                    {
+                        //t.Write(String.Format("{0:x4} -> ", pair.Key));
+                        t.WriteLine("\tLDA\t#${0:x4}\t; cyc=3", pair.Key);
+                        List<int> offsets = pair.Value;
+                        //t.WriteLine(String.Format("{0} locations",offsets.Count));
+                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        {
+                            t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                        }
+                    }
+
+                    t.WriteLine("\tRTS\t\t; cyc=6");
+
 
                     t.WriteLine(";-----------------------------------------------");
                 }
