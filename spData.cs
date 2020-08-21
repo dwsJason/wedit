@@ -1427,11 +1427,242 @@ namespace wedit
         }
 
         //----------------------------------------------------------------------
+
+        public class CompiledData
+        {
+            // Use Dictionary as a map.
+            Dictionary<byte, List<int>>   byte_map = new Dictionary<byte, List<int>>();
+            Dictionary<ushort, List<int>> short_map = new Dictionary<ushort, List<int>>();
+
+            // ... Add some keys and values.
+            //map.Add("cat", "orange");
+            //map.Add("dog", "brown");
+
+            // ... Loop over the map.
+            //foreach (var pair in map)
+            //{
+            //    string key = pair.Key;
+            //    string value = pair.Value;
+            //    Console.WriteLine(key + "/" + value);
+            //}
+
+            // ... Get value at a known key.
+            //string result = map["cat"];
+            //Console.WriteLine(result);
+
+            // ... Use TryGetValue to safely look up a value in the map.
+            //string mapValue;
+            //if (map.TryGetValue("dog", out mapValue))
+            //{
+            //    Console.WriteLine(mapValue);
+            //}
+
+            public CompiledData(ref List<byte> source_canvas,ref List<byte> dest_canvas)
+            {
+                // hard-coded
+                // size of a IIgs SHR Display Buffer
+                if ((source_canvas.Count == dest_canvas.Count) &&
+                    (source_canvas.Count == (160*200)))
+                {
+                    // This could miss the last byte in the buffer
+                    // but we don't care, because our sprite should never be there
+                    // and it helps simple the logic
+
+                    for (int index = 0; index < (source_canvas.Count-1); ++index)
+                    {
+                        // Nothing to compile if the data is identical
+                        if (source_canvas[ index ] == dest_canvas[ index ])
+                            continue;
+
+                        // Definitely we have a byte, but could it be a word?
+                        if (source_canvas[ index + 1] == dest_canvas[ index + 1 ])
+                        {
+                            // We have a byte!
+                            // Record the change in the byte_map
+
+                            byte token = dest_canvas[ index ];
+
+                            List<int> offsets = new List<int>();
+
+                            if (byte_map.TryGetValue(token, out offsets))
+                            {
+                                offsets.Add(index);
+                                byte_map.Remove(token);
+                            }
+
+                            offsets.Add(index);
+                            byte_map.Add(token, offsets);
+
+                            index+=1;           // save time by skipping this one
+
+                        }
+                        else
+                        {
+                            // We have a word!
+                            // Record the change in the word_map
+                            ushort token = dest_canvas[ index+1 ];
+                            token <<= 8;
+                            token |= dest_canvas[ index ];
+
+                            List<int> offsets = new List<int>();
+
+                            if (short_map.TryGetValue(token, out offsets))
+                            {
+                                offsets.Add(index);
+                                short_map.Remove(token);
+                            }
+
+                            offsets.Add(index);
+                            short_map.Add(token, offsets);
+
+                            index+=1; // skip processed byte
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        //
+        // Hard Coded to plot into an array, the size of a IIgs
+        // SHR Display Buffer
+        //
+        public void dxPlot(ref List<byte> canvas, spPixels sprite, int pos_x, int pos_y)
+        {
+            if (canvas.Count != (160*200))
+                return;
+
+
+            // Render a sprite, as if it was being rendered to the SHR video
+            // buffer on a IIgs (yes, this is weird)
+
+            // In pixels
+            int canvas_width = 320;
+            //int canvas_height = 200;
+
+            spPixels pix = sprite;
+
+            // Sprite pixels
+            int width  = pix.m_width * 2;
+            int height = pix.m_height;
+
+            int canvas_x = pos_x + pix.m_offset_x;
+            int canvas_y = pos_y + pix.m_offset_y;
+
+            if (pix.m_mask.Count > 0)
+            {
+                // Use a 16 color sprite + mask
+                for (int y = 0; y < height; ++y)
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
+                        byte mx = pix.m_mask[(y * pix.m_width) + (x>>1)];
+                        if (0 == (x&1))
+                        {
+                            px >>= 4;
+                            mx >>= 4;
+                        }
+
+                        px &= 0xF;
+                        mx &= 0xF;
+                        //------------------------------------------------------
+                        // plot the thing
+                        int canvas_index = (canvas_y + y) * canvas_width / 2;
+                        canvas_index += ((canvas_x + x)/2);
+
+                        if (0 == ((canvas_x + x) & 0x1))
+                        {
+                            // it's an even position
+                            px <<= 4;
+                        }
+
+                        canvas[canvas_index] |= px;
+                    }
+                }
+
+            }
+            else
+            {
+                // 15 Color + Color Index 0 is transparent
+                for (int y = 0; y < height; ++y)
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
+                        if (0 == (x&1))
+                        {
+                            px >>= 4;
+                        }
+
+                        px &= 0xF;
+                        //------------------------------------------------------
+                        // plot the thing
+                        int canvas_index = (canvas_y + y) * canvas_width / 2;
+                        canvas_index += ((canvas_x + x)/2);
+
+                        if (0 == ((canvas_x + x) & 0x1))
+                        {
+                            // it's an even position
+                            px <<= 4;
+                        }
+
+                        canvas[ canvas_index ] |= px;
+                    }
+                }
+            }
+
+
+
+        }
+
+        //----------------------------------------------------------------------
         //
         // Save a sprite Sheet, in dxSprite Format
         //
         public void ExportDxSprite(string pathName)
         {
+            // I want everything Mr Sprite Export is going to give me
+            ExportMrSprite(pathName);
+
+            // I also want more...
+            // I want to export source code for compiled sprites specifically
+            // for the the Journey Game
+            // which means they will include a pre-compiled "Erase"
+            // and they will include transition codes for movement / and 
+            // animations (where only the pixels that change, get changed)
+            // dx == delta, where the name comes from
+
+            // loop through, and grab a C1 of each Frame
+            // then generate draws for each C1
+            //    -- 0- ++
+            //    -0 00 +0
+            //    -+ -+ ++
+
+            // The delta to other frames can come later
+
+            // spPixels, texel format is already the same as a GS!, that seems
+            // random to me, but maybe SP did that on purpose
+
+            List<byte> source_canvas = new List<byte>(160*200);
+            List<byte> dest_canvas   = new List<byte>(160*200);
+
+            // a List of compiled results
+            List<CompiledData> data = new List<CompiledData>();
+
+            for (int frame_index = 0; frame_index < m_frames.Count; ++frame_index)
+            {
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x00;
+                    dest_canvas[ idx ] = 0x00;
+                }
+
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
+
+                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+            }
 
         }
 
