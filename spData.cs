@@ -1683,8 +1683,8 @@ namespace wedit
                 data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
             }
 
-            Console.WriteLine("Export dxSprite Support Files");
-            Console.WriteLine("Export {0}", pathName);
+            Console.WriteLine(" Export dxSprite Support Files");
+            Console.WriteLine(" Export {0}", pathName);
 
             try
             {
