@@ -1726,7 +1726,7 @@ namespace wedit
                     // 9D - STA |NNNN,x ; 5/6
                     // C2 - REP #
                     // E2 - SEP #
-                    // 60 - RTS, 6B - RTL
+                    // 60 - RTS, 6B - RTL (6)
 
                     if (compiled_data.byte_map.Count > 0) {
 
