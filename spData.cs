@@ -1567,7 +1567,11 @@ namespace wedit
                     {
                         byte px = pix.m_pixels[(y * pix.m_width) + (x>>1)];
                         byte mx = pix.m_mask[(y * pix.m_width) + (x>>1)];
-                        if (0 == (x&1))
+                        mx ^= 0xFF;
+                        if (0xFF == mx)
+                            continue;
+
+                        if (0 == (x & 1))
                         {
                             px >>= 4;
                             mx >>= 4;
@@ -1575,6 +1579,8 @@ namespace wedit
 
                         px &= 0xF;
                         mx &= 0xF;
+                        mx |= 0xF0;
+                         
                         //------------------------------------------------------
                         // plot the thing
                         int canvas_index = (canvas_y + y) * canvas_width / 2;
@@ -1584,11 +1590,17 @@ namespace wedit
                         {
                             // it's an even position
                             px <<= 4;
+                            mx <<= 4;
+                            mx |= 0xF;
                         }
 
                         if ((canvas_index >= 0) &&
                             (canvas_index < canvas.Count))
                         {
+                            if (0x11 == canvas[canvas_index]) {
+                                canvas[canvas_index] = 0;
+                            }
+                            canvas[canvas_index] &= mx;
                             canvas[canvas_index] |= px;
                         }
                     }
@@ -1674,8 +1686,8 @@ namespace wedit
             {
                 // Blank Canvas
                 for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x00;
-                    dest_canvas[ idx ] = 0x00;
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
                 }
 
                 dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
