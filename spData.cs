@@ -1717,17 +1717,47 @@ namespace wedit
 
                         foreach (var pair in compiled_data.byte_map)
                         {
-                            cycles += 2;    // +2 LDA #$12
-                            List<int> offsets = pair.Value;
-                            cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            if (0x00 == pair.Key)
+                            {
+                                // STZ Case
+                                List<int> offsets = pair.Value;
+                                cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            }
+                            else if (0x11 == pair.Key)
+                            {
+                                // ERASE Case
+                                List<int> offsets = pair.Value;
+                                cycles += (offsets.Count*5); // +5 LDA >$011234,x
+                                cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            }
+                            else
+                            {
+                                cycles += 2;    // +2 LDA #$12
+                                List<int> offsets = pair.Value;
+                                cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            }
                         }
                     }
 
                     foreach (var pair in compiled_data.short_map)
                     {
-                        cycles += 3;  // +3 LDA #$1234
-                        List<int> offsets = pair.Value;
-                        cycles += (offsets.Count*6); // +6 STA |$1234,x
+                        if (0x0000 == pair.Key)
+                        {
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*6); // +6 STZ |$1234,x
+                        }
+                        else if (0x1111 == pair.Key)
+                        {
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*6); // +6 LDA >$011234,x
+                            cycles += (offsets.Count*6); // +6 STA |$1234,x
+                        }
+                        else
+                        {
+                            cycles += 3;  // +3 LDA #$1234
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*6); // +6 STA |$1234,x
+                        }
                     }
 
                     t.WriteLine(String.Format("data_{0}\t; cycles = {1}, scanlines = {2}", dataidx, cycles, cycles / 65 ));
@@ -1746,14 +1776,34 @@ namespace wedit
 
                         foreach (var pair in compiled_data.byte_map)
                         {
-                            //t.Write(String.Format("{0:x2} -> ", pair.Key));
-                            t.WriteLine("\tLDA\t#${0:x2}\t; cyc=2", pair.Key);
-                            List<int> offsets = pair.Value;
-                            //t.WriteLine(String.Format("{0} locations",offsets.Count));
-
-                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            if (0x00 == pair.Key)
                             {
-                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                                List<int> offsets = pair.Value;
+
+                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                                {
+                                    t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                                }
+                            }
+                            else if (0x11 == pair.Key)
+                            {
+                                List<int> offsets = pair.Value;
+
+                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                                {
+                                    t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=5", offsets[offIdx]);
+                                    t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                                }
+                            }
+                            else
+                            {   
+                                t.WriteLine("\tLDA\t#${0:x2}\t; cyc=2", pair.Key);
+                                List<int> offsets = pair.Value;
+
+                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                                {
+                                    t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                                }
                             }
                         }
 
@@ -1763,13 +1813,32 @@ namespace wedit
 
                     foreach (var pair in compiled_data.short_map)
                     {
-                        //t.Write(String.Format("{0:x4} -> ", pair.Key));
-                        t.WriteLine("\tLDA\t#${0:x4}\t; cyc=3", pair.Key);
-                        List<int> offsets = pair.Value;
-                        //t.WriteLine(String.Format("{0} locations",offsets.Count));
-                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        if (0x0000 == pair.Key)
                         {
-                            t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                            List<int> offsets = pair.Value;
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                            }
+
+                        }
+                        else if (0x1111 == pair.Key)
+                        {
+                            List<int> offsets = pair.Value;
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=6", offsets[offIdx]);
+                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                            }
+                        }
+                        else
+                        {
+                            t.WriteLine("\tLDA\t#${0:x4}\t; cyc=3", pair.Key);
+                            List<int> offsets = pair.Value;
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                            }
                         }
                     }
 
