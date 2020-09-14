@@ -1653,9 +1653,10 @@ namespace wedit
         {
             String fileName = Path.GetFileName( pathName );
             String baseName = Path.GetFileNameWithoutExtension( pathName );
+            String dirName = Path.GetDirectoryName(pathName);
 
             // I want everything Mr Sprite Export is going to give me
-            ExportMrSprite(baseName + ".gif");
+            ExportMrSprite(dirName + baseName + ".gif");
 
             // I also want more...
             // I want to export source code for compiled sprites specifically
@@ -1693,6 +1694,8 @@ namespace wedit
                 dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
 
                 data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
             }
 
             Console.WriteLine(" Export dxSprite Support Files");
