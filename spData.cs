@@ -1533,6 +1533,96 @@ namespace wedit
 
 
         //
+        // Hard Coded SHR Display Buffer, take image and
+        // change it into a collision mask
+        // 
+        // color index 0x1 is the background, and color index 6
+        // is our colliding color
+        //
+        public void dxGenPixelCollision(ref List<byte> canvas)
+        {
+            if (canvas.Count != (160*200))
+                return;
+
+            int top_y = -1;
+            int bottom_y = -1;
+            int last_y = -1;
+            for (int y = 0; y < 200; ++y)
+            {
+                int buffer_index = y * 160;
+                int left_x = -1;
+                int right_x = -1;
+
+                // find left
+                for (int x = 0; x < 160++x)
+                {
+                    if (0x11 != canvas[ buffer_index + x ])
+                    {
+                        left_x = x;
+                        break;
+                    }
+                }
+
+                // Only find the right, if there's a left
+                if (left_x >= 0)
+                {
+                    if (top_y < 0)  top_y = y;
+                    last_y = y;     // last y line with edges
+
+                    for (int x = 159; x >= left_x; --x)
+                    {
+                        if (0x11 != canvas[ buffer_index + x ])
+                        {
+                            right_x = x;
+                            break;
+                        }
+                    }
+
+                    for (int x = left_x; x <= right_x; ++x)
+                    {
+                        byte pixel = 0x11;
+
+                        // Top line, let's fill the whole thing
+                        if (y == top_y)
+                        {
+                            pixel = 0x66;
+                        }
+
+                        // Bottom Line, fill the whole thing
+                        if (y == bottom_y)
+                        {
+                            pixel = 0x66;
+                        }
+
+                        if (left_x == x)
+                        {
+                            pixel &= 0x0F;
+                            pixel |= 0x60;
+                        }
+                        if (right_x == x)
+                        {
+                            pixel &= 0xF0;
+                            pixel |= 0x06;
+                        }
+
+
+                        canvas[ buffer_index + x ] = pixel;
+                    }
+                }
+                else if (bottom_y < 0)
+                {
+                    // there's no edge, but was there an edge before?
+                    if ((last_y >= 0) && (last_y == (y-1)))
+                    {
+                        bottom_y = last_y;  // signal bottom line
+                        y = last_y - 1;     // get for loop to go back in time
+                    }
+                }
+            }
+        }
+
+
+        //
         // Hard Coded to plot into an array, the size of a IIgs
         // SHR Display Buffer
         //
@@ -1693,9 +1783,79 @@ namespace wedit
 
                 dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
 
+                // Full Frame
+                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                // Full Erase
+                data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
+
+                //--------------------------------------------------------------
+
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
+                }
+
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
+
+                dxGenPixelCollision(ref dest_canvas);
+
+                //--------------------------------------------------------------
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
+                }
+
+                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 99);
+
+                // dy = -1
                 data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
 
-                data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
+                //--------------------------------------------------------------
+                //--------------------------------------------------------------
+
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
+                }
+
+                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 101);
+
+                // dy = +1
+                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                //--------------------------------------------------------------
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
+                }
+
+                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 159, 100);
+
+                // dx = -1
+                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                //--------------------------------------------------------------
+                // Blank Canvas
+                for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                    source_canvas[ idx ] = 0x11;
+                    dest_canvas[ idx ] = 0x11;
+                }
+
+                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
+                dxPlot(ref dest_canvas, m_frames[ frame_index ], 161, 100);
+
+                // dx = +1
+                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                //--------------------------------------------------------------
+
             }
 
             Console.WriteLine(" Export dxSprite Support Files");
