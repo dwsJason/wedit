@@ -1554,7 +1554,7 @@ namespace wedit
                 int right_x = -1;
 
                 // find left
-                for (int x = 0; x < 160++x)
+                for (int x = 0; x < 160;  ++x)
                 {
                     if (0x11 != canvas[ buffer_index + x ])
                     {
@@ -1758,9 +1758,27 @@ namespace wedit
 
             // loop through, and grab a C1 of each Frame
             // then generate draws for each C1
-            //    -- 0- ++
+            //    Evens
+            //    -- 0- +-
             //    -0 00 +0
-            //    -+ -+ ++
+            //    -+ 0+ ++
+
+            //    Odds
+            //    -- 0- +-
+            //    -0 00 +0
+            //    -+ 0+ ++
+
+
+            //------------------------------------------------------------------
+            //   00 Full Draw
+            //   00 Full Erase
+            //   00 Collision ring
+            //   00 Collision Erase
+            //   -- 0- +-
+            //   -0    +0
+            //   -+ 0+ ++
+            //------------------------------------------------------------------
+
 
             // The delta to other frames can come later
 
@@ -1775,87 +1793,145 @@ namespace wedit
 
             for (int frame_index = 0; frame_index < m_frames.Count; ++frame_index)
             {
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
+                for (int even_odd = 0; even_odd < 2; ++even_odd)
+                {
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+
+                    // Full Frame
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                    // Full Erase
+                    data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
+
+                    //--------------------------------------------------------------
+
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+
+                    dxGenPixelCollision(ref dest_canvas);
+
+                    // Collision Data
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    // Collision Erase
+                    data.Add( new CompiledData( ref dest_canvas, ref source_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 159+even_odd, 99);
+
+                    // dx -1 dy = -1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 99);
+
+                    // dx 0 dy = -1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 161+even_odd, 99);
+
+                    // dx +1 dy = -1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 159+even_odd, 100);
+
+                    // dx = -1, dy = 0
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 161+even_odd, 100);
+
+                    // dx = +1, dy = 0
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 159+even_odd, 101);
+
+                    // dx = -1, dy = +1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 101);
+
+                    // dx = 0, dy = +1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+
+                    //--------------------------------------------------------------
+                    // Blank Canvas
+                    for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                        source_canvas[ idx ] = 0x11;
+                        dest_canvas[ idx ] = 0x11;
+                    }
+
+                    dxPlot(ref source_canvas, m_frames[ frame_index ], 160+even_odd, 100);
+                    dxPlot(ref dest_canvas, m_frames[ frame_index ], 161+even_odd, 101);
+
+                    // dx = +1, dy = +1
+                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                    //--------------------------------------------------------------
+
                 }
-
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
-
-                // Full Frame
-                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
-                // Full Erase
-                data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
-
-                //--------------------------------------------------------------
-
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
-                }
-
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 100);
-
-                dxGenPixelCollision(ref dest_canvas);
-
-                //--------------------------------------------------------------
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
-                }
-
-                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 99);
-
-                // dy = -1
-                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
-
-                //--------------------------------------------------------------
-                //--------------------------------------------------------------
-
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
-                }
-
-                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 160, 101);
-
-                // dy = +1
-                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
-
-                //--------------------------------------------------------------
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
-                }
-
-                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 159, 100);
-
-                // dx = -1
-                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
-
-                //--------------------------------------------------------------
-                // Blank Canvas
-                for (int idx = 0; idx < source_canvas.Count; ++idx) {
-                    source_canvas[ idx ] = 0x11;
-                    dest_canvas[ idx ] = 0x11;
-                }
-
-                dxPlot(ref source_canvas, m_frames[ frame_index ], 160, 100);
-                dxPlot(ref dest_canvas, m_frames[ frame_index ], 161, 100);
-
-                // dx = +1
-                data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
-
-                //--------------------------------------------------------------
-
             }
 
             Console.WriteLine(" Export dxSprite Support Files");
@@ -1873,10 +1949,12 @@ namespace wedit
                     // How many clocks
 
                     int cycles = 6;  // +6 RTS
+                    int size_bytes = 1; // +1 RTS
 
                     if (compiled_data.byte_map.Count > 0)
                     {
                         cycles += 6; // +3 SEP, +3 REP
+                        size_bytes += 4; // +2 SEP, +2 REP
 
                         foreach (var pair in compiled_data.byte_map)
                         {
@@ -1884,7 +1962,8 @@ namespace wedit
                             {
                                 // STZ Case
                                 List<int> offsets = pair.Value;
-                                cycles += (offsets.Count*5); // +5 STA |$1234,x
+                                cycles += (offsets.Count*5); // +5 STZ |$1234,x
+                                size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
                             }
                             else if (0x11 == pair.Key)
                             {
@@ -1892,12 +1971,15 @@ namespace wedit
                                 List<int> offsets = pair.Value;
                                 cycles += (offsets.Count*5); // +5 LDA >$011234,x
                                 cycles += (offsets.Count*5); // +5 STA |$1234,x
+                                size_bytes += (offsets.Count * 7);  //+4 +3
                             }
                             else
                             {
                                 cycles += 2;    // +2 LDA #$12
+                                size_bytes += 2; // +2 LDA #$12
                                 List<int> offsets = pair.Value;
                                 cycles += (offsets.Count*5); // +5 STA |$1234,x
+                                size_bytes += (offsets.Count *3); // +3 STA |$1234,x
                             }
                         }
                     }
@@ -1908,22 +1990,42 @@ namespace wedit
                         {
                             List<int> offsets = pair.Value;
                             cycles += (offsets.Count*6); // +6 STZ |$1234,x
+                            size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
                         }
                         else if (0x1111 == pair.Key)
                         {
                             List<int> offsets = pair.Value;
                             cycles += (offsets.Count*6); // +6 LDA >$011234,x
                             cycles += (offsets.Count*6); // +6 STA |$1234,x
+                            size_bytes += (offsets.Count * 7);  //+4 +3
                         }
                         else
                         {
                             cycles += 3;  // +3 LDA #$1234
+                            size_bytes += 3; // +3 LDA #$1234
                             List<int> offsets = pair.Value;
                             cycles += (offsets.Count*6); // +6 STA |$1234,x
+                            size_bytes += (offsets.Count *3); // +3 STA |$1234,x
                         }
                     }
 
-                    t.WriteLine(String.Format("data_{0}\t; cycles = {1}, scanlines = {2}", dataidx, cycles, cycles / 65 ));
+                    //------------------------------------------------------------------
+                    //   00 Full Draw
+                    //   00 Full Erase
+                    //   00 Collision ring
+                    //   00 Collision Erase
+                    //   -- 0- +-
+                    //   -0    +0
+                    //   -+ 0+ ++
+                    //------------------------------------------------------------------
+
+                    int frame_no = dataidx / 24;
+                    int even_odd = dataidx / 12;
+                    t.WriteLine(String.Format("data_{0}_{1}_{2}\t; cycles = {3}, scanlines = {4}, bytes={5}",
+                                              frame_no, even_odd,
+                                              dataidx % 12,
+                                              cycles, cycles / 65,
+                                              size_bytes ));
 
                     //--------------------------------------------------------------
 
