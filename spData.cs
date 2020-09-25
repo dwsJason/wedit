@@ -1941,6 +1941,26 @@ namespace wedit
             {
                 System.IO.TextWriter t = new StreamWriter(pathName);
 
+                for (int dataidx = 0; dataidx < data.Count;)
+                {
+                    t.Write("\tadrl\t");
+
+                    int endIdx = dataidx + 12;
+
+                    for (;dataidx < endIdx; ++dataidx)
+                    {
+                        int frame_no = dataidx / 24;
+                        int even_odd = (dataidx / 12) % 2;
+
+                        t.Write(String.Format("data_{0}_{1}_{2},",
+                                                  frame_no, even_odd,
+                                                  dataidx % 12 ));
+                    }
+
+                    t.WriteLine();
+
+                }
+
                 for (int dataidx = 0; dataidx < data.Count; ++dataidx)
                 {
                     CompiledData compiled_data = data[ dataidx ];
@@ -2020,7 +2040,7 @@ namespace wedit
                     //------------------------------------------------------------------
 
                     int frame_no = dataidx / 24;
-                    int even_odd = dataidx / 12;
+                    int even_odd = (dataidx / 12) % 2;
                     t.WriteLine(String.Format("data_{0}_{1}_{2}\t; cycles = {3}, scanlines = {4}, bytes={5}",
                                               frame_no, even_odd,
                                               dataidx % 12,
@@ -2107,7 +2127,7 @@ namespace wedit
                         }
                     }
 
-                    t.WriteLine("\tRTS\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
 
 
                     t.WriteLine(";-----------------------------------------------");
