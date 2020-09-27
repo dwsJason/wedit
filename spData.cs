@@ -1790,6 +1790,7 @@ namespace wedit
 
             // a List of compiled results
             List<CompiledData> data = new List<CompiledData>();
+            List<CompiledData> collision = new List<CompiledData>();
 
             for (int frame_index = 0; frame_index < m_frames.Count; ++frame_index)
             {
@@ -1822,6 +1823,7 @@ namespace wedit
 
                     // Collision Data
                     data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                    collision.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
 
                     // Collision Erase
                     data.Add( new CompiledData( ref dest_canvas, ref source_canvas ));
@@ -1934,6 +1936,188 @@ namespace wedit
                 }
             }
 
+            //------------------------------------------------------------------
+
+            String pathName2 = dirName + baseName + ".collide.txt";
+
+            try
+            {
+                System.IO.TextWriter t = new StreamWriter(pathName2);
+
+                for (int colidx = 0; colidx < collision.Count; colidx+=2)
+                {
+                    t.WriteLine("\tadrl\tcol_{0}_{1}_{2}",
+                                baseName,
+                                colidx / 2,
+                                0);
+
+                    t.WriteLine("\tadrl\tcol_{0}_{1}_{2}",
+                                baseName,
+                                colidx / 2,
+                                1);
+                }
+
+                for (int colidx = 0; colidx < collision.Count; ++colidx)
+                {
+                    CompiledData compiled_data = collision[ colidx ];
+
+                    //--------------------------------------------------------------
+                    // How many clocks
+
+                    // lda |$1234,x               // 5
+                    // and #$F0/#$0F/#$FF         // 2
+                    // cmp #$60/#$06/#$66         // 2
+                    // beq *+7  // :did_collide   // 2 / 3 (if taken)
+
+                    // rtl
+
+                    int cycles = 6;  // +6 RTS/RTL
+                    int size_bytes = 1; // +1 RTS/RTL
+
+                    if (compiled_data.byte_map.Count > 0)
+                    {
+                        cycles += 6; // +3 SEP, +3 R
+                                     //.EP
+                        size_bytes += 4; // +2 SEP, +2 REP
+
+                        foreach (var pair in compiled_data.byte_map)
+                        {
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*11);  // 5+2+2+2
+                            size_bytes += (offsets.Count*9); // 3+2+2+2
+                        }
+                    }
+
+                    foreach (var pair in compiled_data.short_map)
+                    {
+                        List<int> offsets = pair.Value;
+
+                        cycles += (offsets.Count*22);
+                        size_bytes += (offsets.Count*18);
+                    }
+
+                    int frame_no = colidx / 2;
+                    int even_odd = colidx % 2;
+                    t.WriteLine(String.Format("col_{0}_{1}_{2}\t; cycles = {3}, scanlines = {4}, bytes={5}",
+                                              baseName,
+                                              frame_no, even_odd,
+                                              cycles, cycles / 65,
+                                              size_bytes ));
+
+                    //--------------------------------------------------------------
+
+                    // A9 - LDA #
+                    // 9D - STA |NNNN,x ; 5/6
+                    // C2 - REP #
+                    // E2 - SEP #
+                    // 60 - RTS, 6B - RTL (6)
+
+                    if (compiled_data.byte_map.Count > 0) {
+
+                        t.WriteLine("\tSEP\t#$20\t; mx=10   cyc=3");
+
+                        foreach (var pair in compiled_data.byte_map)
+                        {
+                            List<int> offsets = pair.Value;
+
+                            byte mask = 0xF0;
+                            byte pdata = 0x60;
+
+                            if (0x16 == pair.Key)
+                            {
+                                mask = 0x0F;
+                                pdata = 0x06;
+                            }
+                            //else if (0x61 == pair.Key)
+                            //{
+                            //    mask = 0xF0;
+                            //    data = 0x60;
+                            //}
+
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                                t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
+                                t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
+                                t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+                            }
+                        }
+
+                        //t.WriteLine("\tREP\t#$31\t; mxc=000  cyc=3");
+                    }
+
+
+                    foreach (var pair in compiled_data.short_map)
+                    {
+                        List<int> offsets = pair.Value;
+                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        {
+                            byte mask = 0xF0;
+                            byte pdata = 0x60;
+
+                            if (0x16 == (pair.Key & 0xFF))
+                            {
+                                mask = 0x0F;
+                                pdata = 0x06;
+                            }
+                            //else if (0x61 == (pair.Key & 0xFF))
+                            //{
+                            //    mask = 0xF0;
+                            //    data = 0x60;
+                            //}
+
+                            t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                            t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
+                            t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
+                            t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+
+                            mask = 0xF0;
+                            pdata = 0x60;
+
+                            if (0x16 == ((pair.Key>>8) & 0xFF))
+                            {
+                                mask = 0x0F;
+                                pdata = 0x06;
+                            }
+                            //else if (0x61 == ((pair.Key>>8) & 0xFF))
+                            //{
+                            //    mask = 0xF0;
+                            //    data = 0x60;
+                            //}
+
+                            t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]+1);
+                            t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
+                            t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
+                            t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+                        }
+                    }
+                    t.WriteLine("\tREP\t#$30\t; cyc=3");
+
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+                    t.WriteLine("\tRTL\t\t; cyc=6");
+
+
+                    t.WriteLine(";-----------------------------------------------");
+                }
+
+                t.Flush();
+                t.Close();
+                t = null;
+            }
+            catch (IOException ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+
+
+            //------------------------------------------------------------------
+
             Console.WriteLine(" Export dxSprite Support Files");
             Console.WriteLine(" Export {0}", pathName);
 
@@ -1952,7 +2136,8 @@ namespace wedit
                         int frame_no = dataidx / 24;
                         int even_odd = (dataidx / 12) % 2;
 
-                        t.Write(String.Format("data_{0}_{1}_{2},",
+                        t.Write(String.Format("{0}_{1}_{2}_{3},",
+                                                  baseName,
                                                   frame_no, even_odd,
                                                   dataidx % 12 ));
                     }
@@ -2041,7 +2226,8 @@ namespace wedit
 
                     int frame_no = dataidx / 24;
                     int even_odd = (dataidx / 12) % 2;
-                    t.WriteLine(String.Format("data_{0}_{1}_{2}\t; cycles = {3}, scanlines = {4}, bytes={5}",
+                    t.WriteLine(String.Format("{0}_{1}_{2}_{3}\t; cycles = {4}, scanlines = {5}, bytes={6}",
+                                              baseName,
                                               frame_no, even_odd,
                                               dataidx % 12,
                                               cycles, cycles / 65,
