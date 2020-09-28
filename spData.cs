@@ -1534,6 +1534,43 @@ namespace wedit
 
         //
         // Hard Coded SHR Display Buffer, take image and
+        // poke a checkboard pattern through it
+        // 
+        // color index 0x1 is the background
+        //
+        public void dxGenPixelChecker(ref List<byte> canvas)
+        {
+            if (canvas.Count != (160*200))
+                return;
+
+            for (int y = 0; y < 200; ++y)
+            {
+                int buffer_index = y * 160;
+
+                for (int x = 0; x < 160;  ++x)
+                {
+                    byte pixel = canvas[ buffer_index + x ];
+
+                    if (0 == (y&1))
+                    {
+                        pixel &= 0xF0;
+                        pixel |= 0x01;
+                    }
+                    else
+                    {
+                        pixel &= 0x0F;
+                        pixel |= 0x10;
+                    }
+
+
+                    canvas[ buffer_index + x ] = pixel;
+                }
+            }
+        }
+
+
+        //
+        // Hard Coded SHR Display Buffer, take image and
         // change it into a collision mask
         // 
         // color index 0x1 is the background, and color index 6
@@ -1820,6 +1857,7 @@ namespace wedit
                     dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 100);
 
                     dxGenPixelCollision(ref dest_canvas);
+                    dxGenPixelChecker(ref dest_canvas);     // idea here is to cut the # of checks in half
 
                     // Collision Data
                     data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
@@ -1946,12 +1984,12 @@ namespace wedit
 
                 for (int colidx = 0; colidx < collision.Count; colidx+=2)
                 {
-                    t.WriteLine("\tadrl\tcol_{0}_{1}_{2}",
+                    t.WriteLine("\tjmp\tcol_{0}_{1}_{2}",
                                 baseName,
                                 colidx / 2,
                                 0);
 
-                    t.WriteLine("\tadrl\tcol_{0}_{1}_{2}",
+                    t.WriteLine("\tjmp\tcol_{0}_{1}_{2}",
                                 baseName,
                                 colidx / 2,
                                 1);
@@ -2127,7 +2165,7 @@ namespace wedit
 
                 for (int dataidx = 0; dataidx < data.Count;)
                 {
-                    t.Write("\tadrl\t");
+                    t.Write("\tjml\t");
 
                     int endIdx = dataidx + 12;
 
