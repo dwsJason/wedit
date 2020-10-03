@@ -1434,8 +1434,10 @@ namespace wedit
             public Dictionary<byte, List<int>>   byte_map = new Dictionary<byte, List<int>>();
             public Dictionary<ushort, List<int>> short_map = new Dictionary<ushort, List<int>>();
 
+            public int bank_no = -1;
+
             int m_cycles = 0;
-            int m_size_bytes = 0;
+            public int m_size_bytes = 0;
 
             string m_name;
 
@@ -2183,56 +2185,143 @@ namespace wedit
             }
 
             //------------------------------------------------------------------
-            String framePathName = dirName + "\\" + baseName + ".ff.txt";
+            String linkPathName = dirName + "\\" + baseName + ".link.s";
+
+            List<string> labels = new List<string>();
+            List<CompiledData> frames = new List<CompiledData>();
+
+            int frameframe_index = 0;
+
+            for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
+            {
+                string row = "";
+
+                for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
+                {
+                    for (int even_odd = 0; even_odd < 2; ++even_odd)
+                    {
+                        CompiledData compiled_data = frameframe[ frameframe_index ];
+
+                        string name = String.Format("{0}_{1}to{2}_{3}",
+                                                   baseName,
+                                                   source_frame_index,
+                                                   dest_frame_index,
+                                                   even_odd);
+
+                        compiled_data.SetName(name);
+                        compiled_data.CalcBlitClocks();
+
+                        frames.Add( compiled_data );
+
+                        row = row + name + ",";
+                                              
+                        frameframe_index++;
+                    }
+                }
+                labels.Add( row );
+            }
+            
+
+            //------------------------------------------------------------------
+
+            for (int dataidx = 0; dataidx < data.Count;)
+            {
+                string row = "";
+
+                int endIdx = dataidx + 12;
+
+                for (;dataidx < endIdx; ++dataidx)
+                {
+                    CompiledData compiled_data = data[ dataidx ];
+
+                    int frame_no = dataidx / 24;
+                    int even_odd = (dataidx / 12) % 2;
+
+                    string name = String.Format("{0}_{1}_{2}_{3}",
+                                                  baseName,
+                                                  frame_no, even_odd,
+                                                  dataidx % 12 );
+
+                    compiled_data.SetName( name );
+                    compiled_data.CalcBlitClocks();
+                    frames.Add( compiled_data );
+
+                    row = row + name + ",";
+                }
+
+                labels.Add( row );
+            }
+
+//******************************************************************************
+            //
+            // Pack the Banks
+            //
+
+            List<int> sizes = new List<int>();
+
+            sizes.Add(4);    // 4 bytes for the length counts
+
+            sizes[0] += (data.Count * 4);
+            sizes[0] += (frameframe.Count * 4);
+
+            // For each frame
+            for (int frame_no = 0; frame_no < frames.Count; ++frame_no)
+            {
+                int bank = 0;
+
+                CompiledData compiled_data = frames[ frame_no ];
+
+                // On each bank, see if the frame fits
+                for (bank = 0;bank < sizes.Count; ++bank)
+                {
+                    if ((sizes[ bank ] + compiled_data.m_size_bytes) < 65535)
+                    {
+                        break;
+                    }
+                }
+
+                // Assign the data to a bank
+                compiled_data.bank_no = bank;
+
+                if (bank < sizes.Count)
+                {
+                    sizes[ bank ] += compiled_data.m_size_bytes;
+                }
+                else
+                {
+                    // It didn't fit anywhere, to make a new bank
+                    sizes.Add(compiled_data.m_size_bytes);
+                }
+            }
+
+//******************************************************************************
+            //------------------------------------------------------------------
+            //
+            //   Linker File Export
+            //
 
             try
             {
-                System.IO.TextWriter t = new StreamWriter(framePathName);
+                System.IO.TextWriter t = new StreamWriter(linkPathName);
 
-                int frameframe_index = 0;
+                t.WriteLine("**************************************");
+                t.WriteLine("*");
+                t.WriteLine(String.Format("*  {0}", baseName ));
+                t.WriteLine("*");
+                t.WriteLine("**************************************");
+                t.WriteLine("");
+                t.WriteLine("*  Merlin32 Linker File");
+                t.WriteLine("");
+                t.WriteLine("\t\tTYP\t$06\t\t\t; Binary File / Fixed Address");
+                t.WriteLine("");
 
-                for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
+                for (int idx = 0; idx < sizes.Count; ++idx)
                 {
-                    t.Write("\tadrl\t");
-
-                    for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
-                    {
-                        for (int even_odd = 0; even_odd < 2; ++even_odd)
-                        {
-                            CompiledData compiled_data = frameframe[ frameframe_index ];
-
-                            string name = String.Format("{0}_{1}to{2}_{3}",
-                                                       baseName,
-                                                       source_frame_index,
-                                                       dest_frame_index,
-                                                       even_odd);
-
-                            compiled_data.SetName(name);
-                            compiled_data.CalcBlitClocks();
-
-                            t.Write( name + "," );
-                                                  
-                            frameframe_index++;
-                        }
-                    }
-                    t.WriteLine();
+                    t.WriteLine(String.Format("\t\tASM\t{0}{1}.s", baseName, idx));
+                    t.WriteLine(String.Format("\t\tSNA\t{0}{1}", baseName, idx));
                 }
 
-                frameframe_index = 0;
-
-                for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
-                {
-                    for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
-                    {
-                        for (int even_odd = 0; even_odd < 2; ++even_odd)
-                        {
-                            CompiledData compiled_data = frameframe[ frameframe_index ];
-
-                            compiled_data.ExportBlit(ref t);
-                            frameframe_index++;
-                        }
-                    }
-                }
+                t.WriteLine("");
 
                 t.Flush();
                 t.Close();
@@ -2243,6 +2332,66 @@ namespace wedit
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
 
+            //------------------------------------------------------------------
+            //
+            //   Bank Files Export
+            //
+
+            for (int bank_no = 0; bank_no < sizes.Count; ++bank_no)
+            {
+                String bankPathName = dirName + "\\" + baseName + bank_no + ".s";
+
+                try
+                {
+                    System.IO.TextWriter t = new StreamWriter(bankPathName);
+
+                    t.WriteLine("");
+                    t.WriteLine("\tmx %00");
+                    t.WriteLine(String.Format("\torg ${0:x2}0000",bank_no));
+                    t.WriteLine("");
+                    t.WriteLine("");
+
+                    if (0 == bank_no)
+                    {
+                        t.WriteLine(String.Format("\tdw {0},{1}", frames.Count, m_frames.Count));
+
+                        t.WriteLine("");
+                        for (int idx = 0; idx < labels.Count; ++idx)
+                        {
+                            t.WriteLine(String.Format("\text {0}", labels[idx]));
+                        }
+                        t.WriteLine("");
+
+                        for (int idx = 0; idx < labels.Count; ++idx)
+                        {
+                            t.WriteLine(String.Format("\tadrl {0}", labels[idx]));
+                        }
+                        t.WriteLine("");
+                    }
+
+                    for (int idx = 0; idx < frames.Count; ++idx)
+                    {
+                        CompiledData compiled_data = frames[ idx ];
+
+                        if (bank_no == compiled_data.bank_no)
+                        {
+                            compiled_data.ExportBlit( ref t );
+                        }
+                    }
+
+                    t.WriteLine("");
+
+                    t.Flush();
+                    t.Close();
+                    t = null;
+                }
+                catch (IOException ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.ToString());
+                }
+
+
+            }
 
             //------------------------------------------------------------------
 
@@ -2422,72 +2571,8 @@ namespace wedit
             {
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
-
-
             //------------------------------------------------------------------
 
-            Console.WriteLine(" Export dxSprite Support Files");
-            Console.WriteLine(" Export {0}", pathName);
-
-            try
-            {
-                System.IO.TextWriter t = new StreamWriter(pathName);
-
-                for (int dataidx = 0; dataidx < data.Count;)
-                {
-                    t.Write("\tadrl\t");
-
-                    int endIdx = dataidx + 12;
-
-                    for (;dataidx < endIdx; ++dataidx)
-                    {
-                        CompiledData compiled_data = data[ dataidx ];
-
-                        int frame_no = dataidx / 24;
-                        int even_odd = (dataidx / 12) % 2;
-
-                        string name = String.Format("{0}_{1}_{2}_{3}",
-                                                      baseName,
-                                                      frame_no, even_odd,
-                                                      dataidx % 12 );
-
-                        compiled_data.SetName( name );
-                        compiled_data.CalcBlitClocks();
-
-                        t.Write( name + "," );
-                    }
-
-                    t.WriteLine();
-
-                }
-
-                for (int dataidx = 0; dataidx < data.Count; ++dataidx)
-                {
-                    CompiledData compiled_data = data[ dataidx ];
-
-                    //------------------------------------------------------------------
-                    //   00 Full Draw
-                    //   00 Full Erase
-                    //   00 Collision ring
-                    //   00 Collision Erase
-                    //   -- 0- +-
-                    //   -0    +0
-                    //   -+ 0+ ++
-                    //------------------------------------------------------------------
-
-                    compiled_data.ExportBlit( ref t );
-
-                    //--------------------------------------------------------------
-                }
-
-                t.Flush();
-                t.Close();
-                t = null;
-            }
-            catch (IOException ex)
-            {
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
-            }
 
 
         }
