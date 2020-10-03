@@ -1434,6 +1434,11 @@ namespace wedit
             public Dictionary<byte, List<int>>   byte_map = new Dictionary<byte, List<int>>();
             public Dictionary<ushort, List<int>> short_map = new Dictionary<ushort, List<int>>();
 
+            int m_cycles = 0;
+            int m_size_bytes = 0;
+
+            string m_name;
+
             // ... Add some keys and values.
             //map.Add("cat", "orange");
             //map.Add("dog", "brown");
@@ -1527,6 +1532,182 @@ namespace wedit
                         }
                     }
                 }
+            }
+
+            public void SetName(string name)
+            {
+                m_name = name;
+            }
+
+            public void CalcBlitClocks()
+            {
+                //--------------------------------------------------------------
+                // How many clocks
+
+                int cycles = 6;  // +6 RTS
+                int size_bytes = 1; // +1 RTS
+
+                // 8 bit cycles
+                if (byte_map.Count > 0)
+                {
+                    cycles += 6; // +3 SEP, +3 REP
+                    size_bytes += 4; // +2 SEP, +2 REP
+
+                    foreach (var pair in byte_map)
+                    {
+                        if (0x00 == pair.Key)
+                        {
+                            // STZ Case
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*5); // +5 STZ |$1234,x
+                            size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
+                        }
+                        else if (0x11 == pair.Key)
+                        {
+                            // ERASE Case
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*5); // +5 LDA >$011234,x
+                            cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            size_bytes += (offsets.Count * 7);  //+4 +3
+                        }
+                        else
+                        {
+                            cycles += 2;    // +2 LDA #$12
+                            size_bytes += 2; // +2 LDA #$12
+                            List<int> offsets = pair.Value;
+                            cycles += (offsets.Count*5); // +5 STA |$1234,x
+                            size_bytes += (offsets.Count *3); // +3 STA |$1234,x
+                        }
+                    }
+                }
+                // 16 bit cycles
+                foreach (var pair in short_map)
+                {
+                    if (0x0000 == pair.Key)
+                    {
+                        List<int> offsets = pair.Value;
+                        cycles += (offsets.Count*6); // +6 STZ |$1234,x
+                        size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
+                    }
+                    else if (0x1111 == pair.Key)
+                    {
+                        List<int> offsets = pair.Value;
+                        cycles += (offsets.Count*6); // +6 LDA >$011234,x
+                        cycles += (offsets.Count*6); // +6 STA |$1234,x
+                        size_bytes += (offsets.Count * 7);  //+4 +3
+                    }
+                    else
+                    {
+                        cycles += 3;  // +3 LDA #$1234
+                        size_bytes += 3; // +3 LDA #$1234
+                        List<int> offsets = pair.Value;
+                        cycles += (offsets.Count*6); // +6 STA |$1234,x
+                        size_bytes += (offsets.Count *3); // +3 STA |$1234,x
+                    }
+                }
+
+                m_cycles = cycles;
+                m_size_bytes = size_bytes;
+
+            }
+
+
+            public void ExportBlit(ref System.IO.TextWriter t)
+            {
+
+                t.WriteLine(String.Format("{0}\tent\t; cycles = {1}, scanlines = {2}, bytes = {3}",
+                                       m_name,
+                                       m_cycles, m_cycles / 65,
+                                       m_size_bytes) );
+
+                //--------------------------------------------------------------
+
+                // A9 - LDA #
+                // 9D - STA |NNNN,x ; 5/6
+                // C2 - REP #
+                // E2 - SEP #
+                // 60 - RTS, 6B - RTL (6)
+
+                if (byte_map.Count > 0) {
+
+                    t.WriteLine("\tSEP\t#$20\t; mx=10   cyc=3");
+
+                    foreach (var pair in byte_map)
+                    {
+                        if (0x00 == pair.Key)
+                        {
+                            List<int> offsets = pair.Value;
+
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                            }
+                        }
+                        else if (0x11 == pair.Key)
+                        {
+                            List<int> offsets = pair.Value;
+
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=5", offsets[offIdx]);
+                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                            }
+                        }
+                        else
+                        {   
+                            t.WriteLine("\tLDA\t#${0:x2}\t; cyc=2", pair.Key);
+                            List<int> offsets = pair.Value;
+
+                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                            {
+                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
+                            }
+                        }
+                    }
+
+                    t.WriteLine("\tREP\t#$31\t; mxc=000  cyc=3");
+                }
+
+
+                foreach (var pair in short_map)
+                {
+                    if (0x0000 == pair.Key)
+                    {
+                        List<int> offsets = pair.Value;
+                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        {
+                            t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                        }
+
+                    }
+                    else if (0x1111 == pair.Key)
+                    {
+                        List<int> offsets = pair.Value;
+                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        {
+                            t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=6", offsets[offIdx]);
+                            t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                        }
+                    }
+                    else
+                    {
+                        t.WriteLine("\tLDA\t#${0:x4}\t; cyc=3", pair.Key);
+                        List<int> offsets = pair.Value;
+                        for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
+                        {
+                            t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
+                        }
+                    }
+                }
+
+                t.WriteLine("\tRTL\t\t; cyc=6");
+
+                t.WriteLine(";-----------------------------------------------");
+            }
+
+            public void CalcCollisionClocks()
+            {
+
             }
 
         }
@@ -1783,7 +1964,7 @@ namespace wedit
             String dirName = Path.GetDirectoryName(pathName);
 
             // I want everything Mr Sprite Export is going to give me
-            ExportMrSprite(dirName + baseName + ".gif");
+            ExportMrSprite(dirName + "\\" + baseName + ".gif");
 
             // I also want more...
             // I want to export source code for compiled sprites specifically
@@ -1828,6 +2009,33 @@ namespace wedit
             // a List of compiled results
             List<CompiledData> data = new List<CompiledData>();
             List<CompiledData> collision = new List<CompiledData>();
+
+            //------------------------------------------------------------------
+            // Frame to Frame (convert frame X into frame Y)
+
+            List<CompiledData> frameframe = new List<CompiledData>();
+
+            for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
+            {
+                for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
+                {
+                    for (int even_odd = 0; even_odd < 2; ++even_odd)
+                    {
+                        // Blank Canvas
+                        for (int idx = 0; idx < source_canvas.Count; ++idx) {
+                            source_canvas[ idx ] = 0x11;
+                            dest_canvas[ idx ] = 0x11;
+                        }
+
+                        dxPlot(ref source_canvas, m_frames[ source_frame_index ], 160+even_odd, 100);
+                        dxPlot(ref dest_canvas, m_frames[ dest_frame_index ], 160+even_odd, 100);
+
+                        frameframe.Add( new CompiledData( ref source_canvas, ref dest_canvas));
+                    }
+                }
+            }
+
+            //------------------------------------------------------------------
 
             for (int frame_index = 0; frame_index < m_frames.Count; ++frame_index)
             {
@@ -1975,8 +2183,70 @@ namespace wedit
             }
 
             //------------------------------------------------------------------
+            String framePathName = dirName + "\\" + baseName + ".ff.txt";
 
-            String pathName2 = dirName + baseName + ".collide.txt";
+            try
+            {
+                System.IO.TextWriter t = new StreamWriter(framePathName);
+
+                int frameframe_index = 0;
+
+                for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
+                {
+                    t.Write("\tadrl\t");
+
+                    for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
+                    {
+                        for (int even_odd = 0; even_odd < 2; ++even_odd)
+                        {
+                            CompiledData compiled_data = frameframe[ frameframe_index ];
+
+                            string name = String.Format("{0}_{1}to{2}_{3}",
+                                                       baseName,
+                                                       source_frame_index,
+                                                       dest_frame_index,
+                                                       even_odd);
+
+                            compiled_data.SetName(name);
+                            compiled_data.CalcBlitClocks();
+
+                            t.Write( name + "," );
+                                                  
+                            frameframe_index++;
+                        }
+                    }
+                    t.WriteLine();
+                }
+
+                frameframe_index = 0;
+
+                for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
+                {
+                    for (int dest_frame_index = 0; dest_frame_index < m_frames.Count; ++dest_frame_index)
+                    {
+                        for (int even_odd = 0; even_odd < 2; ++even_odd)
+                        {
+                            CompiledData compiled_data = frameframe[ frameframe_index ];
+
+                            compiled_data.ExportBlit(ref t);
+                            frameframe_index++;
+                        }
+                    }
+                }
+
+                t.Flush();
+                t.Close();
+                t = null;
+            }
+            catch (IOException ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+
+
+            //------------------------------------------------------------------
+
+            String pathName2 = dirName + "\\" + baseName + ".collide.txt";
 
             try
             {
@@ -2036,7 +2306,7 @@ namespace wedit
 
                     int frame_no = colidx / 2;
                     int even_odd = colidx % 2;
-                    t.WriteLine(String.Format("col_{0}_{1}_{2}\t; cycles = {3}, scanlines = {4}, bytes={5}",
+                    t.WriteLine(String.Format("col_{0}_{1}_{2}\tent ; cycles = {3}, scanlines = {4}, bytes={5}",
                                               baseName,
                                               frame_no, even_odd,
                                               cycles, cycles / 65,
@@ -2077,7 +2347,7 @@ namespace wedit
                                 t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
                                 t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
                                 t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
-                                t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+                                t.WriteLine("\tBEQ\t*+9\t; cyc=2/3");
                             }
                         }
 
@@ -2107,7 +2377,7 @@ namespace wedit
                             t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
                             t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
                             t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
-                            t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+                            t.WriteLine("\tBEQ\t*+9\t; cyc=2/3");
 
                             mask = 0xF0;
                             pdata = 0x60;
@@ -2126,7 +2396,7 @@ namespace wedit
                             t.WriteLine("\tLDA\t${0:x4},x\t; cyc=5", offsets[offIdx]+1);
                             t.WriteLine("\tAND\t#${0:x2}\t; cyc=2", mask);
                             t.WriteLine("\tCMP\t#${0:x2}\t; cyc=2", pdata);
-                            t.WriteLine("\tBEQ\t*+8\t; cyc=2/3");
+                            t.WriteLine("\tBEQ\t*+9\t; cyc=2/3");
                         }
                     }
                     t.WriteLine("\tREP\t#$30\t; cyc=3");
@@ -2165,19 +2435,26 @@ namespace wedit
 
                 for (int dataidx = 0; dataidx < data.Count;)
                 {
-                    t.Write("\tjml\t");
+                    t.Write("\tadrl\t");
 
                     int endIdx = dataidx + 12;
 
                     for (;dataidx < endIdx; ++dataidx)
                     {
+                        CompiledData compiled_data = data[ dataidx ];
+
                         int frame_no = dataidx / 24;
                         int even_odd = (dataidx / 12) % 2;
 
-                        t.Write(String.Format("{0}_{1}_{2}_{3},",
-                                                  baseName,
-                                                  frame_no, even_odd,
-                                                  dataidx % 12 ));
+                        string name = String.Format("{0}_{1}_{2}_{3}",
+                                                      baseName,
+                                                      frame_no, even_odd,
+                                                      dataidx % 12 );
+
+                        compiled_data.SetName( name );
+                        compiled_data.CalcBlitClocks();
+
+                        t.Write( name + "," );
                     }
 
                     t.WriteLine();
@@ -2187,70 +2464,6 @@ namespace wedit
                 for (int dataidx = 0; dataidx < data.Count; ++dataidx)
                 {
                     CompiledData compiled_data = data[ dataidx ];
-
-                    //--------------------------------------------------------------
-                    // How many clocks
-
-                    int cycles = 6;  // +6 RTS
-                    int size_bytes = 1; // +1 RTS
-
-                    if (compiled_data.byte_map.Count > 0)
-                    {
-                        cycles += 6; // +3 SEP, +3 REP
-                        size_bytes += 4; // +2 SEP, +2 REP
-
-                        foreach (var pair in compiled_data.byte_map)
-                        {
-                            if (0x00 == pair.Key)
-                            {
-                                // STZ Case
-                                List<int> offsets = pair.Value;
-                                cycles += (offsets.Count*5); // +5 STZ |$1234,x
-                                size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
-                            }
-                            else if (0x11 == pair.Key)
-                            {
-                                // ERASE Case
-                                List<int> offsets = pair.Value;
-                                cycles += (offsets.Count*5); // +5 LDA >$011234,x
-                                cycles += (offsets.Count*5); // +5 STA |$1234,x
-                                size_bytes += (offsets.Count * 7);  //+4 +3
-                            }
-                            else
-                            {
-                                cycles += 2;    // +2 LDA #$12
-                                size_bytes += 2; // +2 LDA #$12
-                                List<int> offsets = pair.Value;
-                                cycles += (offsets.Count*5); // +5 STA |$1234,x
-                                size_bytes += (offsets.Count *3); // +3 STA |$1234,x
-                            }
-                        }
-                    }
-
-                    foreach (var pair in compiled_data.short_map)
-                    {
-                        if (0x0000 == pair.Key)
-                        {
-                            List<int> offsets = pair.Value;
-                            cycles += (offsets.Count*6); // +6 STZ |$1234,x
-                            size_bytes += (offsets.Count*3); // +3 STZ |$1234,x
-                        }
-                        else if (0x1111 == pair.Key)
-                        {
-                            List<int> offsets = pair.Value;
-                            cycles += (offsets.Count*6); // +6 LDA >$011234,x
-                            cycles += (offsets.Count*6); // +6 STA |$1234,x
-                            size_bytes += (offsets.Count * 7);  //+4 +3
-                        }
-                        else
-                        {
-                            cycles += 3;  // +3 LDA #$1234
-                            size_bytes += 3; // +3 LDA #$1234
-                            List<int> offsets = pair.Value;
-                            cycles += (offsets.Count*6); // +6 STA |$1234,x
-                            size_bytes += (offsets.Count *3); // +3 STA |$1234,x
-                        }
-                    }
 
                     //------------------------------------------------------------------
                     //   00 Full Draw
@@ -2262,99 +2475,9 @@ namespace wedit
                     //   -+ 0+ ++
                     //------------------------------------------------------------------
 
-                    int frame_no = dataidx / 24;
-                    int even_odd = (dataidx / 12) % 2;
-                    t.WriteLine(String.Format("{0}_{1}_{2}_{3}\t; cycles = {4}, scanlines = {5}, bytes={6}",
-                                              baseName,
-                                              frame_no, even_odd,
-                                              dataidx % 12,
-                                              cycles, cycles / 65,
-                                              size_bytes ));
+                    compiled_data.ExportBlit( ref t );
 
                     //--------------------------------------------------------------
-
-                    // A9 - LDA #
-                    // 9D - STA |NNNN,x ; 5/6
-                    // C2 - REP #
-                    // E2 - SEP #
-                    // 60 - RTS, 6B - RTL (6)
-
-                    if (compiled_data.byte_map.Count > 0) {
-
-                        t.WriteLine("\tSEP\t#$20\t; mx=10   cyc=3");
-
-                        foreach (var pair in compiled_data.byte_map)
-                        {
-                            if (0x00 == pair.Key)
-                            {
-                                List<int> offsets = pair.Value;
-
-                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                                {
-                                    t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=5", offsets[offIdx]);
-                                }
-                            }
-                            else if (0x11 == pair.Key)
-                            {
-                                List<int> offsets = pair.Value;
-
-                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                                {
-                                    t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=5", offsets[offIdx]);
-                                    t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
-                                }
-                            }
-                            else
-                            {   
-                                t.WriteLine("\tLDA\t#${0:x2}\t; cyc=2", pair.Key);
-                                List<int> offsets = pair.Value;
-
-                                for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                                {
-                                    t.WriteLine("\tSTA\t${0:x4},x\t; cyc=5", offsets[offIdx]);
-                                }
-                            }
-                        }
-
-                        t.WriteLine("\tREP\t#$31\t; mxc=000  cyc=3");
-                    }
-
-
-                    foreach (var pair in compiled_data.short_map)
-                    {
-                        if (0x0000 == pair.Key)
-                        {
-                            List<int> offsets = pair.Value;
-                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                            {
-                                t.WriteLine("\tSTZ\t${0:x4},x\t; cyc=6", offsets[offIdx]);
-                            }
-
-                        }
-                        else if (0x1111 == pair.Key)
-                        {
-                            List<int> offsets = pair.Value;
-                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                            {
-                                t.WriteLine("\tLDA\t>$01{0:x4},x\t; cyc=6", offsets[offIdx]);
-                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
-                            }
-                        }
-                        else
-                        {
-                            t.WriteLine("\tLDA\t#${0:x4}\t; cyc=3", pair.Key);
-                            List<int> offsets = pair.Value;
-                            for (int offIdx = 0; offIdx < offsets.Count; ++offIdx)
-                            {
-                                t.WriteLine("\tSTA\t${0:x4},x\t; cyc=6", offsets[offIdx]);
-                            }
-                        }
-                    }
-
-                    t.WriteLine("\tRTL\t\t; cyc=6");
-
-
-                    t.WriteLine(";-----------------------------------------------");
                 }
 
                 t.Flush();
