@@ -1955,6 +1955,11 @@ namespace wedit
 
         }
 
+
+        int key(int from, int too)
+        {
+            return from | (too << 16);
+        }
         //----------------------------------------------------------------------
         //
         // Save a sprite Sheet, in dxSprite Format
@@ -2015,6 +2020,186 @@ namespace wedit
             //------------------------------------------------------------------
             // Frame to Frame (convert frame X into frame Y)
 
+            // Load up list of valid pairs
+            Dictionary<int, bool> valid_pairs = new Dictionary<int, bool>();
+
+            //  0, 1, 2, 3, 4
+            //  5, 6, 7, 8, 9
+            // 10,11,12,13,14
+            // 15,16,17,18,19
+            // 20,21,22,23,24
+
+            valid_pairs.Add( key(0,1), true );
+            valid_pairs.Add( key(0,6), true );
+            valid_pairs.Add( key(0,5), true );
+
+            valid_pairs.Add( key(1,0), true );
+            valid_pairs.Add( key(1,5), true );
+            valid_pairs.Add( key(1,6), true );
+            valid_pairs.Add( key(1,7), true );
+            valid_pairs.Add( key(1,2), true );
+
+            valid_pairs.Add( key(2,1), true );
+            valid_pairs.Add( key(2,6), true );
+            valid_pairs.Add( key(2,7), true );
+            valid_pairs.Add( key(2,8), true );
+            valid_pairs.Add( key(2,3), true );
+
+            valid_pairs.Add( key(3,2), true );
+            valid_pairs.Add( key(3,7), true );
+            valid_pairs.Add( key(3,8), true );
+            valid_pairs.Add( key(3,9), true );
+            valid_pairs.Add( key(3,4), true );
+
+            valid_pairs.Add( key(4,3), true );
+            valid_pairs.Add( key(4,8), true );
+            valid_pairs.Add( key(4,9), true );
+
+            valid_pairs.Add( key(5,0), true );
+            valid_pairs.Add( key(5,1), true );
+            valid_pairs.Add( key(5,6), true );
+            valid_pairs.Add( key(5,11), true );
+            valid_pairs.Add( key(5,10), true );
+
+            valid_pairs.Add( key(6,0), true );
+            valid_pairs.Add( key(6,1), true );
+            valid_pairs.Add( key(6,2), true );
+            valid_pairs.Add( key(6,5), true );
+            valid_pairs.Add( key(6,7), true );
+            valid_pairs.Add( key(6,10), true );
+            valid_pairs.Add( key(6,11), true );
+            valid_pairs.Add( key(6,12), true );
+
+            valid_pairs.Add( key(7,1), true );
+            valid_pairs.Add( key(7,2), true );
+            valid_pairs.Add( key(7,3), true );
+            valid_pairs.Add( key(7,6), true );
+            valid_pairs.Add( key(7,8), true );
+            valid_pairs.Add( key(7,11), true );
+            valid_pairs.Add( key(7,12), true );
+            valid_pairs.Add( key(7,13), true );
+
+            valid_pairs.Add( key(8,2), true );
+            valid_pairs.Add( key(8,3), true );
+            valid_pairs.Add( key(8,4), true );
+            valid_pairs.Add( key(8,7), true );
+            valid_pairs.Add( key(8,9), true );
+            valid_pairs.Add( key(8,12), true );
+            valid_pairs.Add( key(8,13), true );
+            valid_pairs.Add( key(8,14), true );
+
+            valid_pairs.Add( key(9,3), true );
+            valid_pairs.Add( key(9,4), true );
+            valid_pairs.Add( key(9,8), true );
+            valid_pairs.Add( key(9,13), true );
+            valid_pairs.Add( key(9,14), true );
+
+            valid_pairs.Add( key(10,5), true );
+            valid_pairs.Add( key(10,6), true );
+            valid_pairs.Add( key(10,11), true );
+            valid_pairs.Add( key(10,16), true );
+            valid_pairs.Add( key(10,15), true );
+
+            valid_pairs.Add( key(11,5), true );
+            valid_pairs.Add( key(11,6), true );
+            valid_pairs.Add( key(11,7), true );
+            valid_pairs.Add( key(11,10), true );
+            valid_pairs.Add( key(11,12), true );
+            valid_pairs.Add( key(11,15), true );
+            valid_pairs.Add( key(11,16), true );
+            valid_pairs.Add( key(11,17), true );
+
+            valid_pairs.Add( key(12,6), true );
+            valid_pairs.Add( key(12,7), true );
+            valid_pairs.Add( key(12,8), true );
+            valid_pairs.Add( key(12,11), true );
+            valid_pairs.Add( key(12,13), true );
+            valid_pairs.Add( key(12,16), true );
+            valid_pairs.Add( key(12,17), true );
+            valid_pairs.Add( key(12,18), true );
+
+            valid_pairs.Add( key(13,7), true );
+            valid_pairs.Add( key(13,8), true );
+            valid_pairs.Add( key(13,9), true );
+            valid_pairs.Add( key(13,12), true );
+            valid_pairs.Add( key(13,14), true );
+            valid_pairs.Add( key(13,17), true );
+            valid_pairs.Add( key(13,18), true );
+            valid_pairs.Add( key(13,19), true );
+
+            valid_pairs.Add( key(14,8), true );
+            valid_pairs.Add( key(14,9), true );
+            valid_pairs.Add( key(14,13), true );
+            valid_pairs.Add( key(14,18), true );
+            valid_pairs.Add( key(14,19), true );
+
+            valid_pairs.Add( key(15,10), true );
+            valid_pairs.Add( key(15,11), true );
+            valid_pairs.Add( key(15,16), true );
+            valid_pairs.Add( key(15,20), true );
+            valid_pairs.Add( key(15,21), true );
+
+            valid_pairs.Add( key(16,10), true );
+            valid_pairs.Add( key(16,11), true );
+            valid_pairs.Add( key(16,12), true );
+            valid_pairs.Add( key(16,15), true );
+            valid_pairs.Add( key(16,17), true );
+            valid_pairs.Add( key(16,20), true );
+            valid_pairs.Add( key(16,21), true );
+            valid_pairs.Add( key(16,22), true );
+
+            valid_pairs.Add( key(17,11), true );
+            valid_pairs.Add( key(17,12), true );
+            valid_pairs.Add( key(17,13), true );
+            valid_pairs.Add( key(17,16), true );
+            valid_pairs.Add( key(17,18), true );
+            valid_pairs.Add( key(17,21), true );
+            valid_pairs.Add( key(17,22), true );
+            valid_pairs.Add( key(17,23), true );
+
+            valid_pairs.Add( key(18,12), true );
+            valid_pairs.Add( key(18,13), true );
+            valid_pairs.Add( key(18,14), true );
+            valid_pairs.Add( key(18,17), true );
+            valid_pairs.Add( key(18,19), true );
+            valid_pairs.Add( key(18,22), true );
+            valid_pairs.Add( key(18,23), true );
+            valid_pairs.Add( key(18,24), true );
+
+            valid_pairs.Add( key(19,13), true );
+            valid_pairs.Add( key(19,14), true );
+            valid_pairs.Add( key(19,18), true );
+            valid_pairs.Add( key(19,23), true );
+            valid_pairs.Add( key(19,24), true );
+
+            valid_pairs.Add( key(20,15), true );
+            valid_pairs.Add( key(20,16), true );
+            valid_pairs.Add( key(20,21), true );
+
+            valid_pairs.Add( key(21,15), true );
+            valid_pairs.Add( key(21,16), true );
+            valid_pairs.Add( key(21,17), true );
+            valid_pairs.Add( key(21,20), true );
+            valid_pairs.Add( key(21,22), true );
+
+            valid_pairs.Add( key(22,16), true );
+            valid_pairs.Add( key(22,17), true );
+            valid_pairs.Add( key(22,18), true );
+            valid_pairs.Add( key(22,21), true );
+            valid_pairs.Add( key(22,23), true );
+
+            valid_pairs.Add( key(23,17), true );
+            valid_pairs.Add( key(23,18), true );
+            valid_pairs.Add( key(23,19), true );
+            valid_pairs.Add( key(23,22), true );
+            valid_pairs.Add( key(23,24), true );
+
+            valid_pairs.Add( key(24,18), true );
+            valid_pairs.Add( key(24,19), true );
+            valid_pairs.Add( key(24,23), true );
+
+            //-------------------------------------------
+
             List<CompiledData> frameframe = new List<CompiledData>();
 
             for (int source_frame_index = 0; source_frame_index < m_frames.Count; ++source_frame_index)
@@ -2029,8 +2214,13 @@ namespace wedit
                             dest_canvas[ idx ] = 0x11;
                         }
 
-                        dxPlot(ref source_canvas, m_frames[ source_frame_index ], 160+even_odd, 100);
-                        dxPlot(ref dest_canvas, m_frames[ dest_frame_index ], 160+even_odd, 100);
+                        // Crap so we only generate pairs we need 
+                        bool used = false;
+                        if (valid_pairs.TryGetValue( key( source_frame_index, dest_frame_index ), out used ) )
+                        {
+                            dxPlot(ref source_canvas, m_frames[ source_frame_index ], 160+even_odd, 100);
+                            dxPlot(ref dest_canvas, m_frames[ dest_frame_index ], 160+even_odd, 100);
+                        }
 
                         frameframe.Add( new CompiledData( ref source_canvas, ref dest_canvas));
                     }
@@ -2051,10 +2241,19 @@ namespace wedit
 
                     dxPlot(ref dest_canvas, m_frames[ frame_index ], 160+even_odd, 100);
 
-                    // Full Frame
-                    data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                    if (frame_index == 12) {
+                        // Full Frame
+                        data.Add( new CompiledData( ref source_canvas, ref dest_canvas ));
+                    }
+                    else
+                    {
+                        // Generate Empty Frame
+                        data.Add( new CompiledData( ref source_canvas, ref source_canvas));
+                    }
                     // Full Erase
-                    data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
+                    //data.Add( new CompiledData( ref dest_canvas, ref source_canvas));
+                    // Generate Empty Frame, to save memory
+                    data.Add( new CompiledData( ref source_canvas, ref source_canvas));
 
                     //--------------------------------------------------------------
 
